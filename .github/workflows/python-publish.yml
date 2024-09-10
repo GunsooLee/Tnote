@@ -21,6 +21,14 @@ jobs:
       with:
         python-version: '3.x'
 
+    - name: Get Public IP
+      id: ip
+      uses: haythem/public-ip@v1.3
+
+    - name: Print Public IP
+      run: |
+        echo ${{ steps.ip.outputs.ipv4 }}
+
     - name: Copy files via SSH
       env:
         NCP_HOST: ${{ secrets.NCP_HOST }}
