@@ -20,7 +20,13 @@ jobs:
         username: ${{ secrets.PROXY_USER }}
         password: ${{ secrets.PROXY_PASSWORD }}
         port: ${{ secrets.PROXY_PORT }}
+        TARGET_HOST: ${{ secrets.TARGET_HOST }}
+        TARGET_USER: ${{ secrets.TARGET_USER }}
+        TARGET_PASSWORD: ${{ secrets.TARGET_PASSWORD }}
         script: |
           whoami
           cd /root/tnote
-          sudo git pull orign master
+          ls
+          send "ssh -o StrictHostKeyChecking=no $env(TARGET_USER)@$env(TARGET_HOST)\r"
+          expect "password:"
+          send "$env(TARGET_PASSWORD)\r"
