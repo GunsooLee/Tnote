@@ -28,6 +28,6 @@ jobs:
           whoami
           cd /root/tnote
           pwd
-          ssh ${TARGET_USER}@${TARGET_HOST}
+          ssh 211.188.48.50@${TARGET_HOST}
           ${TARGET_PASSWORD}
           pwd
