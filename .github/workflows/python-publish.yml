@@ -16,35 +16,27 @@ jobs:
     - name: Install Expect
       run: sudo apt-get install -y expect
 
-    - name: Upload app.py via Proxy
-      env:
-        PROXY_USER: ${{ secrets.PROXY_USER }}
-        PROXY_PASSWORD: ${{ secrets.PROXY_PASSWORD }}
-        PROXY_HOST: ${{ secrets.PROXY_HOST }}
-        TARGET_USER: ${{ secrets.TARGET_USER }}
-        TARGET_PASSWORD: ${{ secrets.TARGET_PASSWORD }}
-        TARGET_HOST: ${{ secrets.TARGET_HOST }}
+    - name: Create Expect Script
       run: |
-        # Expect script to SSH into the proxy server and then to the target server
-        expect << EOF
+        echo '
         set timeout -1
 
         # Connect to Proxy Server
-        spawn ssh -o StrictHostKeyChecking=no ${env(PROXY_USER)}@${env(PROXY_HOST)}
+        spawn ssh -o StrictHostKeyChecking=no ${env:PROXY_USER}@${env:PROXY_HOST}
         expect "password:"
-        send "${env(PROXY_PASSWORD)}\r"
+        send "${env:PROXY_PASSWORD}\r"
 
         # Connect to Target Server via Proxy
         expect "$ "
-        send "ssh -o StrictHostKeyChecking=no ${env(TARGET_USER)}@${env(TARGET_HOST)}\r"
+        send "ssh -o StrictHostKeyChecking=no ${env:TARGET_USER}@${env:TARGET_HOST}\r"
         expect "password:"
-        send "${env(TARGET_PASSWORD)}\r"
+        send "${env:TARGET_PASSWORD}\r"
 
-        # Upload the file (assuming your repo is checked out in the current directory)
+        # Upload the file
         expect "$ "
-        send "scp app.py ${env(TARGET_USER)}@${env(TARGET_HOST)}:~/app.py\r"
+        send "scp app.py ${env:TARGET_USER}@${env:TARGET_HOST}:~/app.py\r"
         expect "password:"
-        send "${env(TARGET_PASSWORD)}\r"
+        send "${env:TARGET_PASSWORD}\r"
 
         # Exit from target server and proxy server
         expect "$ "
@@ -53,4 +45,14 @@ jobs:
         send "exit\r"
 
         expect eof
-        EOF
+        ' > upload_script.exp
+
+    - name: Run Expect Script
+      env:
+        PROXY_USER: ${{ secrets.PROXY_USER }}
+        PROXY_PASSWORD: ${{ secrets.PROXY_PASSWORD }}
+        PROXY_HOST: ${{ secrets.PROXY_HOST }}
+        TARGET_USER: ${{ secrets.TARGET_USER }}
+        TARGET_PASSWORD: ${{ secrets.TARGET_PASSWORD }}
+        TARGET_HOST: ${{ secrets.TARGET_HOST }}
+      run: expect upload_script.exp
