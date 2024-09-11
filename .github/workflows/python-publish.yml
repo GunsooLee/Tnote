@@ -27,6 +27,6 @@ jobs:
           whoami
           cd /root/tnote
           ls
-          send "ssh -o StrictHostKeyChecking=no $env(TARGET_USER)@$env(TARGET_HOST)\r"
+          send "ssh -o StrictHostKeyChecking=no ${TARGET_USER}@${TARGET_HOST}\r"
           expect "password:"
-          send "$env(TARGET_PASSWORD)\r"
+          send "${TARGET_PASSWORD}\r"
