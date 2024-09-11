@@ -5,29 +5,23 @@ on:
     branches:
       - main  # 메인 브랜치에 푸시될 때 동작
 
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-
-    - name: Create Expect Script
-      uses: appleboy/ssh-action@master
-      env:
-        TARGET_HOST: ${{ secrets.TARGET_HOST }}
-        TARGET_USER: ${{ secrets.TARGET_USER }}
-        TARGET_PASSWORD: ${{ secrets.TARGET_PASSWORD }}
-      with:
-        host: ${{ secrets.PROXY_HOST }}
-        username: ${{ secrets.PROXY_USER }}
-        password: ${{ secrets.PROXY_PASSWORD }}
-        port: ${{ secrets.PROXY_PORT }}
-        script: |
-          whoami
-          cd /root/tnote
-          pwd
-          ssh qqq@$211.188.48.50
-          ${TARGET_PASSWORD}
-          pwd
+    - name: Add ACG rule in NCP
+      run: |
+        curl -X POST "https://ncloud.apigw.ntruss.com/vpc/v2/addAccessControlGroupRule" \
+        -H "Content-Type: application/json" \
+        -H "X-NCP-APIGW-API-KEY-ID: ${{ secrets.NCP_API_KEY_ID }}" \
+        -H "X-NCP-APIGW-API-KEY: ${{ secrets.NCP_API_KEY }}" \
+        -d '{
+          "regionNo": "1",
+          "accessControlGroupNo": "${{ secrets.ACG_NO }}",
+          "protocolTypeCode": "TCP",
+          "portRange": "22",
+          "accessControlGroupRuleDescription": "Allow SSH access from GitHub Actions",
+          "sourceIp": "${{ steps.get_ip.outputs.ip }}/32"
+        }'
