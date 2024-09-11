@@ -3,15 +3,6 @@ name: Deploy to NCP
 on:
   push:
     branches:
-      - main  # main 브랜치에 push 시 실행
-  pull_request:
-    branches:
-      - main  # main 브랜치에 PR 머지 시 실행
-name: Deploy app
-
-on:
-  push:
-    branches:
       - main  # 메인 브랜치에 푸시될 때 동작
 
 jobs:
@@ -23,11 +14,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    # 2. 필요한 패키지 설치 (sshpass 등)
-    - name: Install sshpass
-      run: sudo apt-get update && sudo apt-get install -y sshpass
-
-    # 3. 프록시 서버를 경유하여 본 서버로 SSH 접속 및 app.py 파일 전송
+    # 2. 프록시 서버를 경유하여 본 서버로 SSH 접속 및 app.py 파일 전송
     - name: Deploy app via SSH
       env:
         PROXY_IP: ${{ secrets.PROXY_IP }}           # 프록시 서버 IP
