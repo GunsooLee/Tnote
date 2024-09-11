@@ -27,6 +27,6 @@ jobs:
           whoami
           cd /root/tnote
           pwd
-          ssh -o StrictHostKeyChecking=no ${TARGET_USER}@${TARGET_HOST}
+          ssh StrictHostKeyChecking=no ${TARGET_USER}@${TARGET_HOST}
           ${TARGET_PASSWORD}
           pwd
