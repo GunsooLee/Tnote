@@ -15,14 +15,15 @@ jobs:
 
     - name: Create Expect Script
       uses: appleboy/ssh-action@master
+      env:
+        TARGET_HOST: ${{ secrets.TARGET_HOST }}
+        TARGET_USER: ${{ secrets.TARGET_USER }}
+        TARGET_PASSWORD: ${{ secrets.TARGET_PASSWORD }}
       with:
         host: ${{ secrets.PROXY_HOST }}
         username: ${{ secrets.PROXY_USER }}
         password: ${{ secrets.PROXY_PASSWORD }}
         port: ${{ secrets.PROXY_PORT }}
-        TARGET_HOST: ${{ secrets.TARGET_HOST }}
-        TARGET_USER: ${{ secrets.TARGET_USER }}
-        TARGET_PASSWORD: ${{ secrets.TARGET_PASSWORD }}
         script: |
           whoami
           cd /root/tnote
