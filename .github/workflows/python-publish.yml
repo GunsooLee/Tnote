@@ -16,6 +16,18 @@ jobs:
     - name: Install Expect
       run: sudo apt-get install -y expect
 
+    - name: Print environment variables (Debugging)
+      env:
+        PROXY_USER: ${{ secrets.PROXY_USER }}
+        PROXY_HOST: ${{ secrets.PROXY_HOST }}
+        TARGET_USER: ${{ secrets.TARGET_USER }}
+        TARGET_HOST: ${{ secrets.TARGET_HOST }}
+      run: |
+        echo "Proxy User: $PROXY_USER"
+        echo "Proxy Host: $PROXY_HOST"
+        echo "Target User: $TARGET_USER"
+        echo "Target Host: $TARGET_HOST"
+
     - name: Create Expect Script
       run: |
         echo '
