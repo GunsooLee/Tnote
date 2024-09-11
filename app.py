@@ -25,7 +25,7 @@ from word_cloud_utils import display_word_cloud  # 워드 클라우드 함수를
 font_path = r'/usr/share/fonts/truetype/nanum/NanumBarunGothic.ttf'
 
 # Streamlit 앱 제목
-st.title("T-Note123")
+st.title("T-Note1253")
 
 
 # 파일 업로드
