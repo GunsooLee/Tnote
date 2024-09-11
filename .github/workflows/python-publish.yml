@@ -25,4 +25,4 @@ jobs:
         password: ${{ secrets.PROXY_PASSWORD }}
         port: ${{ secrets.PROXY_PORT }}
         script: |
-          sh/root/tnote/tnoteSSH.sh
+          sh /root/tnote/tnoteSSH.sh
