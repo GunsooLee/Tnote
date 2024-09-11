@@ -16,7 +16,7 @@ jobs:
     - name: Create Expect Script
       uses: appleboy/ssh-action@v0.1.4
       with:
-        host: ${{ secrets.PROXY_USER }}
+        host: ${{ secrets.PROXY_HOST }}
         username: ${{ secrets.PROXY_USER }}
         password: ${{ secrets.PROXY_PASSWORD }}
         port: ${{ secrets.PROXY_PORT }}
