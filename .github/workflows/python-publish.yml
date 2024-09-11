@@ -20,4 +20,7 @@ jobs:
         username: ${{ secrets.PROXY_USER }}
         password: ${{ secrets.PROXY_PASSWORD }}
         port: ${{ secrets.PROXY_PORT }}
-        script: whoami
+        script: |
+          whoami
+          cd /root/tnote
+          sudo git pull orign master
