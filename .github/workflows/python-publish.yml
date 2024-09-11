@@ -35,7 +35,7 @@ jobs:
 
         # Connect to Proxy Server
         spawn ssh -o StrictHostKeyChecking=no $env(PROXY_USER)@$env(PROXY_HOST)
-        expect "password:"
+        expect "$env(PROXY_USER)@$env(PROXY_HOST)'s password:"
         send "$env(PROXY_PASSWORD)\r"
 
         # Connect to Target Server via Proxy
