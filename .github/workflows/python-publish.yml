@@ -22,21 +22,21 @@ jobs:
         set timeout -1
 
         # Connect to Proxy Server
-        spawn ssh -o StrictHostKeyChecking=no ${env:PROXY_USER}@${env:PROXY_HOST}
+        spawn ssh -o StrictHostKeyChecking=no $env(PROXY_USER)@$env(PROXY_HOST)
         expect "password:"
-        send "${env:PROXY_PASSWORD}\r"
+        send "$env(PROXY_PASSWORD)\r"
 
         # Connect to Target Server via Proxy
         expect "$ "
-        send "ssh -o StrictHostKeyChecking=no ${env:TARGET_USER}@${env:TARGET_HOST}\r"
+        send "ssh -o StrictHostKeyChecking=no $env(TARGET_USER)@$env(TARGET_HOST)\r"
         expect "password:"
-        send "${env:TARGET_PASSWORD}\r"
+        send "$env(TARGET_PASSWORD)\r"
 
         # Upload the file
         expect "$ "
-        send "scp app.py ${env:TARGET_USER}@${env:TARGET_HOST}:~/app.py\r"
+        send "scp app.py $env(TARGET_USER)@$env(TARGET_HOST):~/app.py\r"
         expect "password:"
-        send "${env:TARGET_PASSWORD}\r"
+        send "$env(TARGET_PASSWORD)\r"
 
         # Exit from target server and proxy server
         expect "$ "
