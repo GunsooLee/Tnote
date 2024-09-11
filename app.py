@@ -32,7 +32,7 @@ st.set_page_config(
 font_path = r'/usr/share/fonts/truetype/nanum/NanumBarunGothic.ttf'
 
 # Streamlit 앱 제목
-st.title("T-Note")
+st.title("T-Note111111")
 
 
 # 파일 업로드
