@@ -21,6 +21,8 @@ from adjustText import adjust_text
 import platform
 from word_cloud_utils import display_word_cloud  # 워드 클라우드 함수를 가져옴
 
+#깃헙 테스트 박찬명 20240912
+
 #사이드바
 st.set_page_config(
     page_title="T-Note",    # 타이틀바 명
