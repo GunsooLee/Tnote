@@ -46,7 +46,7 @@ if uploaded_file is not None:
 else:
     st.write("Please upload an audio file.")
 
-tab1, tab2 = st.tabs(["📄 회의 녹취록 전문", "🙋<200d>♀️ 화자별 녹취록 전문"])
+tab1, tab2 = st.tabs(["📄 회의 녹취록 전문", "🙋 화자별 녹취록 전문"])
 
 tab1.subheader("회의록 STT 결과")
 tab1.write("""
