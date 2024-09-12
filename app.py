@@ -36,7 +36,7 @@ st.title("T-Note")
 
 
 # 파일 업로드
-uploaded_file = st.file_uploader("녹음된 회의파일을 올려주세요", type=["mp3", "wav", "ogg", "flac"])
+uploaded_file = st.file_uploader("녹음된 회의파일을 올려주세요", type=["mp3", "wav", "ogg", "flac", "m4a"])
 
 
 # 파일이 업로드되었는지 확인
