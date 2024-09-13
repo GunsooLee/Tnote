@@ -37,16 +37,18 @@ st.title("T-Note")
 uploaded_file = st.file_uploader("녹음된 회의파일을 올려주세요", type=["mp3", "wav", "ogg", "flac", "m4a"])
 
 # 저장할 경로 설정
-save_directory = "/home/tnote/backup_file/rec/"  # 디렉토리 이름
-if not os.path.exists(save_directory):
-    os.makedirs(save_directory)
-
+save_directory = "/home/tnote/backup_file/rec/"
+os.makedirs(save_directory, exist_ok=True)
 
 # 파일이 업로드되었는지 확인
 if uploaded_file is not None:
     # 업로드된 파일명과 파일 크기 가져오기
     file_name = uploaded_file.name
     file_size = uploaded_file.size
+
+    # 파일명과 파일 크기 출력
+    st.write(f"업로드된 파일명: {file_name}")
+    st.write(f"파일 크기: {file_size / (1024 * 1024):.2f} MB")
 
     # "파일 저장" 버튼을 화면에 표시
     if st.button("파일 저장"):
@@ -56,9 +58,8 @@ if uploaded_file is not None:
         # 파일을 특정 경로에 저장
         with open(save_path, "wb") as f:
             f.write(uploaded_file.getbuffer())
-            
-    st.success(f"파일 {file_name} 이 '{save_path}' 에 저장되었습니다.[{file_size / (1024 * 1024):.2f} MB]")
-
+        
+        st.success(f"파일 {file_name}이 '{save_path}'에 저장되었습니다. [{file_size / (1024 * 1024):.2f} MB]")
 else:
     st.write("오디오 파일을 업로드해주세요.")
 
