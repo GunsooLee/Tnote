@@ -62,7 +62,8 @@ if uploaded_file is not None:
         st.success(f"파일 {file_name}이 '{save_path}'에 저장되었습니다. [{file_size / (1024 * 1024):.2f} MB]")
 else:
     st.write("오디오 파일을 업로드해주세요.")
-
+    
+"""
 tab1, tab2 = st.tabs(["📄 회의 녹취록 전문", "🙋 화자별 녹취록 전문"])
 
 tab1.subheader("회의록 STT 결과")
@@ -159,3 +160,4 @@ for idx in df_tnote.index:
 #tab4.subheader("워트클라우드")
 #tab4.write(display_word_cloud(result))
                                
+"""
