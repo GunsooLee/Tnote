@@ -15,8 +15,6 @@ import pyLDAvis.gensim_models as gensimvis
 from gensim.corpora.dictionary import Dictionary
 from sklearn.cluster import KMeans
 from sklearn.manifold import TSNE
-import matplotlib.pyplot as plt
-import seaborn as sns
 from adjustText import adjust_text
 import platform
 from word_cloud_utils import display_word_cloud  # 워드 클라우드 함수를 가져옴
