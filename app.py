@@ -49,17 +49,18 @@ if uploaded_file is not None:
     # 업로드된 파일명과 파일 크기 가져오기
     file_name = uploaded_file.name
     file_size = uploaded_file.size
+
+    # "파일 저장" 버튼을 화면에 표시
+    if st.button("파일 저장"):
+        # 버튼이 클릭되면 파일을 특정 경로에 저장
+        save_path = os.path.join(save_directory, file_name)
     
-    # 파일 저장 경로
-    save_path = os.path.join(save_directory, file_name)
-    
-    # 파일을 특정 경로에 저장
-    with open(save_path, "wb") as f:
-        f.write(uploaded_file.getbuffer())
-    
-    st.write(f"파일명: {file_name}")
-    st.write(f"파일 크기: {file_size / (1024 * 1024):.2f} MB")
-    st.write(f"파일이 '{save_path}'에 저장되었습니다.")
+        # 파일을 특정 경로에 저장
+        with open(save_path, "wb") as f:
+            f.write(uploaded_file.getbuffer())
+            
+    st.success(f"파일 {file_name} 이 '{save_path}' 에 저장되었습니다.[{file_size / (1024 * 1024):.2f} MB]")
+
 else:
     st.write("오디오 파일을 업로드해주세요.")
 
