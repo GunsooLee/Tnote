@@ -17,24 +17,6 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Get public IP of the runner
-      id: get_ip
-      run: |
-        IP=$(curl -s https://ifconfig.me)
-        echo "PUBLIC_IP=$IP" >> $GITHUB_ENV
-
-    - name: Add IP to ACG
-      run: |
-        ACG_ID="6192"
-        PUBLIC_IP="${{ env.PUBLIC_IP }}"
-
-        # NCP API 호출을 통해 ACG에 IP 추가
-        curl -X PUT "$NCP_API_URL/v2/acg/modifyAclRule" \
-        -H "x-ncp-apigw-api-key: ${{ secrets.NCP_ACCESS_KEY }}" \
-        -H "x-ncp-apigw-api-secret: ${{ secrets.NCP_SECRET_KEY }}" \
-        -d "acgId=$ACG_ID&ruleList.1.ip=$PUBLIC_IP&ruleList.1.action=ALLOW"
-
-
     - name: Create Expect Script
       uses: appleboy/ssh-action@master
       with:
