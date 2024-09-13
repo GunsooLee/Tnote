@@ -15,8 +15,6 @@ import pyLDAvis.gensim_models as gensimvis
 from gensim.corpora.dictionary import Dictionary
 from sklearn.cluster import KMeans
 from sklearn.manifold import TSNE
-import matplotlib.pyplot as plt
-import seaborn as sns
 from adjustText import adjust_text
 import platform
 from word_cloud_utils import display_word_cloud  # 워드 클라우드 함수를 가져옴
@@ -40,14 +38,34 @@ st.title("T-Note")
 # 파일 업로드
 uploaded_file = st.file_uploader("녹음된 회의파일을 올려주세요", type=["mp3", "wav", "ogg", "flac", "m4a"])
 
+# 저장할 경로 설정
+save_directory = "/home/tnote/backup_file/rec/"
+os.makedirs(save_directory, exist_ok=True)
 
 # 파일이 업로드되었는지 확인
 if uploaded_file is not None:
-    # 파일 길이 출력
-    st.write("File Upload")
-else:
-    st.write("Please upload an audio file.")
+    # 업로드된 파일명과 파일 크기 가져오기
+    file_name = uploaded_file.name
+    file_size = uploaded_file.size
 
+    # 파일명과 파일 크기 출력
+    st.write(f"업로드된 파일명: {file_name}")
+    st.write(f"파일 크기: {file_size / (1024 * 1024):.2f} MB")
+
+    # "파일 저장" 버튼을 화면에 표시
+    if st.button("파일 저장"):
+        # 버튼이 클릭되면 파일을 특정 경로에 저장
+        save_path = os.path.join(save_directory, file_name)
+    
+        # 파일을 특정 경로에 저장
+        with open(save_path, "wb") as f:
+            f.write(uploaded_file.getbuffer())
+        
+        st.success(f"파일 {file_name}이 '{save_path}'에 저장되었습니다. [{file_size / (1024 * 1024):.2f} MB]")
+else:
+    st.write("오디오 파일을 업로드해주세요.")
+    
+"""
 tab1, tab2 = st.tabs(["📄 회의 녹취록 전문", "🙋 화자별 녹취록 전문"])
 
 tab1.subheader("회의록 STT 결과")
@@ -144,3 +162,4 @@ for idx in df_tnote.index:
 #tab4.subheader("워트클라우드")
 #tab4.write(display_word_cloud(result))
                                
+"""
