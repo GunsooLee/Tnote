@@ -25,7 +25,7 @@ jobs:
 
     - name: Add IP to ACG
       run: |
-        ACG_ID="ncloud-default-acg"
+        ACG_ID="6192"
         PUBLIC_IP="${{ env.PUBLIC_IP }}"
 
         # NCP API 호출을 통해 ACG에 IP 추가
