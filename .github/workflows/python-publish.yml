@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main  # 메인 브랜치에 푸시될 때 동작
+  pull_request:
+    branches:
+      - main  # 메인 브랜치에 pull_request될 때 동작
 
 
 ###
