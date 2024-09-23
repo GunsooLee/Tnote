@@ -3,6 +3,32 @@
 
 운영 도메인: http://t-note.kro.kr/
 
+**주요 기능 설명**:
+1. 음성 텍스트 변환: 네이버 CLOVA Speech Recognition를 이용하여 음성을 텍스트로 변환, 화자 구분까지
+2. 형태소 분석 및 단어 빈도: konlpy 라이브러리의 Okt 형태소 분석기를 사용하여, 한국어 텍스트에서 명사만 추출한 후, 등장 빈도를 계산
+3. 주제 도출: TF-IDF 및 LDA를 사용하여 주요 단어를 기반으로 주제를 도출
+4. 전체 대화 요약: Huggingface의 pipeline을 이용하여 대화를 요약??
+5. 화자별 대화 요약: 화자별로 나눈 텍스트를 요약
+6. 감정 분석: Huggingface의 sentiment-analysis pipeline을 사용하여 감정을 분석하고, 긍정적, 부정적, 중립적인 감정 점수를 제공
+
+   
+**Huggingface 모델**
+
+```python
+from transformers import pipeline
+
+# 감성 분석 파이프라인 생성
+classifier = pipeline('sentiment-analysis')
+
+# 텍스트 감성 분석
+result = classifier("이 영화는 정말 재미있어요!")
+print(result)
+```
+
+```css
+[{'label': 'POSITIVE', 'score': 0.9998}]
+```
+
 
 
 === 2024/09/10 회의 내용 ===
