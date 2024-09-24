@@ -34,7 +34,7 @@ st.set_page_config(
 font_path = r'/usr/share/fonts/truetype/nanum/NanumBarunGothic.ttf'
 
 # Streamlit 앱 제목
-st.title("T-Note : tsis AI 회의록작성111123455")
+st.title("T-Note : tsis AI 회의록작성5")
 
 # Pandas display 옵션 설정
 pd.set_option('display.max_columns', None)  # 모든 열 표시
@@ -69,7 +69,21 @@ def insert_file_info_to_db(connection, file_name, file_size, save_path):
         "INSERT INTO tn_rec_file (f_name, f_size, f_path) VALUES (%s, %s, %s)",
         (file_name, file_size, save_path)
     )
-    connection.commit()
+    #connection.commit()
+
+    cursor.execute("SELECT LAST_INSERT_ID()")
+    rec_seq = cursor.fetchone()[0]
+    return rec_seq
+
+# tn_note_mst 테이블에 회의 정보 삽입 함수
+def insert_meeting_info_to_db(connection, rec_seq, name_topic, num_spk, mt_date, mt_term):
+    cursor = connection.cursor()
+    cursor.execute(
+        "INSERT INTO tn_note_mst (rec_file_seq, name_topic, num_spk, mt_date, mt_term) VALUES (%s, %s, %s, %s, %s)",
+        (rec_seq, name_topic, num_spk, mt_date.strftime('%Y-%m-%d'), mt_term)
+    )
+    #connection.commit()
+
 
 # 데이터베이스에서 파일 정보 조회 함수
 def fetch_file_info_from_db(connection):
@@ -86,6 +100,20 @@ with tabs[0]:
     st.header("회의녹취록 업로드")
     uploaded_file = st.file_uploader("녹음된 회의파일을 올려주세요", type=["mp3", "wav", "ogg", "flac", "m4a"])
 
+    # 2열 레이아웃 생성
+    col1, col2 = st.columns(2)
+
+    with col1:
+        name_topic = st.text_input("회의 제목을 입력하세요")
+        mt_date = st.date_input("회의날짜를 선택하세요.")
+
+    with col2:
+        num_spk_opt = ["2","3","4","5","6","7","8","9","10"]
+        num_spk = st.selectbox("회의 참여인원을 선택하세요.", options=num_spk_opt)
+        # 회의 종료 시간을 30분 단위로 선택할 수 있도록 설정
+        mt_term_opt = ["30분", "1시간", "1시간30분", "2시간","2시간30분","3시간","3시간30분","4시간","4시간30분","5시간","5시간30분","6시간"]
+        mt_term = st.selectbox("회의 진행시간을 선택하세요", options=mt_term_opt)
+
     # 저장할 경로 설정
     save_directory = "/home/tnote/backup_file/rec/"
     os.makedirs(save_directory, exist_ok=True)
@@ -93,18 +121,31 @@ with tabs[0]:
     if uploaded_file is not None:
         # 파일 저장 및 정보 출력
         file_name, file_size, save_path = save_file(uploaded_file, save_directory)
-        st.write(f"업로드된 파일명: {file_name}")
-        st.write(f"파일 크기: {file_size / (1024 * 1024):.2f} MB")
+        #st.write(f"업로드 파일명: {file_name}")
+        #st.write(f"파일 크기: {file_size / (1024 * 1024):.2f} MB")
 
         # "파일 저장" 버튼을 화면에 표시
         if st.button("파일 업로드"):
-            st.success(f"파일 {file_name}이 '{save_path}'에 저장되었습니다. [{file_size / (1024 * 1024):.2f} MB]")
 
-            # 데이터베이스에 정보 삽입
-            connection = connect_to_db()
-            insert_file_info_to_db(connection, file_name, file_size, save_path)
-            st.write("데이터베이스에 데이터가 저장되었습니다.")
-            connection.close()
+            if not name_topic :
+            # 회의제목이 입력되지 않았을 경우 경고 메시지 표시
+                st.warning("회의 제목을 입력해야 합니다.")
+            else :
+                st.success(f"파일 {file_name}이 '{save_path}'에 저장되었습니다. [{file_size / (1024 * 1024):.2f} MB]")
+
+                # 데이터베이스에 정보 삽입
+                connection = connect_to_db()
+                rec_seq = insert_file_info_to_db(connection, file_name, file_size, save_path)
+                st.success("데이터베이스에 데이터가 저장시도. :: tn_rec_file") # 디버깅 로그
+
+                insert_meeting_info_to_db(connection, rec_seq, name_topic, num_spk, mt_date, mt_term)
+                st.success("데이터베이스에 데이터가 저장시도. :: tn_note_mst") # 디버깅 로그
+                
+                connection.commit()
+                connection.close()
+
+                st.success("데이터베이스에 commit 완료") # 디버깅 로그
+
 
 
 # 두번째 탭: 조회
@@ -221,4 +262,3 @@ for idx in df_tnote.index:
 
 #tab4.subheader("워트클라우드")
 #tab4.write(display_word_cloud(result))
-                               
