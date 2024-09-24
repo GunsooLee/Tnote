@@ -34,7 +34,7 @@ st.set_page_config(
 font_path = r'/usr/share/fonts/truetype/nanum/NanumBarunGothic.ttf'
 
 # Streamlit 앱 제목
-st.title("T-Note : tsis AI 회의록작성7")
+st.title("T-Note : tsis AI 회의록작성72")
 
 # Pandas display 옵션 설정
 pd.set_option('display.max_columns', None)  # 모든 열 표시
