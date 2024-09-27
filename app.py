@@ -247,8 +247,8 @@ def main_app():
 
     with tabs[2]:
         st.header("회의록 STT 결과")
-         client = ClovaSpeechClient()
-        stt_result = '<br>'.join(client.getSttResult())
+        client = ClovaSpeechClient()
+        stt_result = '<br>'.join(client.getSttAllResult())
         st.write(stt_result,unsafe_allow_html=True)
         st.write('<hr>',unsafe_allow_html=True)
         st.write("""
@@ -293,6 +293,12 @@ def main_app():
     <br>화자0) 저는 나쁘지 않은 것 같아요. 그 주제 그.
     <br>화자3) 네, 좋은 것 같아요. 회의로 요약.
     """,unsafe_allow_html=True)
+
+    with tabs[3]:
+        st.header("화자별 STT 결과")
+        client = ClovaSpeechClient()
+        speaker_result = '<br>'.join(client.getSttSpeakResult())
+        st.write(speaker_result,unsafe_allow_html=True)
 
     #tab4.subheader("워트클라우드")
     #tab4.write(display_word_cloud(result))
