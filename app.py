@@ -23,6 +23,7 @@ from adjustText import adjust_text
 import platform
 from word_cloud_utils import display_word_cloud  # 워드 클라우드 함수를 가져옴
 import uuid
+from ClovaSpeechClient import ClovaSpeechClient
 
 # 세션 상태 초기화
 if 'logged_in' not in st.session_state:
@@ -246,6 +247,10 @@ def main_app():
 
     with tabs[2]:
         st.header("회의록 STT 결과")
+         client = ClovaSpeechClient()
+        stt_result = '<br>'.join(client.getSttResult())
+        st.write(stt_result,unsafe_allow_html=True)
+        st.write('<hr>',unsafe_allow_html=True)
         st.write("""
     <br>화자0) 우리가 인제 티맵을 같이 하게 됐는데, 주제를 이제 좀 정해야 될 것 같거든요.
     <br>화자0) 주제를 어떤 거를 했으면 좋겠는지 좀 생각해 놓은 게 있으면 조금 얘기를 해주세요.
