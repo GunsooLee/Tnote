@@ -25,6 +25,11 @@ from word_cloud_utils import display_word_cloud  # 워드 클라우드 함수를
 import uuid
 from ClovaSpeechClient import ClovaSpeechClient
 
+# 회의록 파일 다운로드 추가
+from resultToDocx import create_meeting_minutes
+from datetime import datetime
+
+
 # 세션 상태 초기화
 if 'logged_in' not in st.session_state:
     st.session_state['logged_in'] = False
@@ -53,6 +58,15 @@ def main_app():
         initial_sidebar_state="auto"
     )
 
+    # 세션 데이터
+    if 'data' not in st.session_state:
+        st.session_state.data = {
+            'name_topic': '',
+            'mt_date': '',
+            'num_spk': '',
+            'mt_term': '',
+        }
+    
     font_path = r'/usr/share/fonts/truetype/nanum/NanumBarunGothic.ttf'
 
     # Streamlit 앱 제목
@@ -136,7 +150,7 @@ def main_app():
                 clean_text.append(txt)
         return " ".join(clean_text)
 
-    tabs = st.tabs(["회의녹취록 업로드", "회의녹취록  조회", "📄 회의 녹취록 전문", "🙋 화자별 녹취록 전문"])
+    tabs = st.tabs(["회의녹취록 업로드", "회의녹취록  조회", "📄 회의 녹취록 전문", "🙋 화자별 녹취록 전문","회의록 다운로드"])
 
     # 첫번째 탭: 업로드
     with tabs[0]:
@@ -156,7 +170,13 @@ def main_app():
             # 회의 종료 시간을 30분 단위로 선택할 수 있도록 설정
             mt_term_opt = ["30분", "1시간", "1시간30분", "2시간","2시간30분","3시간","3시간30분","4시간","4시간30분","5시간","5시간30분","6시간"]
             mt_term = st.selectbox("회의 진행시간을 선택하세요", options=mt_term_opt)
-
+        
+        #회의록 저장을 위한 데이터 저장
+        st.session_state.data['name_topic'] = name_topic
+        st.session_state.data['mt_date'] = mt_date.strftime("%Y-%m-%d")
+        st.session_state.data['num_spk'] = num_spk
+        st.session_state.data['mt_term'] = mt_term
+        
         # 저장할 경로 설정
         save_directory = "/home/tnote/backup_file/rec/"
         os.makedirs(save_directory, exist_ok=True)
@@ -303,6 +323,54 @@ def main_app():
     #tab4.subheader("워트클라우드")
     #tab4.write(display_word_cloud(result))
     # 로그인 상태에 따라 페이지 렌더링
+    
+        
+    with tabs[4]:
+        st.header("회의록 다운로드")
+        # Session State에서 데이터 가져오기
+        data = st.session_state.data
+        return_filepath =''
+        if data:        
+            attendees = st.text_area("회의 참석자 (한 줄에 한 명씩 입력)", height=100)
+            attendees_list = attendees.splitlines()
+            if st.button("회의록 생성"):
+                if 'file_generated' not in st.session_state:  # 파일 생성 여부 확인
+                    # 회의록 생성 로직
+                    date = datetime.now().strftime('%Y%m%d_%H%M%S')
+                    file_name = f"회의록_{date}"
+                    return_filepath = create_meeting_minutes(
+                        data['name_topic'],
+                        "회의실 A",  # 임시로 고정, 필요에 따라 수정
+                        data['mt_date'],
+                        attendees_list,  # 임시로 고정, 필요에 따라 수정
+                        data['num_spk'],
+                        "회의 내용",  # 임시로 고정, 실제 내용으로 대체
+                        file_name
+                    )
+                    st.session_state.file_generated = True  # 파일 생성 완료 표시
+
+            # 파일 다운로드 버튼 생성
+            if 'file_generated' in st.session_state:
+                if os.path.exists(return_filepath):
+                    # 파일 다운로드 버튼 생성
+                    st.text(return_filepath)
+                    try:
+                        with open(return_filepath, 'rb') as file:
+                            st.download_button(
+                                label="회의록 파일 다운로드",
+                                data=file,
+                                file_name=return_filepath.split('\\')[-1],
+                                mime='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                            )
+                    except FileNotFoundError as e:
+                        print(f"파일을 열 수 없습니다: {e}")
+                    except PermissionError as e:
+                        print(f"파일 접근 권한이 없습니다: {e}")
+                    except Exception as e:
+                        print(f"알 수 없는 오류 발생: {e}")    
+        else:
+            st.warning("아직 데이터가 없습니다.")
+        
 if not st.session_state['logged_in']:
     login()
 else:
