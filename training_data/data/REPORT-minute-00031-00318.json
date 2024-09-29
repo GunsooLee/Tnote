@@ -1,0 +1,23 @@
+{
+	"Meta(Acqusition)": {
+		"doc_id": "REPORT-minute-00031",
+		"doc_category": "REPORT",
+		"doc_type": "minute",
+		"doc_name": "제20대 국회 기획재정위원회 회의록 데이터셋.csv",
+		"author": null,
+		"publisher": null,
+		"publisher_year": null,
+		"doc_origin": "국회도서관 포털"
+	},
+	"Meta(Refine)": {
+		"passage_id": "REPORT-minute-00031-00318",
+		"passage": "위원장대리 이현재] \"위원님 이렇게 하시면 어떻겠습니까?\"\n박영선 위원] \"이거는……\"\n위원장대리 이현재] \"그 자료를……\"\n박영선 위원] \"국민을 속이는 일 아닌가요?\"\n위원장대리 이현재] \"자료를 받으셨으니까요 그 자료를 가지고 질의를 하시면서 말씀을 진행하시면 어떻겠습니까?\"\n박영선 위원] \"예 그리고 그다음에 ‘Bank of Korea should be consistent with its mandate’ 이렇게 돼 있는데 이거를 한국은행이라는 데서 번역을 이런 식으로 해 가지고 이거를 여당 위원님이 마치 IMF가 자본확충펀드를 인도스(endorse)해 준 것처럼 이렇게…… 글쎄 제가 이거 영어를 잘 못 합니다. 그래서 영어 잘하시는 분들 이거 번역하셔 가지고 이거는……\"\n위원장대리 이현재] \"위원님 질의를 시작하시지요. 하시면서……\"\n박영선 위원] \"아니……\"\n위원장대리 이현재] \"한국은행한테 질의를 하시지요 뭐.\"\n박영선 위원] \"아니 한국은행 번역도 그렇게 돼 있어요. ‘당국은 재정 정책이 선도적인 역할을 하고’ 그런데 약간 번역을 완화했지요. 예? 완화해 갖고 선도적인 그런데 이 얘기는 싹 빼고 한국……\"\n한국은행총재 이주열] \"그런데 저게 IMF 사무소 측에서 릴리즈(release)한 겁니다. 저희들은……\"\n박영선 위원] \"글쎄 IMF 사무소 측에서 릴리즈한 원본에 그렇게 돼 있다니까요. ‘재정 정책을 반드시 먼저 해야 된다’……\"\n",
+		"passage_Cnt": 708
+	},
+	"Annotation": {
+		"summary1": "박 위원은 여당이 Bank of Korea should be consistent with its mandate의 뜻을 IMF 사무소 원본과 다르게 잘못 번역했다고 말했다.",
+		"summary2": "박영선 위원] \"예 그리고 그다음에 ‘Bank of Korea should be consistent with its mandate’ 이렇게 돼 있는데 이거를 한국은행이라는 데서 번역을 이런 식으로 해 가지고 이거를 여당 위원님이 마치 IMF가 자본확충펀드를 인도스(endorse)해 준 것처럼 이렇게…… 박영선 위원] \"글쎄 IMF 사무소 측에서 릴리즈한 원본에 그렇게 돼 있다니까요.",
+		"summary3": null,
+		"summary_3_cnt": null
+	}
+}
