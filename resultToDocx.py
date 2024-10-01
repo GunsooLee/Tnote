@@ -1,5 +1,6 @@
 from docx import Document
 from datetime import datetime
+import os
 
 def create_meeting_minutes(title, meeting_room, date, writer, attendees, contents, file_name='Tnote_'+datetime.now().strftime('%Y%m%d_%H%M%S')):
     """_summary_
@@ -32,7 +33,7 @@ def create_meeting_minutes(title, meeting_room, date, writer, attendees, content
     table.cell(1, 0).text = '작성자'
     table.cell(1, 1).text = writer
     table.cell(1, 2).text = '참석인원'
-    table.cell(1, 3).text = ", ".join(attendees)
+    table.cell(1, 3).text = "\n".join(attendees)
 
     # 회의 내용
     document.add_paragraph()
@@ -46,4 +47,8 @@ def create_meeting_minutes(title, meeting_room, date, writer, attendees, content
     # 파일 저장 
     file_path = 'result_file/' + file_name + '.docx'
     document.save(file_path)
-    return file_path
+    
+    #파일 사이즈
+    file_size =  os.path.getsize(file_path)
+    file_size = file_size / (1024 * 1024)
+    return file_size, file_path

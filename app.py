@@ -85,6 +85,7 @@ def main_app():
     def connect_to_db():
         return mysql.connector.connect(
             host='localhost',
+            # host='211.188.48.50',
             user='tnote',
             password='q1w2e3r4',
             database='db_tnote'
@@ -125,14 +126,26 @@ def main_app():
         return rec_seq
 
     # tn_note_mst 테이블에 회의 정보 삽입 함수
-    def insert_meeting_info_to_db(connection, rec_seq, name_topic, num_spk, mt_date, mt_term):
+    def insert_meeting_info_to_db(connection, rec_seq, name_topic, num_spk, mt_date, mt_term, res_file_seq):
         cursor = connection.cursor()
         cursor.execute(
-            "INSERT INTO tn_note_mst (rec_file_seq, name_topic, num_spk, mt_date, mt_term) VALUES (%s, %s, %s, %s, %s)",
-            (rec_seq, name_topic, num_spk, mt_date.strftime('%Y-%m-%d'), mt_term)
+            "INSERT INTO tn_note_mst (rec_file_seq, name_topic, num_spk, mt_date, mt_term, res_file_seq) VALUES (%s, %s, %s, %s, %s, %s)",
+            (rec_seq, name_topic, num_spk, mt_date.strftime('%Y-%m-%d'), mt_term, res_file_seq)
         )
         #connection.commit()
 
+    # 데이터베이스에 회의록 파일 정보 삽입 함수
+    def insert_result_file_info_to_db(connection, file_name, file_size, save_path):
+        cursor = connection.cursor()
+        cursor.execute(
+            "INSERT INTO tn_result_file (file_name, file_size, file_path) VALUES (%s, %s, %s)",
+            (file_name, file_size, save_path)
+        )
+        #connection.commit()
+
+        cursor.execute("SELECT LAST_INSERT_ID()")
+        res_file_seq = cursor.fetchone()[0]
+        return res_file_seq
 
     # 데이터베이스에서 파일 정보 조회 함수
     def fetch_file_info_from_db(connection):
@@ -141,14 +154,14 @@ def main_app():
         records = cursor.fetchall()
         return records
 
-    def okt_clean(text, test_stopwords):
-        okt = Okt()
-        clean_text = []
-        okt_pos = okt.pos(text, stem=True)
-        for txt, pos in okt_pos:
-            if pos not in ['Josa', 'Eomi', 'Punctuation', 'Adjective', 'Verb', 'Adverb'] and txt not in test_stopwords:
-                clean_text.append(txt)
-        return " ".join(clean_text)
+    # def okt_clean(text, test_stopwords):
+    #     okt = Okt()
+    #     clean_text = []
+    #     okt_pos = okt.pos(text, stem=True)
+    #     for txt, pos in okt_pos:
+    #         if pos not in ['Josa', 'Eomi', 'Punctuation', 'Adjective', 'Verb', 'Adverb'] and txt not in test_stopwords:
+    #             clean_text.append(txt)
+    #     return " ".join(clean_text)
 
     tabs = st.tabs(["회의녹취록 업로드", "회의녹취록  조회", "📄 회의 녹취록 전문", "🙋 화자별 녹취록 전문","회의록 다운로드"])
 
@@ -163,24 +176,30 @@ def main_app():
         with col1:
             name_topic = st.text_input("회의 제목을 입력하세요")
             mt_date = st.date_input("회의날짜를 선택하세요.")
-
-        with col2:
             num_spk_opt = ["2","3","4","5","6","7","8","9","10"]
             num_spk = st.selectbox("회의 참여인원을 선택하세요.", options=num_spk_opt)
+
+        with col2:
+            meeting_room = st.text_input("회의실을 입력하세요")
             # 회의 종료 시간을 30분 단위로 선택할 수 있도록 설정
             mt_term_opt = ["30분", "1시간", "1시간30분", "2시간","2시간30분","3시간","3시간30분","4시간","4시간30분","5시간","5시간30분","6시간"]
             mt_term = st.selectbox("회의 진행시간을 선택하세요", options=mt_term_opt)
-        
-        #회의록 저장을 위한 데이터 저장
-        st.session_state.data['name_topic'] = name_topic
-        st.session_state.data['mt_date'] = mt_date.strftime("%Y-%m-%d")
-        st.session_state.data['num_spk'] = num_spk
-        st.session_state.data['mt_term'] = mt_term
+            speakers_text = st.text_area("참석자 이름을 엔터로 구분하여 입력하세요")
+            speakers = speakers_text
+            
+        #회의록 저장을 위한 데이터 저장 - 회의록 생성로직 이동으로 주석
+        # st.session_state.data['name_topic'] = name_topic
+        # st.session_state.data['mt_date'] = mt_date.strftime("%Y-%m-%d")
+        # st.session_state.data['num_spk'] = num_spk
+        # st.session_state.data['mt_term'] = mt_term
         
         # 저장할 경로 설정
         save_directory = "/home/tnote/backup_file/rec/"
         os.makedirs(save_directory, exist_ok=True)
-
+        
+        # 마스터 테이블에 저장할때 시퀀스 가져오는거 중복 내용 처리
+        rec_seq=''
+        
         if uploaded_file is not None:
 
             # "파일 저장" 버튼을 화면에 표시
@@ -202,8 +221,6 @@ def main_app():
                     rec_seq = insert_file_info_to_db(connection, file_name, file_size, save_path)
                     st.success("데이터베이스에 데이터가 저장시도. :: tn_rec_file") # 디버깅 로그
 
-                    insert_meeting_info_to_db(connection, rec_seq, name_topic, num_spk, mt_date, mt_term)
-                    st.success("데이터베이스에 데이터가 저장시도. :: tn_note_mst") # 디버깅 로그
                     
                     connection.commit()
                     connection.close()
@@ -221,14 +238,39 @@ def main_app():
                  '많은', '많이', '정말', '너무', '수', '등', '것',
                  '같습니다' , '좀' , '같아요' , '가' , '거', '이제']
 
-                    for row in range(0, len(df_tnote)):
-                        df_tnote.iloc[row, 1] = okt_clean(df_tnote.iloc[row, 1], test_stopwords)
+                    # for row in range(0, len(df_tnote)):
+                    #     df_tnote.iloc[row, 1] = okt_clean(df_tnote.iloc[row, 1], test_stopwords)
 
-                    result = ""
-                    for idx in df_tnote.index:
-                        value = df_tnote.loc[idx,"text"]
-                        result += " " + value
+                    # result = ""
+                    # for idx in df_tnote.index:
+                    #     value = df_tnote.loc[idx,"text"]
+                    #     result += " " + value
 
+                    #회의록 생성 로직 
+                    if 'file_generated' not in st.session_state:  # 파일 생성 여부 확인
+                        date = datetime.now().strftime('%Y%m%d_%H%M%S')
+                        file_name = f"회의록_{date}"
+                        retrun_filesize, return_filepath = create_meeting_minutes(
+                            name_topic,
+                            meeting_room,  
+                            mt_date.strftime("%Y-%m-%d"),
+                            '작성자', # 임시로 고정, 실제 내용으로 대체
+                            speakers,
+                            "회의 내용",  # 임시로 고정, 실제 내용으로 대체
+                            file_name
+                        )
+                        st.session_state.file_generated = True  # 파일 생성 완료 표시
+                    
+                    # 회의록 내용 db 저장
+                    connection = connect_to_db()
+                    res_file_seq = insert_result_file_info_to_db(connection,file_name,retrun_filesize,return_filepath)
+                    insert_meeting_info_to_db(connection, rec_seq, name_topic, num_spk, mt_date, mt_term, res_file_seq)
+                    
+                    connection.commit()
+                    connection.close()
+
+                    
+                    st.success("데이터베이스에 데이터가 저장시도. :: tn_note_mst") # 디버깅 로그
                     # 확장 가능한 컨테이너에 결과 표시
                     with st.expander("회의 녹취록 업로드 결과 보기▼"):
                         st.divider() 
@@ -246,8 +288,30 @@ def main_app():
                             st.write(f"◆ 회의요약: T-LAB 주제를 정해야해서 회의를 함.")
                         with col2:
                             # 이미지
-                            display_word_cloud(result)
-                            #st.image("https://static.streamlit.io/examples/dice.jpg", caption="Dice Image")
+                            # display_word_cloud(result)
+                            st.image("https://static.streamlit.io/examples/dice.jpg", caption="Dice Image")
+                    
+                    # 회의록 다운로드 추가
+                    with st.expander("회의록 다운로드 보기▼"):
+                        # 파일 다운로드 버튼 생성
+                        if 'file_generated' in st.session_state:
+                            if os.path.exists(return_filepath):
+                                # 파일 다운로드 버튼 생성
+                                st.text(return_filepath)
+                                try:
+                                    with open(return_filepath, 'rb') as file:
+                                        st.download_button(
+                                            label="회의록 파일 다운로드",
+                                            data=file,
+                                            file_name=return_filepath.split('\\')[-1],
+                                            mime='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                                        )
+                                except FileNotFoundError as e:
+                                    print(f"파일을 열 수 없습니다: {e}")
+                                except PermissionError as e:
+                                    print(f"파일 접근 권한이 없습니다: {e}")
+                                except Exception as e:
+                                    print(f"알 수 없는 오류 발생: {e}")    
 
 
     # 두번째 탭: 조회
@@ -256,12 +320,14 @@ def main_app():
         if st.button("조회"):
             connection = connect_to_db()
             records = fetch_file_info_from_db(connection)
-            connection.close()
-
+            connection.close()            
+            
             # 조회된 데이터를 데이터프레임으로 변환하여 출력
             df = pd.DataFrame(records, columns=["파일명", "파일 크기(byte)", "파일 경로","업로드 일시"])
             st.write("업로드된 회의 녹취록 리스트:")
             st.dataframe(df)
+            
+
 
 
 
