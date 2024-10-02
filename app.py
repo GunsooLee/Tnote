@@ -235,7 +235,7 @@ def main_app():
             mt_term_opt = ["30분", "1시간", "1시간30분", "2시간","2시간30분","3시간","3시간30분","4시간","4시간30분","5시간","5시간30분","6시간"]
             mt_term = st.selectbox("회의 진행시간을 선택하세요", options=mt_term_opt)
             speakers_text = st.text_area("참석자 이름을 엔터로 구분하여 입력하세요")
-            speakers = speakers_text.splitlines()
+            speakers = speakers_text
 
         #회의록 저장을 위한 데이터 저장 - 회의록 생성로직 이동으로 주석
         # st.session_state.data['name_topic'] = name_topic
@@ -288,7 +288,7 @@ def main_app():
                             meeting_room,  
                             mt_date.strftime("%Y-%m-%d"),
                             '작성자', # 임시로 고정, 실제 내용으로 대체
-                            speakers,
+                            speakers.splitlines(),
                             "회의 주제"   # 임시로 고정, 실제 내용으로 대체
                             "회의 내용",  # 임시로 고정, 실제 내용으로 대체
                             file_name
