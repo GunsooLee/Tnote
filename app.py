@@ -24,6 +24,7 @@ import platform
 from word_cloud_utils import display_word_cloud  # 워드 클라우드 함수를 가져옴
 import uuid
 from ClovaSpeechClient import ClovaSpeechClient
+from hanspell import spell_checker
 
 # 회의록 파일 다운로드 추가
 from resultToDocx import create_meeting_minutes
@@ -382,7 +383,25 @@ def main_app():
                     ,['화자3', '네, 좋은 것 같아요. 회의로 요약.']
                     ]))
 
-                    df_origin.columns =  ["화자", "내용"]
+                    df_origin.columns =  ["화자", "원문"]
+
+                    # 맞춤법 교정 함수
+                    def correct_spelling(text):
+                        try:
+                            result = spell_checker.check(text)
+                            return result.checked  # 맞춤법이 교정된 텍스트 반환
+                        except KeyError as e:
+                            # 'result' 키가 없을 경우 원본 텍스트 반환
+                            print(f"맞춤법 교정 중 오류 발생: {e}. 원본 텍스트 반환.")
+                            return text
+                        except Exception as e:
+                            # 그 외 다른 오류가 발생한 경우에도 원본 텍스트 반환
+                            print(f"맞춤법 교정 중 알 수 없는 오류 발생: {e}. 원본 텍스트 반환.")
+                            return text
+
+                    # 맞춤법 교정 적용
+                    df_origin['내용'] = df_origin['원문'].apply(correct_spelling)
+                                            
                     with st.expander("전체 STT 결과"):
                         st.write(df_origin)
                     with st.expander("한국어 형태소 분석"):
