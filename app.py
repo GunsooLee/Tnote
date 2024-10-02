@@ -29,6 +29,10 @@ from ClovaSpeechClient import ClovaSpeechClient
 from resultToDocx import create_meeting_minutes
 from datetime import datetime
 
+# 그리드 클릭 이벤트
+from st_aggrid import AgGrid, GridOptionsBuilder
+from st_aggrid.shared import GridUpdateMode
+
 
 # 세션 상태 초기화
 if 'logged_in' not in st.session_state:
@@ -154,14 +158,14 @@ def main_app():
         records = cursor.fetchall()
         return records
 
-    # def okt_clean(text, test_stopwords):
-    #     okt = Okt()
-    #     clean_text = []
-    #     okt_pos = okt.pos(text, stem=True)
-    #     for txt, pos in okt_pos:
-    #         if pos not in ['Josa', 'Eomi', 'Punctuation', 'Adjective', 'Verb', 'Adverb'] and txt not in test_stopwords:
-    #             clean_text.append(txt)
-    #     return " ".join(clean_text)
+    def okt_clean(text, test_stopwords):
+        okt = Okt()
+        clean_text = []
+        okt_pos = okt.pos(text, stem=True)
+        for txt, pos in okt_pos:
+            if pos not in ['Josa', 'Eomi', 'Punctuation', 'Adjective', 'Verb', 'Adverb'] and txt not in test_stopwords:
+                clean_text.append(txt)
+        return " ".join(clean_text)
 
     tabs = st.tabs(["회의녹취록 업로드", "회의녹취록  조회", "📄 회의 녹취록 전문", "🙋 화자별 녹취록 전문","회의록 다운로드"])
 
@@ -238,13 +242,13 @@ def main_app():
                  '많은', '많이', '정말', '너무', '수', '등', '것',
                  '같습니다' , '좀' , '같아요' , '가' , '거', '이제']
 
-                    # for row in range(0, len(df_tnote)):
-                    #     df_tnote.iloc[row, 1] = okt_clean(df_tnote.iloc[row, 1], test_stopwords)
+                    for row in range(0, len(df_tnote)):
+                        df_tnote.iloc[row, 1] = okt_clean(df_tnote.iloc[row, 1], test_stopwords)
 
-                    # result = ""
-                    # for idx in df_tnote.index:
-                    #     value = df_tnote.loc[idx,"text"]
-                    #     result += " " + value
+                    result = ""
+                    for idx in df_tnote.index:
+                        value = df_tnote.loc[idx,"text"]
+                        result += " " + value
 
                     #회의록 생성 로직 
                     if 'file_generated' not in st.session_state:  # 파일 생성 여부 확인
@@ -288,8 +292,8 @@ def main_app():
                             st.write(f"◆ 회의요약: T-LAB 주제를 정해야해서 회의를 함.")
                         with col2:
                             # 이미지
-                            # display_word_cloud(result)
-                            st.image("https://static.streamlit.io/examples/dice.jpg", caption="Dice Image")
+                            display_word_cloud(result)
+                            #st.image("https://static.streamlit.io/examples/dice.jpg", caption="Dice Image")
                     
                     # 회의록 다운로드 추가
                     with st.expander("회의록 다운로드 보기▼"):
@@ -317,6 +321,11 @@ def main_app():
     # 두번째 탭: 조회
     with tabs[1]:
         st.header("회의녹취록 조회")
+        
+        # session_state에서 grid_data를 초기화
+        if 'grid_data' not in st.session_state:
+            st.session_state.grid_data = None
+
         if st.button("조회"):
             connection = connect_to_db()
             records = fetch_file_info_from_db(connection)
@@ -324,12 +333,43 @@ def main_app():
             
             # 조회된 데이터를 데이터프레임으로 변환하여 출력
             df = pd.DataFrame(records, columns=["파일명", "파일 크기(byte)", "파일 경로","업로드 일시"])
+            st.session_state.grid_data = df  # session_state에 저장
+
+            #st.dataframe(df)
+        
+        # session_state에 저장된 데이터가 있을 경우에만 그리드를 표시
+        if st.session_state.grid_data is not None:
             st.write("업로드된 회의 녹취록 리스트:")
-            st.dataframe(df)
+            df = st.session_state.grid_data
+
+            # AgGrid로 그리드 표시
+            gb = GridOptionsBuilder.from_dataframe(df)
+            gb.configure_selection('single')  # 행을 클릭할 수 있도록 설정
+            grid_options = gb.build()
+
+            grid_response = AgGrid(
+                df,
+                gridOptions=grid_options,
+                height=250,
+                update_mode=GridUpdateMode.SELECTION_CHANGED,
+                fit_columns_on_grid_load=True
+            )
             
-
-
-
+            # 사용자가 선택한 행에 대한 정보 처리
+            selected_row = grid_response['selected_rows']
+            
+            # 선택된 행이 있는지 확인
+            if selected_row is not None and len(selected_row) > 0:
+                # 선택된 행의 데이터 구조 확인
+                st.write("선택된 행의 데이터 구조 확인: ", selected_row[0])
+            
+                # 특정 필드만 출력 (예: 파일명 출력)
+                if "파일명" in selected_row[0]:
+                    st.write(f"선택된 파일명: {selected_row[0]['파일명']}")
+                else:
+                    st.write("선택된 데이터에서 '파일명'을 찾을 수 없습니다.")
+            else:
+                st.write("선택된 행이 없습니다.")
 
     with tabs[2]:
         st.header("회의록 STT 결과")
