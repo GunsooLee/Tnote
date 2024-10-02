@@ -357,6 +357,12 @@ def main_app():
             
             # 사용자가 선택한 행에 대한 정보 처리
             selected_row = grid_response['selected_rows']
+
+            # 선택된 행의 데이터 구조 확인
+            st.write("선택된 행의 데이터 구조: ", selected_row)
+        
+            # 자료형 확인
+            st.write("선택된 데이터의 자료형: ", type(selected_row))
             
             # 선택된 행이 있는지 확인
             if selected_row is not None and len(selected_row) > 0:
