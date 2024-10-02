@@ -1,4 +1,6 @@
 from docx import Document
+from docx.shared import Inches, Pt
+from docx.enum.text import WD_ALIGN_PARAGRAPH
 from datetime import datetime
 import os
 
