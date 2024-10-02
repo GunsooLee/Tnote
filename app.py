@@ -88,15 +88,13 @@ def main_app():
     # 로딩바 : 단계별 정보를 반환하는 함수
     def progress_steps(step):
         if step == 1:
-            return "1/5 단계: STT 적용", "/home/tnote/app/Tnote/res/image/stt_image.jpg"
+            return "1/4 단계: STT 적용", "/home/tnote/app/Tnote/res/image/progressbar_1_stt.png"
         elif step == 2:
-            return "2/5 단계: 정규화", "/home/tnote/app/Tnote/res/image/normalization_image.jpg"
+            return "2/4 단계: 자연어처리", "/home/tnote/app/Tnote/res/image/progressbar_2_nlp.png"
         elif step == 3:
-            return "3/5 단계: 벡터화", "/home/tnote/app/Tnote/res/image/vectorization_image.jpg"
+            return "3/4 단계: 주제선정", "/home/tnote/app/Tnote/res/image/progressbar_3_topic.png"
         elif step == 4:
-            return "4/5 단계: 주제선정", "/home/tnote/app/Tnote/res/image/topic_selection_image.jpg"
-        elif step == 5:
-            return "5/5 단계: 문서요약", "/home/tnote/app/Tnote/res/image/summary_image.jpg"
+            return "4/4 단계: 회의요약", "/home/tnote/app/Tnote/res/image/progressbar_4_summary.png"
 
     # MySQL 데이터베이스 연결 함수
     def connect_to_db():
