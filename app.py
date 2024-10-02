@@ -187,11 +187,11 @@ def main_app():
         #connection.commit()
 
     # 데이터베이스에 회의록 파일 정보 삽입 함수
-    def insert_result_file_info_to_db(connection, file_name, file_size, save_path):
+    def insert_result_file_info_to_db(connection, file_name, file_size, save_path, document_title, meeting_room, meeting_date, attendees):
         cursor = connection.cursor()
         cursor.execute(
-            "INSERT INTO tn_result_file (file_name, file_size, file_path) VALUES (%s, %s, %s)",
-            (file_name, file_size, save_path)
+            "INSERT INTO tn_result_file (file_name, file_size, file_path,document_title, meeting_room, meeting_date, attendees ) VALUES (%s, %s, %s,%s, %s, %s, %s)",
+            (file_name, file_size, save_path, document_title, meeting_room, meeting_date, attendees)
         )
         #connection.commit()
 
@@ -203,6 +203,13 @@ def main_app():
     def fetch_file_info_from_db(connection):
         cursor = connection.cursor()
         cursor.execute("SELECT f_name, f_size, f_path, dt_insert FROM tn_rec_file")
+        records = cursor.fetchall()
+        return records
+
+    # 회의록 정보 select
+    def result_file_info_from_db(connection):
+        cursor = connection.cursor()
+        cursor.execute("SELECT document_title, meeting_room, meeting_date, attendees, file_name, file_size, file_path,insert_date  FROM tn_result_file")
         records = cursor.fetchall()
         return records
 
@@ -282,6 +289,7 @@ def main_app():
                             mt_date.strftime("%Y-%m-%d"),
                             '작성자', # 임시로 고정, 실제 내용으로 대체
                             speakers,
+                            "회의 주제"   # 임시로 고정, 실제 내용으로 대체
                             "회의 내용",  # 임시로 고정, 실제 내용으로 대체
                             file_name
                         )
@@ -289,7 +297,7 @@ def main_app():
 
                     # 회의록 내용 db 저장
                     connection = connect_to_db()
-                    res_file_seq = insert_result_file_info_to_db(connection,file_name,retrun_filesize,return_filepath)
+                    res_file_seq = insert_result_file_info_to_db(connection,file_name,retrun_filesize,return_filepath,name_topic,meeting_room,mt_date.strftime("%Y-%m-%d"),speakers)
                     insert_meeting_info_to_db(connection, rec_seq, name_topic, num_spk, mt_date, mt_term, res_file_seq)
 
                     connection.commit()
@@ -443,11 +451,11 @@ def main_app():
 
         if st.button("조회"):
             connection = connect_to_db()
-            records = fetch_file_info_from_db(connection)
+            records = result_file_info_from_db(connection)
             connection.close()            
 
             # 조회된 데이터를 데이터프레임으로 변환하여 출력
-            df = pd.DataFrame(records, columns=["파일명", "파일 크기(byte)", "파일 경로","업로드 일시"])
+            df = pd.DataFrame(records, columns=["회의록 제목","회의실","회의날짜","참석자","파일명", "파일 크기(byte)", "파일 경로","업로드 일시"])
             st.session_state.grid_data = df  # session_state에 저장
 
             #st.dataframe(df)
