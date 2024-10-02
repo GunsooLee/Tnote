@@ -85,6 +85,19 @@ def main_app():
     pd.set_option('display.width', 0)           # 터미널 너비에 맞춰 자동 조정
     pd.set_option('display.max_colwidth', None) # 열 내용이 잘리지 않도록 설정
 
+    # 로딩바 : 단계별 정보를 반환하는 함수
+    def progress_steps(step):
+        if step == 1:
+            return "1/5 단계: STT 적용", "/home/tnote/app/Tnote/res/image/stt_image.jpg"
+        elif step == 2:
+            return "2/5 단계: 정규화", "/home/tnote/app/Tnote/res/image/normalization_image.jpg"
+        elif step == 3:
+            return "3/5 단계: 벡터화", "/home/tnote/app/Tnote/res/image/vectorization_image.jpg"
+        elif step == 4:
+            return "4/5 단계: 주제선정", "/home/tnote/app/Tnote/res/image/topic_selection_image.jpg"
+        elif step == 5:
+            return "5/5 단계: 문서요약", "/home/tnote/app/Tnote/res/image/summary_image.jpg"
+
     # MySQL 데이터베이스 연결 함수
     def connect_to_db():
         return mysql.connector.connect(
