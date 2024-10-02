@@ -36,6 +36,15 @@ from st_aggrid.shared import GridUpdateMode
 # 프로그레스바
 import time
 
+# 회의록 요약 관련 함수
+from function.summarize_overall import summarize_overall
+from function.summarize_by_speaker import summarize_by_speaker
+from function.summarize_title import summarize_title
+from function.sentiment_analysis_by_speaker import analyze_emotion_by_speaker
+from function.tfidf_vectorization import tfidf_vectorize, plot_tfidf_matrix
+from function.lda_topic_modeling import lda_topic_modeling, plot_lda_topics
+from function.kmeans_clustering import kmeans_clustering, plot_kmeans_clusters
+from function.okt_clean import okt_clean
 
 # 세션 상태 초기화
 if 'logged_in' not in st.session_state:
@@ -356,6 +365,81 @@ def main_app():
                                     print(f"파일 접근 권한이 없습니다: {e}")
                                 except Exception as e:
                                     print(f"알 수 없는 오류 발생: {e}")    
+
+                    # 데이터프레임 입력 예시
+                    df_origin = pd.DataFrame(np.array([
+                    ['화자0', '우리가 인제 티맵을 같이 하게 됐는데, 주제를 이제 좀 정해야 될 것 같거든요.']
+                    ,['화자0', '주제를 어떤 거를 했으면 좋겠는지 좀 생각해 놓은 게 있으면 조금 얘기를 해주세요.']
+                    ,['화자1', '저는 클라우드가 좋은 것 같습니다.']
+                    ,['화자1', '요새는 클라우드에서 뭐든 데이터 처리하고 하는 게 많으니까 클라우드 주제가 좋은 것 같습니다. 클.']
+                    ,['화자0', '삼명 씨는 혹시 생각해 놓 법은 있어요.']
+                    ,['화자2', '요즘 또 트렌드가 빅데이터 쪽이 트렌드도 많고 저희 이제 자격증 같은 것들이 빅데이터 쪽 관련된 자격증이 많이 나오고 있거든요.']
+                    ,['화자2', '그래서 저희 그럼 자격증 취득하면서 그 연구 목적으로 빅데이터 쪽 하면은 괜찮을 것 같습니다.']
+                    ,['화자0', '빅데이터도 요새 많이 하니까 좋은 것 같긴 하네요.']
+                    ,['화자0', '근데 인제 제 생각은 우리가 아직 주니어 레벨이니까 그냥 언어 그러니까 씨라던지 자바라든지 이런 언어도 좀 공부해 보는 것도 나쁘지 않을 것 같아요.']
+                    ,['화자3', '저는 좀 AI가 해보고 싶은데요. 요즘 AI가 대세잖아요, 체치 비티라든지 AI 해보면 좀 재미있을 것 같습니다.']
+                    ,['화자0', '확실히 그 AI 관련해서 막 기사도 많이 올라오고 그런 것 같아요. AI 나쁘지 않은 것 같은데.']
+                    ,['화자1', 'AI 좋은 것 같습니다.']
+                    ,['화자0', '그쵸 AI 어때요? 편수도 AI. 어떻게 보나요?']
+                    ,['화자2', 'AI를 한다. 그러면은 지금 아까 얘기한 것처럼 채 DDPT도 있고 좀 분야가 많은 것 같은데.']
+                    ,['화자2', 'AI에서 어떤 분야가 좀 더 해야 될지 이것조 이거를 좀 정해야 될 것 같습니다.']
+                    ,['화자0', '그러면 아무래도 이게 우리가 회사에서 하는 거니까 업무에 좀 적용하기 좋은 주제를 잡꾸 하는 게 맞을 것 같은데요.']
+                    ,['화자0', '우리 팀에서 사용하기 좋은 업무 주제가 있을까요? AI를 만약에 한다고 하면.']
+                    ,['화자2', '제가 프로젝트 학교 다닐 때 썼던 게 이제 AI 쪽 체포 옷을 한번 쓴 적이 있었거든요. 그래서 근데 그거는?']
+                    ,['화자2', '이제 AI라기보다는 저희가 케이스 바이 케이스를 많이 만들어가지고.']
+                    ,['화자2', '이제 사용자가 입력한 그 핵심 단어만 딱 잡아가지고. 그거에 관련된 거를 보여주는 체포을 했던 적이 있거든요.']
+                    ,['화자2', '챗봇도 하면은 나쁘지 않을 것 같은데.']
+                    ,['화자2', '챗봇을 이제 채 지금 저희 사용자들이 뭐 물어봤을 때 이거를 답변을 해주는 거를 하는 것도 나쁘지 않을 것 같습니다.']
+                    ,['화자0', '그.']
+                    ,['화자0', '세포.']
+                    ,['화자1', '핫 꽃은 그럼 우리 팀에서만 쓸 수 있는 걸 말하는 건가?']
+                    ,['화자2', '그 연구 목적이면은 크게 문제없지 않을까 싶은데.']
+                    ,['화자2', '예, 이건 단순하게 의견이라서 그냥 이런 것도 해봤다라고.']
+                    ,['화자0', '얘기드린 거예요. 근데 또 얘기를 들어보니까 그러면은 좀 뭔가.']
+                    ,['화자0', '챗봇이라고 하면은 딱 다양한 업무에 좀 적용하기에는 좀 주제가 좀 어려울 수도 있다고 좀 생각이 들어가지고 이런 거 어때요?']
+                    ,['화자0', '그냥 이렇게 뭔가 실무에서 꼭 쓰지 않더라도 다양한 업무에서 그냥 모두가 쓸 수 있는 거를 한번 생각해보는 건 어떨지.']
+                    ,['화자1', '좋죠.']
+                    ,['화자0', '지금 우리 미디어 팀 말고도 다른 팀에서도 이제 다양하게 쓸 수 있는 주제를 한번 좀 생각해보는 것도 좋을 것 같아요.']
+                    ,['화자3', '회의는 다 하는데 회의 관련된 건 어떨까요?']
+                    ,['화자1', '오 괜찮다.']
+                    ,['화자2', '회의록 작성할 때 참고하는 괜찮네요.']
+                    ,['화자0', '그러네요. 회의할 때 이제 저희가 회의록은 쓰니까 회의는 누구나 하기도 하고.']
+                    ,['화자0', '괜찮네요.']
+                    ,['화자1', '그럼 회의를 요약해 주는 회의 요약 AI를 만들어 볼까요?']
+                    ,['화자0', '저는 나쁘지 않은 것 같아요. 그 주제 그.']
+                    ,['화자3', '네, 좋은 것 같아요. 회의로 요약.']
+                    ]))
+
+                    df_origin.columns =  ["화자", "내용"]
+                    with st.expander("전체 STT 결과"):
+                        st.write(df_origin)
+                    with st.expander("한국어 형태소 분석"):
+                        df_origin['분석된 내용'] = df_origin['내용'].apply(okt_clean)
+                        st.write(df_origin)
+                    with st.expander("단어 벡터화"):
+                        tfidf_matrix, vectorizer = tfidf_vectorize(df_origin[['화자', '분석된 내용']])
+                        plot_tfidf_matrix(tfidf_matrix, vectorizer)
+                    with st.expander("토픽 모델링"):
+                        lda_model = lda_topic_modeling(tfidf_matrix, num_topics=3)
+                        plot_lda_topics(lda_model, vectorizer)
+                    with st.expander("군집화"):
+                        kmeans_model = kmeans_clustering(tfidf_matrix, num_clusters=3)
+                        plot_kmeans_clusters(kmeans_model, tfidf_matrix)
+                    with st.expander("전체 회의 제목"):
+                        combined_text = df_origin['내용'].str.cat(sep=' ')
+                        title = summarize_title(combined_text)
+                        st.write(title)
+                    with st.expander("전체 회의 요약"):
+                        overall_summary = summarize_overall(combined_text)
+                        st.write(overall_summary)
+                    with st.expander("화자별 요약"):
+                        speaker_summaries = summarize_by_speaker(df_origin)
+                        for speaker, summary in speaker_summaries.items():
+                            st.write(f"{speaker}: {summary}")
+                    with st.expander("화자별 감정 분석"):
+                        speaker_emotions = analyze_emotion_by_speaker(df_origin)
+                        for speaker, emotions in speaker_emotions.items():
+                            st.write(f"{speaker}: {emotions}")
 
 
     # 두번째 탭: 조회
