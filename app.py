@@ -91,13 +91,37 @@ def main_app():
     # 로딩바 : 단계별 정보를 반환하는 함수
     def progress_steps(step):
         if step == 1:
-            return "1/4 단계: STT 적용", "/home/tnote/app/Tnote/res/image/progressbar_1_stt.png"
+            return "        1/4 단계: STT 적용중.......", "/home/tnote/app/Tnote/res/image/progressbar_1_stt.png"
         elif step == 2:
-            return "2/4 단계: 자연어처리", "/home/tnote/app/Tnote/res/image/progressbar_2_nlp.png"
+            return "        2/4 단계: 자연어처리중.......", "/home/tnote/app/Tnote/res/image/progressbar_2_nlp.png"
         elif step == 3:
-            return "3/4 단계: 주제선정", "/home/tnote/app/Tnote/res/image/progressbar_3_topic.png"
+            return "        3/4 단계: 주제선정중.......", "/home/tnote/app/Tnote/res/image/progressbar_3_topic.png"
         elif step == 4:
-            return "4/4 단계: 회의요약", "/home/tnote/app/Tnote/res/image/progressbar_4_summary.png"
+            return "        4/4 단계: 회의요약중.......", "/home/tnote/app/Tnote/res/image/progressbar_4_summary.png"
+
+    # 단계별 프로그레스바와 텍스트, 이미지를 표시하는 함수
+    def show_progress_with_image(total_steps):
+
+        progress_bar = st.progress(0)
+
+        # 텍스트와 이미지를 업데이트할 공간 확보
+        text_placeholder = st.empty()
+        image_placeholder = st.empty()
+
+        for step in range(1, total_steps + 1):
+
+            # 각 단계별 텍스트와 이미지 가져오기
+            step_text, image_path = progress_steps(step)
+
+            # 텍스트와 이미지를 업데이트
+            text_placeholder.write(f"### {step_text}")  # 텍스트를 업데이트
+            image_placeholder.image(image_path, width=200)  # 이미지를 업데이트
+
+            # 프로그레스바 업데이트 (총 단계 중 몇 번째 단계인지 계산하여 반영)
+            progress_bar.progress(step / total_steps)
+
+            # 각 단계에서 작업이 진행되는 시간 (예시로 2초)
+            time.sleep(2)
 
     # MySQL 데이터베이스 연결 함수
     def connect_to_db():
@@ -227,23 +251,9 @@ def main_app():
                 # 회의제목이 입력되지 않았을 경우 경고 메시지 표시
                     st.warning("회의 제목을 입력해야 합니다.")
                 else :
-
-                    # 프로그레스바 초기화
-                    progress_bar = st.progress(0)
-
-                    # 각 단계별로 진행
-                    step_text, image_path = progress_steps(1)
-                    # 현재 단계 텍스트와 이미지 표시
-                    st.write(step_text)
-                    st.image(image_path, width=100)
-
-                    # 프로그레스바 업데이트
-                    progress_bar.progress(1 / 4)
-
-                    # 각 단계가 진행되는 동안 대기 (여기서는 2초로 설정)
-                    time.sleep(2)
-
-
+                    
+                    show_progress_with_image(4)
+                    
                     # 파일 저장 및 정보 출력
                     file_name, file_size, save_path = save_file(uploaded_file, save_directory)
                     st.write(f"업로드 파일명: {file_name}")
