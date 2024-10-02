@@ -1,4 +1,4 @@
-#import mysql.connector
+import mysql.connector
 import streamlit as st
 import io
 import os
@@ -24,7 +24,6 @@ import platform
 from word_cloud_utils import display_word_cloud  # 워드 클라우드 함수를 가져옴
 import uuid
 from ClovaSpeechClient import ClovaSpeechClient
-from hanspell import spell_checker
 
 # 회의록 파일 다운로드 추가
 from resultToDocx import create_meeting_minutes
@@ -83,7 +82,7 @@ def main_app():
             'num_spk': '',
             'mt_term': '',
         }
-    
+
     font_path = r'/usr/share/fonts/truetype/nanum/NanumBarunGothic.ttf'
 
     # Streamlit 앱 제목
@@ -101,13 +100,13 @@ def main_app():
     # 로딩바 : 단계별 정보를 반환하는 함수
     def progress_steps(step):
         if step == 1:
-            return "        1/4 단계: STT 적용중......."
+            return "        1/4 단계: STT 적용중.......", "/home/tnote/app/Tnote/res/image/progressbar_1_stt.png"
         elif step == 2:
-            return "        2/4 단계: 자연어처리중......."
+            return "        2/4 단계: 자연어처리중.......", "/home/tnote/app/Tnote/res/image/progressbar_2_nlp.png"
         elif step == 3:
-            return "        3/4 단계: 주제선정중......."
+            return "        3/4 단계: 주제선정중.......", "/home/tnote/app/Tnote/res/image/progressbar_3_topic.png"
         elif step == 4:
-            return "        4/4 단계: 회의요약중......."
+            return "        4/4 단계: 회의요약중.......", "/home/tnote/app/Tnote/res/image/progressbar_4_summary.png"
 
     # 단계별 프로그레스바와 텍스트, 이미지를 표시하는 함수
     def show_progress_with_image(total_steps):
@@ -121,10 +120,11 @@ def main_app():
         for step in range(1, total_steps + 1):
 
             # 각 단계별 텍스트와 이미지 가져오기
-            step_text = progress_steps(step)
+            step_text, image_path = progress_steps(step)
 
             # 텍스트와 이미지를 업데이트
             text_placeholder.write(f"### {step_text}")  # 텍스트를 업데이트
+            image_placeholder.image(image_path, width=200)  # 이미지를 업데이트
 
             # 프로그레스바 업데이트 (총 단계 중 몇 번째 단계인지 계산하여 반영)
             progress_bar.progress(step / total_steps)
@@ -132,14 +132,24 @@ def main_app():
             # 각 단계에서 작업이 진행되는 시간 (예시로 2초)
             time.sleep(2)
 
+    # MySQL 데이터베이스 연결 함수
+    def connect_to_db():
+        return mysql.connector.connect(
+            host='localhost',
+            # host='211.188.48.50',
+            user='tnote',
+            password='q1w2e3r4',
+            database='db_tnote'
+        )
+
     # 파일 저장 함수
     def save_file(uploaded_file, directory):
 
         # UUID 생성
         unique_id = uuid.uuid4()
-        
+
         st.success("uuid 호출 시도") # 디버깅 로그
-        
+
         # 새로운 파일명 생성
         new_filename = f"{unique_id}-{uploaded_file.name}"
 
@@ -153,6 +163,47 @@ def main_app():
 
         return file_name, file_size, save_path
 
+    # 데이터베이스에 파일 정보 삽입 함수
+    def insert_file_info_to_db(connection, file_name, file_size, save_path):
+        cursor = connection.cursor()
+        cursor.execute(
+            "INSERT INTO tn_rec_file (f_name, f_size, f_path) VALUES (%s, %s, %s)",
+            (file_name, file_size, save_path)
+        )
+        #connection.commit()
+
+        cursor.execute("SELECT LAST_INSERT_ID()")
+        rec_seq = cursor.fetchone()[0]
+        return rec_seq
+
+    # tn_note_mst 테이블에 회의 정보 삽입 함수
+    def insert_meeting_info_to_db(connection, rec_seq, name_topic, num_spk, mt_date, mt_term, res_file_seq):
+        cursor = connection.cursor()
+        cursor.execute(
+            "INSERT INTO tn_note_mst (rec_file_seq, name_topic, num_spk, mt_date, mt_term, res_file_seq) VALUES (%s, %s, %s, %s, %s, %s)",
+            (rec_seq, name_topic, num_spk, mt_date.strftime('%Y-%m-%d'), mt_term, res_file_seq)
+        )
+        #connection.commit()
+
+    # 데이터베이스에 회의록 파일 정보 삽입 함수
+    def insert_result_file_info_to_db(connection, file_name, file_size, save_path):
+        cursor = connection.cursor()
+        cursor.execute(
+            "INSERT INTO tn_result_file (file_name, file_size, file_path) VALUES (%s, %s, %s)",
+            (file_name, file_size, save_path)
+        )
+        #connection.commit()
+
+        cursor.execute("SELECT LAST_INSERT_ID()")
+        res_file_seq = cursor.fetchone()[0]
+        return res_file_seq
+
+    # 데이터베이스에서 파일 정보 조회 함수
+    def fetch_file_info_from_db(connection):
+        cursor = connection.cursor()
+        cursor.execute("SELECT f_name, f_size, f_path, dt_insert FROM tn_rec_file")
+        records = cursor.fetchall()
+        return records
 
     tabs = st.tabs(["📄 회의녹취록 업로드", "회의녹취록 조회", "회의록 다운로드"])
 
@@ -177,20 +228,20 @@ def main_app():
             mt_term = st.selectbox("회의 진행시간을 선택하세요", options=mt_term_opt)
             speakers_text = st.text_area("참석자 이름을 엔터로 구분하여 입력하세요")
             speakers = speakers_text
-            
+
         #회의록 저장을 위한 데이터 저장 - 회의록 생성로직 이동으로 주석
         # st.session_state.data['name_topic'] = name_topic
         # st.session_state.data['mt_date'] = mt_date.strftime("%Y-%m-%d")
         # st.session_state.data['num_spk'] = num_spk
         # st.session_state.data['mt_term'] = mt_term
-        
+
         # 저장할 경로 설정
         save_directory = "/home/tnote/backup_file/rec/"
         os.makedirs(save_directory, exist_ok=True)
-        
+
         # 마스터 테이블에 저장할때 시퀀스 가져오는거 중복 내용 처리
         rec_seq=''
-        
+
         if uploaded_file is not None:
 
             # "파일 저장" 버튼을 화면에 표시
@@ -200,16 +251,26 @@ def main_app():
                 # 회의제목이 입력되지 않았을 경우 경고 메시지 표시
                     st.warning("회의 제목을 입력해야 합니다.")
                 else :
-                    
+
                     show_progress_with_image(4)
-                    
+
                     # 파일 저장 및 정보 출력
                     file_name, file_size, save_path = save_file(uploaded_file, save_directory)
                     st.write(f"업로드 파일명: {file_name}")
                     st.write(f"파일 크기: {file_size / (1024 * 1024):.2f} MB")
                     st.success(f"파일 {file_name}이 '{save_path}'에 저장되었습니다. [{file_size / (1024 * 1024):.2f} MB]")
 
-                    
+                    # 데이터베이스에 정보 삽입
+                    connection = connect_to_db()
+                    rec_seq = insert_file_info_to_db(connection, file_name, file_size, save_path)
+                    st.success("데이터베이스에 데이터가 저장시도. :: tn_rec_file") # 디버깅 로그
+
+
+                    connection.commit()
+                    connection.close()
+
+                    st.success("데이터베이스에 commit 완료") # 디버깅 로그
+
                     #회의록 생성 로직 
                     if 'file_generated' not in st.session_state:  # 파일 생성 여부 확인
                         date = datetime.now().strftime('%Y%m%d_%H%M%S')
@@ -225,6 +286,16 @@ def main_app():
                         )
                         st.session_state.file_generated = True  # 파일 생성 완료 표시
 
+                    # 회의록 내용 db 저장
+                    connection = connect_to_db()
+                    res_file_seq = insert_result_file_info_to_db(connection,file_name,retrun_filesize,return_filepath)
+                    insert_meeting_info_to_db(connection, rec_seq, name_topic, num_spk, mt_date, mt_term, res_file_seq)
+
+                    connection.commit()
+                    connection.close()
+
+
+                    st.success("데이터베이스에 데이터가 저장시도. :: tn_note_mst") # 디버깅 로그
                     # 확장 가능한 컨테이너에 결과 표시
                     with st.expander("회의 녹취록 업로드 결과 보기▼"):
                         st.divider() 
@@ -244,7 +315,7 @@ def main_app():
                             # 이미지
                             #display_word_cloud(result)
                             st.image("https://static.streamlit.io/examples/dice.jpg", caption="Dice Image")
-                    
+
                     # 회의록 다운로드 추가
                     with st.expander("회의록 다운로드 보기▼"):
                         # 파일 다운로드 버튼 생성
@@ -311,25 +382,7 @@ def main_app():
                     ,['화자3', '네, 좋은 것 같아요. 회의로 요약.']
                     ]))
 
-                    df_origin.columns =  ["화자", "원문"]
-
-                    # 맞춤법 교정 함수
-                    def correct_spelling(text):
-                        try:
-                            result = spell_checker.check(text)
-                            return result.checked  # 맞춤법이 교정된 텍스트 반환
-                        except KeyError as e:
-                            # 'result' 키가 없을 경우 원본 텍스트 반환
-                            print(f"맞춤법 교정 중 오류 발생: {e}. 원본 텍스트 반환.")
-                            return text
-                        except Exception as e:
-                            # 그 외 다른 오류가 발생한 경우에도 원본 텍스트 반환
-                            print(f"맞춤법 교정 중 알 수 없는 오류 발생: {e}. 원본 텍스트 반환.")
-                            return text
-
-                    # 맞춤법 교정 적용
-                    df_origin['내용'] = df_origin['원문'].apply(correct_spelling)
-
+                    df_origin.columns =  ["화자", "내용"]
                     with st.expander("전체 STT 결과"):
                         st.write(df_origin)
                     with st.expander("한국어 형태소 분석"):
@@ -364,7 +417,7 @@ def main_app():
     # 두번째 탭: 조회
     with tabs[1]:
         st.header("회의녹취록 조회")
-        
+
         # session_state에서 grid_data를 초기화
         if 'grid_data' not in st.session_state:
             st.session_state.grid_data = None
@@ -373,13 +426,13 @@ def main_app():
             connection = connect_to_db()
             records = fetch_file_info_from_db(connection)
             connection.close()            
-            
+
             # 조회된 데이터를 데이터프레임으로 변환하여 출력
             df = pd.DataFrame(records, columns=["파일명", "파일 크기(byte)", "파일 경로","업로드 일시"])
             st.session_state.grid_data = df  # session_state에 저장
 
             #st.dataframe(df)
-        
+
         # session_state에 저장된 데이터가 있을 경우에만 그리드를 표시
         if st.session_state.grid_data is not None:
             st.write("업로드된 회의 녹취록 리스트:")
@@ -397,7 +450,7 @@ def main_app():
                 update_mode=GridUpdateMode.SELECTION_CHANGED,
                 fit_columns_on_grid_load=True
             )
-            
+
             # 사용자가 선택한 행에 대한 정보 처리
             selected_row = grid_response['selected_rows']
 
@@ -428,7 +481,6 @@ def main_app():
                     st.write("회의록 파일 경로가 존재하지 않습니다.")
             else:
                 st.write("선택된 회의록이이 없습니다.")
-
     with tabs[2]:
         st.header("회의록 다운로드")
         # Session State에서 데이터 가져오기
@@ -474,8 +526,8 @@ def main_app():
                         print(f"알 수 없는 오류 발생: {e}")    
         else:
             st.warning("아직 데이터가 없습니다.")
-        
+
 if not st.session_state['logged_in']:
-    main_app()
+    login()
 else:
-    main_app()                               
+    main_app()                 
