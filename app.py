@@ -360,22 +360,32 @@ def main_app():
 
             # 선택된 행의 데이터 구조 확인
             st.write("선택된 행의 데이터 구조: ", selected_row)
-        
+
             # 자료형 확인
-            st.write("선택된 데이터의 자료형: ", type(selected_row))
-            
-            # 선택된 행이 있는지 확인
-            if selected_row is not None and len(selected_row) > 0:
-                # 선택된 행의 데이터 구조 확인
-                st.write("선택된 행의 데이터 구조 확인: ", selected_row[0])
-            
-                # 특정 필드만 출력 (예: 파일명 출력)
-                if "파일명" in selected_row[0]:
-                    st.write(f"선택된 파일명: {selected_row[0]['파일명']}")
+            #st.write("선택된 데이터의 자료형: ", type(selected_row))
+
+            # DataFrame으로 반환된 경우, 선택된 행을 DataFrame 형식으로 처리
+            if isinstance(selected_row, pd.DataFrame) and not selected_row.empty:
+                # 선택된 첫 번째 행 데이터 추출
+                selected_row_data = selected_row.iloc[0]  # DataFrame에서 첫 번째 행 가져오기
+
+                # 파일 경로 추출
+                file_path = selected_row_data['파일 경로']  # '파일 경로' 컬럼에서 값 추출
+
+                # 파일 경로가 존재하는지 확인하고 다운로드 버튼 제공
+                if os.path.exists(file_path):
+                    # 파일을 읽어서 다운로드 버튼으로 제공
+                    with open(file_path, 'rb') as file:
+                        st.download_button(
+                            label="회의록 다운로드",
+                            data=file,
+                            file_name=os.path.basename(file_path)
+                        )
                 else:
-                    st.write("선택된 데이터에서 '파일명'을 찾을 수 없습니다.")
+                    st.write("회의록 파일 경로가 존재하지 않습니다.")
             else:
-                st.write("선택된 행이 없습니다.")
+                st.write("선택된 회의록이이 없습니다.")
+
 
     with tabs[2]:
         st.header("회의록 STT 결과")
