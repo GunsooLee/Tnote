@@ -33,6 +33,9 @@ from datetime import datetime
 from st_aggrid import AgGrid, GridOptionsBuilder
 from st_aggrid.shared import GridUpdateMode
 
+# 프로그레스바
+import time
+
 
 # 세션 상태 초기화
 if 'logged_in' not in st.session_state:
@@ -225,7 +228,23 @@ def main_app():
                     st.warning("회의 제목을 입력해야 합니다.")
                 else :
 
-                # 파일 저장 및 정보 출력
+                    # 프로그레스바 초기화
+                    progress_bar = st.progress(0)
+
+                    # 각 단계별로 진행
+                    step_text, image_path = progress_steps(1)
+                    # 현재 단계 텍스트와 이미지 표시
+                    st.write(step_text)
+                    st.image(image_path, width=100)
+
+                    # 프로그레스바 업데이트
+                    progress_bar.progress(1 / 4)
+
+                    # 각 단계가 진행되는 동안 대기 (여기서는 2초로 설정)
+                    time.sleep(2)
+
+
+                    # 파일 저장 및 정보 출력
                     file_name, file_size, save_path = save_file(uploaded_file, save_directory)
                     st.write(f"업로드 파일명: {file_name}")
                     st.write(f"파일 크기: {file_size / (1024 * 1024):.2f} MB")
