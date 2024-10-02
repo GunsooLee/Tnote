@@ -3,8 +3,8 @@ import streamlit as st
 from transformers import BartForConditionalGeneration, PreTrainedTokenizerFast
 
 # KoBART 모델과 토크나이저 불러오기
-model = BartForConditionalGeneration.from_pretrained('gogamza/kobart-summarization')
-tokenizer = PreTrainedTokenizerFast.from_pretrained('gogamza/kobart-summarization')
+model = BartForConditionalGeneration.from_pretrained('./kobart-finetuned')
+tokenizer = PreTrainedTokenizerFast.from_pretrained('./kobart-finetuned')
 
 # 대화 데이터를 화자별로 분리
 def split_speakers(conversation_text):
