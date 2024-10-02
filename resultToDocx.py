@@ -30,7 +30,8 @@ def create_meeting_minutes(title, meeting_room, date, writer, attendees, subject
     
     row_cells = table.add_row().cells
     row_cells[0].text = '참석자'
-    row_cells[1].text = attendees
+    for name in attendees:
+        row_cells[1].add_paragraph(name)
     row_cells[2].text = '작성자'
     row_cells[3].text = writer
 
