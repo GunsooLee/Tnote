@@ -29,6 +29,10 @@ from ClovaSpeechClient import ClovaSpeechClient
 from resultToDocx import create_meeting_minutes
 from datetime import datetime
 
+# 그리드 클릭 이벤트
+from st_aggrid import AgGrid, GridOptionsBuilder
+from st_aggrid.shared import GridUpdateMode
+
 
 # 세션 상태 초기화
 if 'logged_in' not in st.session_state:
@@ -80,6 +84,19 @@ def main_app():
     pd.set_option('display.max_rows', None)     # 모든 행 표시
     pd.set_option('display.width', 0)           # 터미널 너비에 맞춰 자동 조정
     pd.set_option('display.max_colwidth', None) # 열 내용이 잘리지 않도록 설정
+
+    # 로딩바 : 단계별 정보를 반환하는 함수
+    def progress_steps(step):
+        if step == 1:
+            return "1/5 단계: STT 적용", "/home/tnote/app/Tnote/res/image/stt_image.jpg"
+        elif step == 2:
+            return "2/5 단계: 정규화", "/home/tnote/app/Tnote/res/image/normalization_image.jpg"
+        elif step == 3:
+            return "3/5 단계: 벡터화", "/home/tnote/app/Tnote/res/image/vectorization_image.jpg"
+        elif step == 4:
+            return "4/5 단계: 주제선정", "/home/tnote/app/Tnote/res/image/topic_selection_image.jpg"
+        elif step == 5:
+            return "5/5 단계: 문서요약", "/home/tnote/app/Tnote/res/image/summary_image.jpg"
 
     # MySQL 데이터베이스 연결 함수
     def connect_to_db():
@@ -154,14 +171,14 @@ def main_app():
         records = cursor.fetchall()
         return records
 
-    # def okt_clean(text, test_stopwords):
-    #     okt = Okt()
-    #     clean_text = []
-    #     okt_pos = okt.pos(text, stem=True)
-    #     for txt, pos in okt_pos:
-    #         if pos not in ['Josa', 'Eomi', 'Punctuation', 'Adjective', 'Verb', 'Adverb'] and txt not in test_stopwords:
-    #             clean_text.append(txt)
-    #     return " ".join(clean_text)
+    def okt_clean(text, test_stopwords):
+        okt = Okt()
+        clean_text = []
+        okt_pos = okt.pos(text, stem=True)
+        for txt, pos in okt_pos:
+            if pos not in ['Josa', 'Eomi', 'Punctuation', 'Adjective', 'Verb', 'Adverb'] and txt not in test_stopwords:
+                clean_text.append(txt)
+        return " ".join(clean_text)
 
     tabs = st.tabs(["회의녹취록 업로드", "회의녹취록  조회", "📄 회의 녹취록 전문", "🙋 화자별 녹취록 전문","회의록 다운로드"])
 
@@ -238,13 +255,13 @@ def main_app():
                  '많은', '많이', '정말', '너무', '수', '등', '것',
                  '같습니다' , '좀' , '같아요' , '가' , '거', '이제']
 
-                    # for row in range(0, len(df_tnote)):
-                    #     df_tnote.iloc[row, 1] = okt_clean(df_tnote.iloc[row, 1], test_stopwords)
+                    for row in range(0, len(df_tnote)):
+                        df_tnote.iloc[row, 1] = okt_clean(df_tnote.iloc[row, 1], test_stopwords)
 
-                    # result = ""
-                    # for idx in df_tnote.index:
-                    #     value = df_tnote.loc[idx,"text"]
-                    #     result += " " + value
+                    result = ""
+                    for idx in df_tnote.index:
+                        value = df_tnote.loc[idx,"text"]
+                        result += " " + value
 
                     #회의록 생성 로직 
                     if 'file_generated' not in st.session_state:  # 파일 생성 여부 확인
@@ -288,8 +305,8 @@ def main_app():
                             st.write(f"◆ 회의요약: T-LAB 주제를 정해야해서 회의를 함.")
                         with col2:
                             # 이미지
-                            # display_word_cloud(result)
-                            st.image("https://static.streamlit.io/examples/dice.jpg", caption="Dice Image")
+                            display_word_cloud(result)
+                            #st.image("https://static.streamlit.io/examples/dice.jpg", caption="Dice Image")
                     
                     # 회의록 다운로드 추가
                     with st.expander("회의록 다운로드 보기▼"):
@@ -317,6 +334,11 @@ def main_app():
     # 두번째 탭: 조회
     with tabs[1]:
         st.header("회의녹취록 조회")
+        
+        # session_state에서 grid_data를 초기화
+        if 'grid_data' not in st.session_state:
+            st.session_state.grid_data = None
+
         if st.button("조회"):
             connection = connect_to_db()
             records = fetch_file_info_from_db(connection)
@@ -324,11 +346,58 @@ def main_app():
             
             # 조회된 데이터를 데이터프레임으로 변환하여 출력
             df = pd.DataFrame(records, columns=["파일명", "파일 크기(byte)", "파일 경로","업로드 일시"])
+            st.session_state.grid_data = df  # session_state에 저장
+
+            #st.dataframe(df)
+        
+        # session_state에 저장된 데이터가 있을 경우에만 그리드를 표시
+        if st.session_state.grid_data is not None:
             st.write("업로드된 회의 녹취록 리스트:")
-            st.dataframe(df)
+            df = st.session_state.grid_data
+
+            # AgGrid로 그리드 표시
+            gb = GridOptionsBuilder.from_dataframe(df)
+            gb.configure_selection('single')  # 행을 클릭할 수 있도록 설정
+            grid_options = gb.build()
+
+            grid_response = AgGrid(
+                df,
+                gridOptions=grid_options,
+                height=250,
+                update_mode=GridUpdateMode.SELECTION_CHANGED,
+                fit_columns_on_grid_load=True
+            )
             
+            # 사용자가 선택한 행에 대한 정보 처리
+            selected_row = grid_response['selected_rows']
 
+            # 선택된 행의 데이터 구조 확인
+            st.write("선택된 행의 데이터 구조: ", selected_row)
 
+            # 자료형 확인
+            #st.write("선택된 데이터의 자료형: ", type(selected_row))
+
+            # DataFrame으로 반환된 경우, 선택된 행을 DataFrame 형식으로 처리
+            if isinstance(selected_row, pd.DataFrame) and not selected_row.empty:
+                # 선택된 첫 번째 행 데이터 추출
+                selected_row_data = selected_row.iloc[0]  # DataFrame에서 첫 번째 행 가져오기
+
+                # 파일 경로 추출
+                file_path = selected_row_data['파일 경로']  # '파일 경로' 컬럼에서 값 추출
+
+                # 파일 경로가 존재하는지 확인하고 다운로드 버튼 제공
+                if os.path.exists(file_path):
+                    # 파일을 읽어서 다운로드 버튼으로 제공
+                    with open(file_path, 'rb') as file:
+                        st.download_button(
+                            label="회의록 다운로드",
+                            data=file,
+                            file_name=os.path.basename(file_path)
+                        )
+                else:
+                    st.write("회의록 파일 경로가 존재하지 않습니다.")
+            else:
+                st.write("선택된 회의록이이 없습니다.")
 
 
     with tabs[2]:
