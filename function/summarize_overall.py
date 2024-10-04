@@ -7,6 +7,13 @@ model = BartForConditionalGeneration.from_pretrained('./kobart-finetuned')
 # 전체 요약 함수
 def summarize_overall(text):
     inputs = tokenizer([text], max_length=1024, return_tensors='pt', truncation=True)
-    summary_ids = model.generate(inputs['input_ids'], num_beams=4, max_length=256, min_length=100, early_stopping=True)
+    summary_ids = model.generate(
+        inputs['input_ids'], 
+        num_beams=4, 
+        max_length=256, 
+        min_length=100, 
+        no_repeat_ngram_size=2, 
+        num_return_sequences=5, # 다섯 개의 문장을 리턴
+        early_stopping=True)
     summary = tokenizer.decode(summary_ids[0], skip_special_tokens=True)
     return summary
