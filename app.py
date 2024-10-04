@@ -287,7 +287,7 @@ def main_app():
                     st.warning("회의 제목을 입력해야 합니다.")
                 else :
 
-                    show_progress_with_image(4)
+                    #show_progress_with_image(4)
 
                     # 파일 저장 및 정보 출력
                     file_name, file_size, save_path = save_file(uploaded_file, save_directory)
