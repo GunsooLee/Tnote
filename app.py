@@ -349,9 +349,11 @@ def main_app():
 
                     # 데이터프레임 입력 예시
                     client = ClovaSpeechClient()
-                    df_origin = pd.DataFrame(np.array(client.getSttAllResultDf(save_path)))
-
-                    df_origin.columns =  ["화자", "원문"]
+                    try:    
+                        df_origin = pd.DataFrame(np.array(client.getSttAllResultDf(save_path)))
+                        df_origin.columns =  ["화자", "원문"]
+                    except ValueError as e:
+                        print(f"ClovaSpeechClient 오류 발생: {e}")
 
                     # 맞춤법 교정 함수
                     def correct_spelling(text):

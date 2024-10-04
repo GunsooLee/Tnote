@@ -7,9 +7,9 @@ from time import sleep
 
 class ClovaSpeechClient:
     # Clova Speech invoke URL
-    invoke_url = 'https://clovaspeech-gw.ncloud.com/external/v1/9148/459eeca12f4c18165921361fc6f7217a4b6ce822f290d65d5bed60187a681763'
+    invoke_url = 'https://clovaspeech-gw.ncloud.com/external/v1/9174/5fc4aeab8b3fdd113df9f7e445550eb8f9c0b085a429272173e84df9e977b87c'
     # Clova Speech secret key
-    secret = '68c826dce2684d01bcfac8e149489997'
+    secret = 'b71e5626a6a745e5b0c586e9c822a0ee' #유료 api
     
     # 인증서 파일 경로
     # cert_file_path = 'C:/Users/User/Downloads/Clova_Util/ncloud_CA.pem'
