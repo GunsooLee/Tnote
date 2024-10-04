@@ -98,17 +98,36 @@ def main_app():
     pd.set_option('display.width', 0)           # 터미널 너비에 맞춰 자동 조정
     pd.set_option('display.max_colwidth', None) # 열 내용이 잘리지 않도록 설정
 
+
     # 로딩바 : 단계별 정보를 반환하는 함수
     def progress_steps(step):
         if step == 1:
-            return "        1/4 단계: STT 적용중.......", "/home/tnote/app/Tnote/res/image/progressbar_1_stt.png"
+            return "        1/8 단계: STT 적용 중......."
         elif step == 2:
-            return "        2/4 단계: 자연어처리중.......", "/home/tnote/app/Tnote/res/image/progressbar_2_nlp.png"
+            return "        2/8 단계: 형태소 분석 중......."
         elif step == 3:
-            return "        3/4 단계: 주제선정중.......", "/home/tnote/app/Tnote/res/image/progressbar_3_topic.png"
+            return "        3/8 단계: 단어 벡터화......."
         elif step == 4:
-            return "        4/4 단계: 회의요약중.......", "/home/tnote/app/Tnote/res/image/progressbar_4_summary.png"
+            return "        4/8 단계: 토픽 모델링/군집화......."
+        elif step == 5:
+            return "        5/8 단계: 주제 선정 중......."
+        elif step == 6:
+            return "        6/8 단계: 전체 회의 요약......."
+        elif step == 7:
+            return "        7/8 단계: 화자별 요약......."
+        elif step == 8:
+            return "        8/8 단계: 화자별 감정분석......."
+        elif step == 9:
+            return "        회의록 작성 완료"
 
+    # 단계별 프로그레스바와 텍스트, 이미지를 표시하는 함수
+    def show_progress(step):
+
+        step_text = progress_steps(step)
+    
+        text_placeholder.write(f"### {step_text}")  # 텍스트를 업데이트
+
+        progress_bar.progress(step / total_steps)
     # 단계별 프로그레스바와 텍스트, 이미지를 표시하는 함수
     def show_progress_with_image(total_steps):
 
@@ -236,6 +255,14 @@ def main_app():
             mt_term = st.selectbox("회의 진행시간을 선택하세요", options=mt_term_opt)
             speakers_text = st.text_area("참석자 이름을 엔터로 구분하여 입력하세요")
             speakers = speakers_text
+            
+        total_steps = 8
+        
+        progress_bar = st.progress(0)
+
+        # 텍스트와 이미지를 업데이트할 공간 확보
+        text_placeholder = st.empty()
+        image_placeholder = st.empty()
 
         #회의록 저장을 위한 데이터 저장 - 회의록 생성로직 이동으로 주석
         # st.session_state.data['name_topic'] = name_topic
@@ -376,31 +403,40 @@ def main_app():
                         print(f"ClovaSpeechClient 데이터 없음: {e}")
                                             
                     with st.expander("전체 STT 결과"):
+                        show_progress(1)
                         st.write(df_origin)
                     with st.expander("한국어 형태소 분석"):
+                        show_progress(2)
                         df_origin['분석된 내용'] = df_origin['내용'].apply(okt_clean)
                         st.write(df_origin)
                     with st.expander("단어 벡터화"):
+                        show_progress(3)
                         tfidf_matrix, vectorizer = tfidf_vectorize(df_origin[['화자', '분석된 내용']])
                         plot_tfidf_matrix(tfidf_matrix, vectorizer)
                     with st.expander("토픽 모델링"):
+                        show_progress(4)
                         lda_model = lda_topic_modeling(tfidf_matrix, num_topics=3)
                         plot_lda_topics(lda_model, vectorizer)
                     with st.expander("군집화"):
+                        show_progress(4)
                         kmeans_model = kmeans_clustering(tfidf_matrix, num_clusters=3)
                         plot_kmeans_clusters(kmeans_model, tfidf_matrix)
                     with st.expander("전체 회의 제목"):
+                        show_progress(5)
                         combined_text = df_origin['내용'].str.cat(sep=' ')
                         title = summarize_title(combined_text)
                         st.write(title)
                     with st.expander("전체 회의 요약"):
+                        show_progress(6)
                         overall_summary = summarize_overall(combined_text)
                         st.write(overall_summary)
                     with st.expander("화자별 요약"):
+                        show_progress(7)
                         speaker_summaries = summarize_by_speaker(df_origin)
                         for speaker, summary in speaker_summaries.items():
                             st.write(f"{speaker}: {summary}")
                     with st.expander("화자별 감정 분석"):
+                        show_progress(8)
                         speaker_emotions = analyze_emotion_by_speaker(df_origin)
                         for speaker, emotions in speaker_emotions.items():
                             st.write(f"{speaker}: {emotions}")
