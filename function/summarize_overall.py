@@ -9,7 +9,7 @@ def summarize_overall(text):
     inputs = tokenizer([text], max_length=1024, return_tensors='pt', truncation=True)
     summary_ids = model.generate(
         inputs['input_ids'], 
-        num_beams=3, 
+        num_beams=4, 
         max_length=256, 
         min_length=100, 
         no_repeat_ngram_size=2, 
