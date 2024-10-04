@@ -370,7 +370,10 @@ def main_app():
                             return text
 
                     # 맞춤법 교정 적용
-                    df_origin['내용'] = df_origin['원문'].apply(correct_spelling)
+                    try:
+                        df_origin['내용'] = df_origin['원문'].apply(correct_spelling)
+                    except KeyError as e:
+                        print(f"ClovaSpeechClient 데이터 없음: {e}")
                                             
                     with st.expander("전체 STT 결과"):
                         st.write(df_origin)
