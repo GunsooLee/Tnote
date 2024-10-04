@@ -136,9 +136,9 @@ class ClovaSpeechClient:
         
         return stt_result
     
-    def getSttAllResultDf(filePath):
+    def getSttAllResultDf(self,save_path):
         
-        res = ClovaSpeechClient().req_upload(file=filePath, completion='sync') #파일 업로드
+        res = ClovaSpeechClient().req_upload(file=save_path, completion='sync') #파일 업로드
         #print(res.text)
         
         json_obj = json.loads(res.text)
@@ -155,5 +155,5 @@ class ClovaSpeechClient:
             stt_result.append(segment['textEdited'])  
             result.append(stt_result)
         
-        return stt_result
+        return result
         
