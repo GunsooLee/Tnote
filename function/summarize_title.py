@@ -6,14 +6,14 @@ tokenizer = PreTrainedTokenizerFast.from_pretrained('./kobart-finetuned')
 model = BartForConditionalGeneration.from_pretrained('./kobart-finetuned')
 
 # 한 줄 요약 (명사형으로 끝나게 처리)
-def summarize_title(text, max_length=15):
+def summarize_title(text, max_length=40):
     # 1. KoBART 모델을 사용하여 기본적인 요약 수행
     inputs = tokenizer([text], max_length=1024, return_tensors='pt', truncation=True)
     summary_ids = model.generate(
         inputs['input_ids'],
         num_beams=4,
         max_length=max_length,  # 최대 길이 (제목 길이)
-        min_length=5,           # 최소 길이
+        min_length=10,           # 최소 길이
         early_stopping=True
     )
     summary = tokenizer.decode(summary_ids[0], skip_special_tokens=True)
