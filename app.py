@@ -423,7 +423,7 @@ def main_app():
                         plot_kmeans_clusters(kmeans_model, tfidf_matrix)
                     with st.expander("전체 회의 제목"):
                         show_progress(5)
-                        combined_text = df_origin['내용'].str.cat(sep=' ')
+                        combined_text = df_origin.apply(lambda row: f"{row['화자']}] {row['내용']}", axis=1).str.cat(sep='\n')
                         title = summarize_title(combined_text)
                         st.write(title)
                     with st.expander("전체 회의 요약"):
