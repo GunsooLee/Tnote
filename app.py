@@ -235,20 +235,19 @@ def main_app():
 
     def make_docx(topic, room, date_ymd, username, speakers, title, summary):
         #회의록 생성 로직 
-        if 'file_generated' not in st.session_state:  # 파일 생성 여부 확인
-            date = datetime.now().strftime('%Y%m%d_%H%M%S')
-            file_name = f"회의록_{date}"
-            retrun_filesize, return_filepath = create_meeting_minutes(
-                name_topic,
-                meeting_room,  
-                mt_date.strftime("%Y-%m-%d"),
-                st.session_state['username'], # 임시로 고정, 실제 내용으로 대체
-                speakers.splitlines(),
-                to_title,   # 임시로 고정, 실제 내용으로 대체
-                to_overall_summary,  # 임시로 고정, 실제 내용으로 대체
-                file_name
-            )
-            st.session_state.file_generated = True  # 파일 생성 완료 표시
+        date = datetime.now().strftime('%Y%m%d_%H%M%S')
+        file_name = f"회의록_{date}"
+        retrun_filesize, return_filepath = create_meeting_minutes(
+            name_topic,
+            meeting_room,  
+            mt_date.strftime("%Y-%m-%d"),
+            st.session_state['username'], # 임시로 고정, 실제 내용으로 대체
+            speakers.splitlines(),
+            to_title,   # 임시로 고정, 실제 내용으로 대체
+            to_overall_summary,  # 임시로 고정, 실제 내용으로 대체
+            file_name
+        )
+        st.session_state.file_generated = True  # 파일 생성 완료 표시
 
         # 회의록 내용 db 저장
         connection = connect_to_db()
