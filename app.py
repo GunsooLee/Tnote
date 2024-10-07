@@ -390,27 +390,9 @@ def main_app():
                     except KeyError as e:
                         print(f"ClovaSpeechClient 데이터 없음: {e}")
                     
-                    # 회의록 다운로드 추가
-                    with st.expander("회의록 다운로드 보기▼"):
-                        # 파일 다운로드 버튼 생성
-                        if st.session_state.file_generated:
-                            if os.path.exists(down_file_path):
-                                # 파일 다운로드 버튼 생성
-                                st.text(down_file_path)
-                                try:
-                                    with open(down_file_path, 'rb') as file:
-                                        st.download_button(
-                                            label="회의록 파일 다운로드",
-                                            data=file,
-                                            file_name=down_file_path.split('\\')[-1],
-                                            mime='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-                                        )
-                                except FileNotFoundError as e:
-                                    print(f"파일을 열 수 없습니다: {e}")
-                                except PermissionError as e:
-                                    print(f"파일 접근 권한이 없습니다: {e}")
-                                except Exception as e:
-                                    print(f"알 수 없는 오류 발생: {e}")    
+                    # placeholder 생성
+                    placeholder = st.empty()
+                    
                                                             
                     with st.expander("전체 STT 결과"):
                         show_progress(1)
@@ -455,7 +437,28 @@ def main_app():
                         
                         # 프로세스 종료시 파일다운로드 추가
                         down_file_path = make_docx(name_topic,meeting_room,mt_date.strftime("%Y-%m-%d"),st.session_state['username'],speakers, to_title, to_overall_summary)
-                        
+                    
+                    # 회의록 다운로드 추가
+                    with placeholder.expander("회의록 다운로드 보기▼"):
+                        # 파일 다운로드 버튼 생성
+                        if st.session_state.file_generated:
+                            if os.path.exists(down_file_path):
+                                # 파일 다운로드 버튼 생성
+                                st.text(down_file_path)
+                                try:
+                                    with open(down_file_path, 'rb') as file:
+                                        st.download_button(
+                                            label="회의록 파일 다운로드",
+                                            data=file,
+                                            file_name=down_file_path.split('\\')[-1],
+                                            mime='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                                        )
+                                except FileNotFoundError as e:
+                                    print(f"파일을 열 수 없습니다: {e}")
+                                except PermissionError as e:
+                                    print(f"파일 접근 권한이 없습니다: {e}")
+                                except Exception as e:
+                                    print(f"알 수 없는 오류 발생: {e}")    
                                             
 
     # 두번째 탭: 조회
