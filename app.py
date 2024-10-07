@@ -456,8 +456,7 @@ def main_app():
                         # 프로세스 종료시 파일다운로드 추가
                         down_file_path = make_docx(name_topic,meeting_room,mt_date.strftime("%Y-%m-%d"),st.session_state['username'],speakers, to_title, to_overall_summary)
                         
-                        show_progress(9)
-                    
+                                            
 
     # 두번째 탭: 조회
     with tabs[1]:
