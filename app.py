@@ -61,6 +61,7 @@ def login():
         # 예시로 간단한 인증 로직 (실제 환경에서는 안전한 인증 방법 사용)
         if username == "tsis" and password == "1":
             st.session_state['logged_in'] = True
+            st.session_state['username'] = username
             st.success("로그인 성공!")
             st.rerun()  # 로그인 성공 시 페이지 새로고침
         else:
@@ -228,7 +229,7 @@ def main_app():
     # 회의록 정보 select
     def result_file_info_from_db(connection):
         cursor = connection.cursor()
-        cursor.execute("SELECT document_title, meeting_room, meeting_date, attendees, file_name, file_size, file_path,insert_date  FROM tn_result_file")
+        cursor.execute("SELECT document_title, meeting_room, meeting_date, attendees, file_name, file_size, file_path,insert_date  FROM tn_result_file ORDER BY insert_date desc")
         records = cursor.fetchall()
         return records
 
@@ -304,31 +305,7 @@ def main_app():
                     connection.commit()
                     connection.close()
 
-                    st.success("데이터베이스에 commit 완료") # 디버깅 로그
-
-                    #회의록 생성 로직 
-                    if 'file_generated' not in st.session_state:  # 파일 생성 여부 확인
-                        date = datetime.now().strftime('%Y%m%d_%H%M%S')
-                        file_name = f"회의록_{date}"
-                        retrun_filesize, return_filepath = create_meeting_minutes(
-                            name_topic,
-                            meeting_room,  
-                            mt_date.strftime("%Y-%m-%d"),
-                            '작성자', # 임시로 고정, 실제 내용으로 대체
-                            speakers.splitlines(),
-                            "회의 주제"   # 임시로 고정, 실제 내용으로 대체
-                            "회의 내용",  # 임시로 고정, 실제 내용으로 대체
-                            file_name
-                        )
-                        st.session_state.file_generated = True  # 파일 생성 완료 표시
-
-                    # 회의록 내용 db 저장
-                    connection = connect_to_db()
-                    res_file_seq = insert_result_file_info_to_db(connection,file_name,retrun_filesize,return_filepath,name_topic,meeting_room,mt_date.strftime("%Y-%m-%d"),speakers)
-                    insert_meeting_info_to_db(connection, rec_seq, name_topic, num_spk, mt_date, mt_term, res_file_seq)
-
-                    connection.commit()
-                    connection.close()
+                    st.success("데이터베이스에 commit 완료") # 디버깅 로그                  
 
 
                     st.success("데이터베이스에 데이터가 저장시도. :: tn_note_mst") # 디버깅 로그
@@ -396,6 +373,11 @@ def main_app():
                             print(f"맞춤법 교정 중 알 수 없는 오류 발생: {e}. 원본 텍스트 반환.")
                             return text
 
+
+                    # 전체 회의 제목과 요약을 회의록생성시 가져오기위한 변수
+                    to_title =''
+                    to_overall_summary=''
+                    
                     # 맞춤법 교정 적용
                     try:
                         df_origin['내용'] = df_origin['원문'].apply(correct_spelling)
@@ -425,10 +407,12 @@ def main_app():
                         show_progress(5)
                         combined_text = df_origin.apply(lambda row: f"{row['화자']}] {row['내용']}", axis=1).str.cat(sep='\n')
                         title = summarize_title(combined_text)
+                        to_title=title
                         st.write(title)
                     with st.expander("전체 회의 요약"):
                         show_progress(6)
                         overall_summary = summarize_overall(combined_text)
+                        to_overall_summary = overall_summary
                         st.write(overall_summary)
                     with st.expander("화자별 요약"):
                         show_progress(7)
@@ -440,6 +424,31 @@ def main_app():
                         speaker_emotions = analyze_emotion_by_speaker(df_origin)
                         for speaker, emotions in speaker_emotions.items():
                             st.write(f"{speaker}: {emotions}")
+                    
+                    
+                    #회의록 생성 로직 
+                    if 'file_generated' not in st.session_state:  # 파일 생성 여부 확인
+                        date = datetime.now().strftime('%Y%m%d_%H%M%S')
+                        file_name = f"회의록_{date}"
+                        retrun_filesize, return_filepath = create_meeting_minutes(
+                            name_topic,
+                            meeting_room,  
+                            mt_date.strftime("%Y-%m-%d"),
+                            st.session_state['username'], # 임시로 고정, 실제 내용으로 대체
+                            speakers.splitlines(),
+                            to_title,   # 임시로 고정, 실제 내용으로 대체
+                            to_overall_summary,  # 임시로 고정, 실제 내용으로 대체
+                            file_name
+                        )
+                        st.session_state.file_generated = True  # 파일 생성 완료 표시
+
+                    # 회의록 내용 db 저장
+                    connection = connect_to_db()
+                    res_file_seq = insert_result_file_info_to_db(connection,file_name,retrun_filesize,return_filepath,name_topic,meeting_room,mt_date.strftime("%Y-%m-%d"),speakers)
+                    insert_meeting_info_to_db(connection, rec_seq, name_topic, num_spk, mt_date, mt_term, res_file_seq)
+
+                    connection.commit()
+                    connection.close()
 
 
     # 두번째 탭: 조회
