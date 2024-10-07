@@ -266,7 +266,7 @@ def main_app():
     with tabs[0]:
         st.header("회의녹취록 업로드")
         uploaded_file = st.file_uploader("녹음된 회의파일을 올려주세요", type=["mp3", "wav", "ogg", "flac", "m4a"])
-
+        st.session_state.file_generated = False
         # 2열 레이아웃 생성
         col1, col2 = st.columns(2)
 
