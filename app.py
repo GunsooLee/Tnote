@@ -233,6 +233,33 @@ def main_app():
         records = cursor.fetchall()
         return records
 
+    def make_docx(topic, room, date_ymd, username, speakers, title, summary):
+        #회의록 생성 로직 
+        if 'file_generated' not in st.session_state:  # 파일 생성 여부 확인
+            date = datetime.now().strftime('%Y%m%d_%H%M%S')
+            file_name = f"회의록_{date}"
+            retrun_filesize, return_filepath = create_meeting_minutes(
+                name_topic,
+                meeting_room,  
+                mt_date.strftime("%Y-%m-%d"),
+                st.session_state['username'], # 임시로 고정, 실제 내용으로 대체
+                speakers.splitlines(),
+                to_title,   # 임시로 고정, 실제 내용으로 대체
+                to_overall_summary,  # 임시로 고정, 실제 내용으로 대체
+                file_name
+            )
+            st.session_state.file_generated = True  # 파일 생성 완료 표시
+
+        # 회의록 내용 db 저장
+        connection = connect_to_db()
+        res_file_seq = insert_result_file_info_to_db(connection,file_name,retrun_filesize,return_filepath,name_topic,meeting_room,mt_date.strftime("%Y-%m-%d"),speakers)
+        insert_meeting_info_to_db(connection, rec_seq, name_topic, num_spk, mt_date, mt_term, res_file_seq)
+
+        connection.commit()
+        connection.close()
+        return return_filepath
+
+    
     tabs = st.tabs(["📄 회의녹취록 업로드", "회의녹취록 조회", "회의록 다운로드"])
 
     # 첫번째 탭: 업로드
@@ -329,27 +356,7 @@ def main_app():
                             #display_word_cloud(result)
                             st.image("https://static.streamlit.io/examples/dice.jpg", caption="Dice Image")
 
-                    # 회의록 다운로드 추가
-                    with st.expander("회의록 다운로드 보기▼"):
-                        # 파일 다운로드 버튼 생성
-                        if 'file_generated' in st.session_state:
-                            if os.path.exists(return_filepath):
-                                # 파일 다운로드 버튼 생성
-                                st.text(return_filepath)
-                                try:
-                                    with open(return_filepath, 'rb') as file:
-                                        st.download_button(
-                                            label="회의록 파일 다운로드",
-                                            data=file,
-                                            file_name=return_filepath.split('\\')[-1],
-                                            mime='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-                                        )
-                                except FileNotFoundError as e:
-                                    print(f"파일을 열 수 없습니다: {e}")
-                                except PermissionError as e:
-                                    print(f"파일 접근 권한이 없습니다: {e}")
-                                except Exception as e:
-                                    print(f"알 수 없는 오류 발생: {e}")    
+                    
 
                     # 데이터프레임 입력 예시
                     client = ClovaSpeechClient()
@@ -383,7 +390,29 @@ def main_app():
                         df_origin['내용'] = df_origin['원문'].apply(correct_spelling)
                     except KeyError as e:
                         print(f"ClovaSpeechClient 데이터 없음: {e}")
-                                            
+                    
+                    # 회의록 다운로드 추가
+                    with st.expander("회의록 다운로드 보기▼"):
+                        # 파일 다운로드 버튼 생성
+                        if st.session_state.file_generated:
+                            if os.path.exists(down_file_path):
+                                # 파일 다운로드 버튼 생성
+                                st.text(down_file_path)
+                                try:
+                                    with open(down_file_path, 'rb') as file:
+                                        st.download_button(
+                                            label="회의록 파일 다운로드",
+                                            data=file,
+                                            file_name=down_file_path.split('\\')[-1],
+                                            mime='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                                        )
+                                except FileNotFoundError as e:
+                                    print(f"파일을 열 수 없습니다: {e}")
+                                except PermissionError as e:
+                                    print(f"파일 접근 권한이 없습니다: {e}")
+                                except Exception as e:
+                                    print(f"알 수 없는 오류 발생: {e}")    
+                                                            
                     with st.expander("전체 STT 결과"):
                         show_progress(1)
                         st.write(df_origin)
@@ -424,32 +453,12 @@ def main_app():
                         speaker_emotions = analyze_emotion_by_speaker(df_origin)
                         for speaker, emotions in speaker_emotions.items():
                             st.write(f"{speaker}: {emotions}")
+                        
+                        # 프로세스 종료시 파일다운로드 추가
+                        down_file_path = make_docx(name_topic,meeting_room,mt_date.strftime("%Y-%m-%d"),st.session_state['username'],speakers.splitlines(), to_title, to_overall_summary)
+                        
+                        show_progress(9)
                     
-                    
-                    #회의록 생성 로직 
-                    if 'file_generated' not in st.session_state:  # 파일 생성 여부 확인
-                        date = datetime.now().strftime('%Y%m%d_%H%M%S')
-                        file_name = f"회의록_{date}"
-                        retrun_filesize, return_filepath = create_meeting_minutes(
-                            name_topic,
-                            meeting_room,  
-                            mt_date.strftime("%Y-%m-%d"),
-                            st.session_state['username'], # 임시로 고정, 실제 내용으로 대체
-                            speakers.splitlines(),
-                            to_title,   # 임시로 고정, 실제 내용으로 대체
-                            to_overall_summary,  # 임시로 고정, 실제 내용으로 대체
-                            file_name
-                        )
-                        st.session_state.file_generated = True  # 파일 생성 완료 표시
-
-                    # 회의록 내용 db 저장
-                    connection = connect_to_db()
-                    res_file_seq = insert_result_file_info_to_db(connection,file_name,retrun_filesize,return_filepath,name_topic,meeting_room,mt_date.strftime("%Y-%m-%d"),speakers)
-                    insert_meeting_info_to_db(connection, rec_seq, name_topic, num_spk, mt_date, mt_term, res_file_seq)
-
-                    connection.commit()
-                    connection.close()
-
 
     # 두번째 탭: 조회
     with tabs[1]:
