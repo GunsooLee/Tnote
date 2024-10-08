@@ -404,15 +404,15 @@ def main_app():
                     with st.expander("단어 벡터화"):
                         show_progress(3)
                         tfidf_matrix, vectorizer = tfidf_vectorize(df_origin[['화자', '분석된 내용']])
-                        plot_tfidf_matrix(tfidf_matrix, vectorizer)
+                        st.pyplot(plot_tfidf_matrix(tfidf_matrix, vectorizer))
                     with st.expander("토픽 모델링"):
                         show_progress(4)
                         lda_model = lda_topic_modeling(tfidf_matrix, num_topics=3)
-                        plot_lda_topics(lda_model, vectorizer)
+                        st.pyplot(plot_lda_topics(lda_model, vectorizer))
                     with st.expander("군집화"):
                         show_progress(4)
                         kmeans_model = kmeans_clustering(tfidf_matrix, num_clusters=3)
-                        plot_kmeans_clusters(kmeans_model, tfidf_matrix)
+                        st.pyplot(plot_kmeans_clusters(kmeans_model, tfidf_matrix))
                     with st.expander("전체 회의 제목"):
                         show_progress(5)
                         combined_text = df_origin.apply(lambda row: f"{row['화자']}] {row['내용']}", axis=1).str.cat(sep='\n')

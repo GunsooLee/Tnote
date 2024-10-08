@@ -19,4 +19,6 @@ def plot_kmeans_clusters(kmeans, tfidf_matrix):
     plt.figure(figsize=(10, 7))
     sns.scatterplot(x=reduced_data[:, 0], y=reduced_data[:, 1], hue=clusters, palette="Set1", s=100)
     plt.title("KMeans Clustering of Documents")
-    st.pyplot(plt.gcf())  # Streamlit에서 차트를 출력
+    
+    # st.pyplot(plt.gcf())  # Streamlit에서 차트를 출력
+    return plt.gcf()

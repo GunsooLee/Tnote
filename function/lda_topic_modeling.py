@@ -25,4 +25,6 @@ def plot_lda_topics(lda, vectorizer, n_top_words=10):
         ax.invert_yaxis()
         ax.tick_params(axis='both', which='major', labelsize=12)
     plt.tight_layout()
-    st.pyplot(plt.gcf())  # Streamlit에서 차트를 출력
+    
+    #st.pyplot(plt.gcf())  # Streamlit에서 차트를 출력
+    return plt.gcf()

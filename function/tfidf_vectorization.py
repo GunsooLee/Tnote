@@ -39,4 +39,5 @@ def plot_tfidf_matrix(tfidf_matrix, vectorizer, top_n=20):
     plt.xticks(rotation=45)
     
     # Streamlit에 그래프 표시
-    st.pyplot(plt.gcf())
+    # st.pyplot(plt.gcf())
+    return plt.gcf()
