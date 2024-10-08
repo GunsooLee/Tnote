@@ -259,6 +259,7 @@ def main_app():
         return return_filepath
 
     # 세션데이터
+    st.session_state.check = None
     st.session_state.check.info = None
     st.session_state.check.file_info = None
     st.session_state.check.df_origin = None
