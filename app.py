@@ -259,8 +259,8 @@ def main_app():
         return return_filepath
 
     # 세션데이터
-    st.session_state.info = None
-    st.session_state.file_info = None
+    st.session_state.info = {}
+    st.session_state.file_info = {}
     st.session_state.df_origin = None
     st.session_state.df_origin_analyze = None
     st.session_state.plot_tfidf_matrix = None
@@ -291,10 +291,10 @@ def main_app():
                 st.session_state.info['mt_date'] = mt_date
                 st.session_state.info['num_spk'] = num_spk
             else:
-                name_topic = st.text_input("회의 제목을 입력하세요",value=st.session_state.info['name_topic'])
-                mt_date = st.date_input("회의날짜를 선택하세요.",value=st.session_state.info['mt_date'])
+                name_topic = st.text_input("회의 제목을 입력하세요",value=st.session_state.info.get('name_topic'))
+                mt_date = st.date_input("회의날짜를 선택하세요.",value=st.session_state.info.get('mt_date'))
                 num_spk_opt = ["2","3","4","5","6","7","8","9","10"]
-                num_spk = st.selectbox("회의 참여인원을 선택하세요.", options=num_spk_opt,index=st.session_state.info['num_spk'])
+                num_spk = st.selectbox("회의 참여인원을 선택하세요.", options=num_spk_opt,index=st.session_state.info.get('num_spk'))
 
         with col2:
             if st.session_state.info is None:
@@ -308,11 +308,11 @@ def main_app():
                 st.session_state.info['mt_term'] = mt_term
                 st.session_state.info['speakers'] = speakers
             else:
-                meeting_room = st.text_input("회의실을 입력하세요",value=st.session_state.info['meeting_room'])
+                meeting_room = st.text_input("회의실을 입력하세요",value=st.session_state.info.get('meeting_room'))
                 # 회의 종료 시간을 30분 단위로 선택할 수 있도록 설정
                 mt_term_opt = ["30분", "1시간", "1시간30분", "2시간","2시간30분","3시간","3시간30분","4시간","4시간30분","5시간","5시간30분","6시간"]
-                mt_term = st.selectbox("회의 진행시간을 선택하세요", options=mt_term_opt,index=st.session_state.info['mt_term'])
-                speakers = st.text_area("참석자 이름을 엔터로 구분하여 입력하세요",value=st.session_state.info['speakers'])
+                mt_term = st.selectbox("회의 진행시간을 선택하세요", options=mt_term_opt,index=st.session_state.info.get('mt_term'))
+                speakers = st.text_area("참석자 이름을 엔터로 구분하여 입력하세요",value=st.session_state.info.get('speakers'))
                 
             
         total_steps = 8
@@ -424,16 +424,16 @@ def main_app():
                         # 세션 데이터 있는경우
                         with st.expander("회의 녹취록 업로드 결과 보기▼"):
                             st.divider() 
-                            st.write(f"◆ 파일명: {st.session_state.file_info['file_name']}")
-                            st.write(f"◆ 파일 크기: {st.session_state.file_info['file_size'] / (1024 * 1024):.2f} MB")
-                            st.write(f"◆ 저장 경로: {st.session_state.file_info['save_path']}")
+                            st.write(f"◆ 파일명: {st.session_state.file_info.get('file_name')}")
+                            st.write(f"◆ 파일 크기: {st.session_state.file_info.get('file_size') / (1024 * 1024):.2f} MB")
+                            st.write(f"◆ 저장 경로: {st.session_state.file_info.get('save_path')}")
                             st.divider() 
                             col1, col2 = st.columns(2)
                             with col1:
-                                st.write(f"◆ 회의제목: {st.session_state.info['name_topic']}")
-                                st.write(f"◆ 회의참여인원: {st.session_state.info['num_spk']}")
-                                st.write(f"◆ 회의날짜: {st.session_state.info['mt_date']}")
-                                st.write(f"◆ 회의진행시간: {st.session_state.info['mt_term']}")
+                                st.write(f"◆ 회의제목: {st.session_state.info.get('name_topic')}")
+                                st.write(f"◆ 회의참여인원: {st.session_state.info.get('num_spk')}")
+                                st.write(f"◆ 회의날짜: {st.session_state.info.get('mt_date')}")
+                                st.write(f"◆ 회의진행시간: {st.session_state.info.get('mt_term')}")
                                 st.write(f"◆ 회의주제: T-LAB 주제정하기")
                                 st.write(f"◆ 회의요약: T-LAB 주제를 정해야해서 회의를 함.")
                             with col2:
