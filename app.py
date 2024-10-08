@@ -282,7 +282,7 @@ def main_app():
         col1, col2 = st.columns(2)
 
         with col1:
-            if st.session_state.info is None:
+            if not st.session_state.info:
                 name_topic = st.text_input("회의 제목을 입력하세요")
                 mt_date = st.date_input("회의날짜를 선택하세요.")
                 num_spk_opt = ["2","3","4","5","6","7","8","9","10"]
@@ -297,7 +297,7 @@ def main_app():
                 num_spk = st.selectbox("회의 참여인원을 선택하세요.", options=num_spk_opt,index=st.session_state.info.get('num_spk'))
 
         with col2:
-            if st.session_state.info is None:
+            if not st.session_state.info:
                 meeting_room = st.text_input("회의실을 입력하세요")
                 # 회의 종료 시간을 30분 단위로 선택할 수 있도록 설정
                 mt_term_opt = ["30분", "1시간", "1시간30분", "2시간","2시간30분","3시간","3시간30분","4시간","4시간30분","5시간","5시간30분","6시간"]
@@ -346,7 +346,7 @@ def main_app():
                     st.warning("회의 제목을 입력해야 합니다.")
                 else :
                     # 세션 데이터 없을때
-                    if st.session_state.file_info is None:
+                    if not st.session_state.file_info:
                         #show_progress_with_image(4)
 
                         # 파일 저장 및 정보 출력
