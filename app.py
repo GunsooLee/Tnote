@@ -281,8 +281,8 @@ def main_app():
         # 2열 레이아웃 생성
         col1, col2 = st.columns(2)
 
-        with col1:
-            if not st.session_state.info:
+        if not st.session_state.info:            
+            with col1:            
                 name_topic = st.text_input("회의 제목을 입력하세요")
                 mt_date = st.date_input("회의날짜를 선택하세요.")
                 num_spk_opt = ["2","3","4","5","6","7","8","9","10"]
@@ -290,14 +290,7 @@ def main_app():
                 st.session_state.info['name_topic'] = name_topic
                 st.session_state.info['mt_date'] = mt_date
                 st.session_state.info['num_spk'] = num_spk
-            else:
-                name_topic = st.text_input("회의 제목을 입력하세요",value=st.session_state.info.get('name_topic'))
-                mt_date = st.date_input("회의날짜를 선택하세요.",value=st.session_state.info.get('mt_date'))
-                num_spk_opt = ["2","3","4","5","6","7","8","9","10"]
-                num_spk = st.selectbox("회의 참여인원을 선택하세요.", options=num_spk_opt,index=st.session_state.info.get('num_spk'))
-
-        with col2:
-            if not st.session_state.info:
+            with col2:            
                 meeting_room = st.text_input("회의실을 입력하세요")
                 # 회의 종료 시간을 30분 단위로 선택할 수 있도록 설정
                 mt_term_opt = ["30분", "1시간", "1시간30분", "2시간","2시간30분","3시간","3시간30분","4시간","4시간30분","5시간","5시간30분","6시간"]
@@ -307,7 +300,14 @@ def main_app():
                 st.session_state.info['meeting_room'] = meeting_room
                 st.session_state.info['mt_term'] = mt_term
                 st.session_state.info['speakers'] = speakers
-            else:
+        else:
+            with col1:            
+                name_topic = st.text_input("회의 제목을 입력하세요",value=st.session_state.info.get('name_topic'))
+                mt_date = st.date_input("회의날짜를 선택하세요.",value=st.session_state.info.get('mt_date'))
+                num_spk_opt = ["2","3","4","5","6","7","8","9","10"]
+                num_spk = st.selectbox("회의 참여인원을 선택하세요.", options=num_spk_opt,index=st.session_state.info.get('num_spk'))
+
+            with col2:
                 meeting_room = st.text_input("회의실을 입력하세요",value=st.session_state.info.get('meeting_room'))
                 # 회의 종료 시간을 30분 단위로 선택할 수 있도록 설정
                 mt_term_opt = ["30분", "1시간", "1시간30분", "2시간","2시간30분","3시간","3시간30분","4시간","4시간30분","5시간","5시간30분","6시간"]
@@ -484,14 +484,14 @@ def main_app():
                             st.pyplot(st.session_state.plot_lda_topic)
                             
                     with st.expander("군집화"):
-                        if st.session_state.plot_kmeans_cluster is None:
+                        if st.session_state.plot_kmeans_clusters is None:
                             show_progress(4)
                             kmeans_model = kmeans_clustering(tfidf_matrix, num_clusters=3)
                             print_date = plot_kmeans_clusters(kmeans_model, tfidf_matrix)
                             st.pyplot(print_date)
-                            st.session_state.plot_kmeans_cluster = print_date
+                            st.session_state.plot_kmeans_clusters = print_date
                         else:
-                            st.pyplot(st.session_state.plot_kmeans_cluster)
+                            st.pyplot(st.session_state.plot_kmeans_clusters)
                     with st.expander("전체 회의 제목"):
                         if st.session_state.summarize_title is None:
                             show_progress(5)
