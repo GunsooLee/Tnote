@@ -344,102 +344,81 @@ def main_app():
                 if not name_topic :
                 # 회의제목이 입력되지 않았을 경우 경고 메시지 표시
                     st.warning("회의 제목을 입력해야 합니다.")
-                else :
-                    # 세션 데이터 없을때
-                    if not st.session_state.file_info:
-                        #show_progress_with_image(4)
+                else :                    
+                    #show_progress_with_image(4)
 
-                        # 파일 저장 및 정보 출력
-                        file_name, file_size, save_path = save_file(uploaded_file, save_directory)
-                        st.write(f"업로드 파일명: {file_name}")
-                        st.write(f"파일 크기: {file_size / (1024 * 1024):.2f} MB")
-                        st.success(f"파일 {file_name}이 '{save_path}'에 저장되었습니다. [{file_size / (1024 * 1024):.2f} MB]")
+                    # 파일 저장 및 정보 출력
+                    file_name, file_size, save_path = save_file(uploaded_file, save_directory)
+                    st.write(f"업로드 파일명: {file_name}")
+                    st.write(f"파일 크기: {file_size / (1024 * 1024):.2f} MB")
+                    st.success(f"파일 {file_name}이 '{save_path}'에 저장되었습니다. [{file_size / (1024 * 1024):.2f} MB]")
 
-                        # 데이터베이스에 정보 삽입
-                        connection = connect_to_db()
-                        rec_seq = insert_file_info_to_db(connection, file_name, file_size, save_path)
-                        st.success("데이터베이스에 데이터가 저장시도. :: tn_rec_file") # 디버깅 로그
+                    # 데이터베이스에 정보 삽입
+                    connection = connect_to_db()
+                    rec_seq = insert_file_info_to_db(connection, file_name, file_size, save_path)
+                    st.success("데이터베이스에 데이터가 저장시도. :: tn_rec_file") # 디버깅 로그
 
 
-                        connection.commit()
-                        connection.close()
+                    connection.commit()
+                    connection.close()
 
-                        st.success("데이터베이스에 commit 완료") # 디버깅 로그                  
+                    st.success("데이터베이스에 commit 완료") # 디버깅 로그                  
 
 
-                        st.success("데이터베이스에 데이터가 저장시도. :: tn_note_mst") # 디버깅 로그
-                        # 확장 가능한 컨테이너에 결과 표시
-                        with st.expander("회의 녹취록 업로드 결과 보기▼"):
-                            st.divider() 
-                            st.write(f"◆ 파일명: {file_name}")
-                            st.write(f"◆ 파일 크기: {file_size / (1024 * 1024):.2f} MB")
-                            st.write(f"◆ 저장 경로: {save_path}")
-                            st.divider() 
-                            col1, col2 = st.columns(2)
-                            with col1:
-                                st.write(f"◆ 회의제목: {name_topic}")
-                                st.write(f"◆ 회의참여인원: {num_spk}")
-                                st.write(f"◆ 회의날짜: {mt_date}")
-                                st.write(f"◆ 회의진행시간: {mt_term}")
-                                st.write(f"◆ 회의주제: T-LAB 주제정하기")
-                                st.write(f"◆ 회의요약: T-LAB 주제를 정해야해서 회의를 함.")
-                            with col2:
-                                # 이미지
-                                #display_word_cloud(result)
-                                st.image("https://static.streamlit.io/examples/dice.jpg", caption="Dice Image")
+                    st.success("데이터베이스에 데이터가 저장시도. :: tn_note_mst") # 디버깅 로그
+                    # 확장 가능한 컨테이너에 결과 표시
+                    with st.expander("회의 녹취록 업로드 결과 보기▼"):
+                        st.divider() 
+                        st.write(f"◆ 파일명: {file_name}")
+                        st.write(f"◆ 파일 크기: {file_size / (1024 * 1024):.2f} MB")
+                        st.write(f"◆ 저장 경로: {save_path}")
+                        st.divider() 
+                        col1, col2 = st.columns(2)
+                        with col1:
+                            st.write(f"◆ 회의제목: {name_topic}")
+                            st.write(f"◆ 회의참여인원: {num_spk}")
+                            st.write(f"◆ 회의날짜: {mt_date}")
+                            st.write(f"◆ 회의진행시간: {mt_term}")
+                            st.write(f"◆ 회의주제: T-LAB 주제정하기")
+                            st.write(f"◆ 회의요약: T-LAB 주제를 정해야해서 회의를 함.")
+                        with col2:
+                            # 이미지
+                            #display_word_cloud(result)
+                            st.image("https://static.streamlit.io/examples/dice.jpg", caption="Dice Image")
 
-                        st.session_state.file_info['file_name']=file_name
-                        st.session_state.file_info['file_size']=file_size
-                        st.session_state.file_info['save_path']=save_path
+                    st.session_state.file_info['file_name']=file_name
+                    st.session_state.file_info['file_size']=file_size
+                    st.session_state.file_info['save_path']=save_path
 
-                        # 데이터프레임 입력 예시
-                        client = ClovaSpeechClient()
-                        try:    
-                            df_origin = pd.DataFrame(np.array(client.getSttAllResultDf(save_path)))
-                            df_origin.columns =  ["화자", "원문"]                            
-                        except ValueError as e:
-                            print(f"ClovaSpeechClient 오류 발생: {e}")
+                    # 데이터프레임 입력 예시
+                    client = ClovaSpeechClient()
+                    try:    
+                        df_origin = pd.DataFrame(np.array(client.getSttAllResultDf(save_path)))
+                        df_origin.columns =  ["화자", "원문"]                            
+                    except ValueError as e:
+                        print(f"ClovaSpeechClient 오류 발생: {e}")
 
-                        # 맞춤법 교정 함수
-                        def correct_spelling(text):
-                            try:
-                                result = spell_checker.check(text)
-                                return result.checked  # 맞춤법이 교정된 텍스트 반환
-                            except KeyError as e:
-                                # 'result' 키가 없을 경우 원본 텍스트 반환
-                                print(f"맞춤법 교정 중 오류 발생: {e}. 원본 텍스트 반환.")
-                                return text
-                            except Exception as e:
-                                # 그 외 다른 오류가 발생한 경우에도 원본 텍스트 반환
-                                print(f"맞춤법 교정 중 알 수 없는 오류 발생: {e}. 원본 텍스트 반환.")
-                                return text                        
-                        
-                        # 맞춤법 교정 적용
+                    # 맞춤법 교정 함수
+                    def correct_spelling(text):
                         try:
-                            df_origin['내용'] = df_origin['원문'].apply(correct_spelling)
-                            st.session_state.df_origin = df_origin
+                            result = spell_checker.check(text)
+                            return result.checked  # 맞춤법이 교정된 텍스트 반환
                         except KeyError as e:
-                            print(f"ClovaSpeechClient 데이터 없음: {e}")
-                    else:
-                        # 세션 데이터 있는경우
-                        with st.expander("회의 녹취록 업로드 결과 보기▼"):
-                            st.divider() 
-                            st.write(f"◆ 파일명: {st.session_state.file_info.get('file_name')}")
-                            st.write(f"◆ 파일 크기: {st.session_state.file_info.get('file_size') / (1024 * 1024):.2f} MB")
-                            st.write(f"◆ 저장 경로: {st.session_state.file_info.get('save_path')}")
-                            st.divider() 
-                            col1, col2 = st.columns(2)
-                            with col1:
-                                st.write(f"◆ 회의제목: {st.session_state.info.get('name_topic')}")
-                                st.write(f"◆ 회의참여인원: {st.session_state.info.get('num_spk')}")
-                                st.write(f"◆ 회의날짜: {st.session_state.info.get('mt_date')}")
-                                st.write(f"◆ 회의진행시간: {st.session_state.info.get('mt_term')}")
-                                st.write(f"◆ 회의주제: T-LAB 주제정하기")
-                                st.write(f"◆ 회의요약: T-LAB 주제를 정해야해서 회의를 함.")
-                            with col2:
-                                # 이미지
-                                #display_word_cloud(result)
-                                st.image("https://static.streamlit.io/examples/dice.jpg", caption="Dice Image")
+                            # 'result' 키가 없을 경우 원본 텍스트 반환
+                            print(f"맞춤법 교정 중 오류 발생: {e}. 원본 텍스트 반환.")
+                            return text
+                        except Exception as e:
+                            # 그 외 다른 오류가 발생한 경우에도 원본 텍스트 반환
+                            print(f"맞춤법 교정 중 알 수 없는 오류 발생: {e}. 원본 텍스트 반환.")
+                            return text                        
+                    
+                    # 맞춤법 교정 적용
+                    try:
+                        df_origin['내용'] = df_origin['원문'].apply(correct_spelling)
+                        st.session_state.df_origin = df_origin
+                    except KeyError as e:
+                        print(f"ClovaSpeechClient 데이터 없음: {e}")
+                        
                     
                     
                     # 전체 회의 제목과 요약을 회의록생성시 가져오기위한 변수
@@ -451,19 +430,13 @@ def main_app():
                     
                                                             
                     with st.expander("전체 STT 결과"):
-                        if st.session_state.df_origin is None:
-                            show_progress(1)
-                            st.write(df_origin)
-                        else:
-                            st.write(st.session_state.df_origin)
-                    with st.expander("한국어 형태소 분석"):
-                        if st.session_state.df_origin_analyze is None:
-                            show_progress(2)
-                            df_origin['분석된 내용'] = df_origin['내용'].apply(okt_clean)
-                            st.write(df_origin)
-                            st.session_state.df_origin_analyze = df_origin
-                        else:
-                            st.write(st.session_state.df_origin_analyze)
+                        show_progress(1)
+                        st.write(df_origin)
+                    with st.expander("한국어 형태소 분석"):                    
+                        show_progress(2)
+                        df_origin['분석된 내용'] = df_origin['내용'].apply(okt_clean)
+                        st.write(df_origin)
+                        st.session_state.df_origin_analyze = df_origin
                     with st.expander("단어 벡터화"):
                         if st.session_state.plot_tfidf_matrix is None:
                             show_progress(3)
@@ -471,8 +444,6 @@ def main_app():
                             print_date = plot_tfidf_matrix(tfidf_matrix, vectorizer)
                             st.pyplot(print_date)
                             st.session_state.plot_tfidf_matrix = print_date
-                        else:
-                            st.pyplot(st.session_state.plot_tfidf_matrix)
                     with st.expander("토픽 모델링"):
                         if st.session_state.plot_lda_topics is None:
                             show_progress(4)
@@ -480,8 +451,6 @@ def main_app():
                             print_date=plot_lda_topics(lda_model, vectorizer)
                             st.pyplot(print_date)
                             st.session_state.plot_lda_topics = print_date
-                        else:
-                            st.pyplot(st.session_state.plot_lda_topic)
                             
                     with st.expander("군집화"):
                         if st.session_state.plot_kmeans_clusters is None:
@@ -490,8 +459,6 @@ def main_app():
                             print_date = plot_kmeans_clusters(kmeans_model, tfidf_matrix)
                             st.pyplot(print_date)
                             st.session_state.plot_kmeans_clusters = print_date
-                        else:
-                            st.pyplot(st.session_state.plot_kmeans_clusters)
                     with st.expander("전체 회의 제목"):
                         if st.session_state.summarize_title is None:
                             show_progress(5)
@@ -500,8 +467,6 @@ def main_app():
                             to_title=title
                             st.write(title)
                             st.session_state.summarize_title = title
-                        else:
-                            st.write(st.session_state.summarize_title)
                     with st.expander("전체 회의 요약"):
                         if st.session_state.summarize_overall is None:
                             show_progress(6)
@@ -509,8 +474,6 @@ def main_app():
                             to_overall_summary = overall_summary
                             st.write(overall_summary)
                             st.session_state.summarize_overall = overall_summary
-                        else:
-                            st.write(st.session_state.summarize_overall)
                     with st.expander("화자별 요약"):
                         if st.session_state.summarize_by_speaker is None:
                             show_progress(7)
@@ -518,9 +481,6 @@ def main_app():
                             for speaker, summary in speaker_summaries.items():
                                 st.write(f"{speaker}: {summary}")
                             st.session_state.summarize_by_speaker=speaker_summaries
-                        else:
-                            for speaker, summary in st.session_state.summarize_by_speaker.items():
-                                st.write(f"{speaker}: {summary}")
                     with st.expander("화자별 감정 분석"):
                         if st.session_state.analyze_emotion_by_speaker is None:
                             show_progress(8)
@@ -530,10 +490,6 @@ def main_app():
                             st.session_state.analyze_emotion_by_speaker = speaker_emotions
                             # 프로세스 종료시 파일다운로드 추가
                             down_file_path = make_docx(name_topic,meeting_room,mt_date.strftime("%Y-%m-%d"),st.session_state['username'],speakers, to_title, to_overall_summary)
-                        else:
-                            for speaker, emotions in st.session_state.analyze_emotion_by_speaker.items():
-                                st.write(f"{speaker}: {emotions}")
-                                
                         
                     # 회의록 다운로드 추가
                     with placeholder.expander("회의록 다운로드 보기▼"):
@@ -556,7 +512,78 @@ def main_app():
                                     print(f"파일 접근 권한이 없습니다: {e}")
                                 except Exception as e:
                                     print(f"알 수 없는 오류 발생: {e}")    
-                                            
+        else:
+            # 세션 데이터 있는경우
+            with st.expander("회의 녹취록 업로드 결과 보기▼"):
+                st.divider() 
+                st.write(f"◆ 파일명: {st.session_state.file_info.get('file_name')}")
+                st.write(f"◆ 파일 크기: {st.session_state.file_info.get('file_size') / (1024 * 1024):.2f} MB")
+                st.write(f"◆ 저장 경로: {st.session_state.file_info.get('save_path')}")
+                st.divider() 
+                col1, col2 = st.columns(2)
+                with col1:
+                    st.write(f"◆ 회의제목: {st.session_state.info.get('name_topic')}")
+                    st.write(f"◆ 회의참여인원: {st.session_state.info.get('num_spk')}")
+                    st.write(f"◆ 회의날짜: {st.session_state.info.get('mt_date')}")
+                    st.write(f"◆ 회의진행시간: {st.session_state.info.get('mt_term')}")
+                    st.write(f"◆ 회의주제: T-LAB 주제정하기")
+                    st.write(f"◆ 회의요약: T-LAB 주제를 정해야해서 회의를 함.")
+                with col2:
+                    # 이미지
+                    #display_word_cloud(result)
+                    st.image("https://static.streamlit.io/examples/dice.jpg", caption="Dice Image")           
+            
+            # 전체 회의 제목과 요약을 회의록생성시 가져오기위한 변수
+                    to_title =''
+                    to_overall_summary=''    
+                    
+                    # placeholder 생성
+                    placeholder = st.empty()
+                    
+                                                            
+                    with st.expander("전체 STT 결과"):                        
+                        st.write(st.session_state.df_origin)
+                    with st.expander("한국어 형태소 분석"):
+                        st.write(st.session_state.df_origin_analyze)
+                    with st.expander("단어 벡터화"):
+                        st.pyplot(st.session_state.plot_tfidf_matrix)
+                    with st.expander("토픽 모델링"):
+                        st.pyplot(st.session_state.plot_lda_topic)                            
+                    with st.expander("군집화"):
+                        st.pyplot(st.session_state.plot_kmeans_clusters)
+                    with st.expander("전체 회의 제목"):
+                        st.write(st.session_state.summarize_title)
+                    with st.expander("전체 회의 요약"):
+                        st.write(st.session_state.summarize_overall)
+                    with st.expander("화자별 요약"):
+                        for speaker, summary in st.session_state.summarize_by_speaker.items():
+                            st.write(f"{speaker}: {summary}")
+                    with st.expander("화자별 감정 분석"):
+                        for speaker, emotions in st.session_state.analyze_emotion_by_speaker.items():
+                            st.write(f"{speaker}: {emotions}")
+                                
+                        
+                    # 회의록 다운로드 추가
+                    with placeholder.expander("회의록 다운로드 보기▼"):
+                        # 파일 다운로드 버튼 생성
+                        if st.session_state.file_generated:
+                            if os.path.exists(down_file_path):
+                                # 파일 다운로드 버튼 생성
+                                st.text(down_file_path)
+                                try:
+                                    with open(down_file_path, 'rb') as file:
+                                        st.download_button(
+                                            label="회의록 파일 다운로드",
+                                            data=file,
+                                            file_name=down_file_path.split('\\')[-1],
+                                            mime='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                                        )
+                                except FileNotFoundError as e:
+                                    print(f"파일을 열 수 없습니다: {e}")
+                                except PermissionError as e:
+                                    print(f"파일 접근 권한이 없습니다: {e}")
+                                except Exception as e:
+                                    print(f"알 수 없는 오류 발생: {e}") 
 
     # 두번째 탭: 조회
     with tabs[1]:
