@@ -587,7 +587,8 @@ def main_app():
                                     print(f"파일 접근 권한이 없습니다: {e}")
                                 except Exception as e:
                                     print(f"알 수 없는 오류 발생: {e}") 
-
+    
+    st.write(f"{st.session_state.process_check}")
     # 두번째 탭: 조회
     with tabs[1]:
         st.header("회의녹취록 조회")
