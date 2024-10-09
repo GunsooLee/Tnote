@@ -338,8 +338,7 @@ def main_app():
         rec_seq=''
         st.write(f"{st.session_state.process_check}")
         # 한번이라도 프로세스가 실행되었는지 확인
-        # if not st.session_state.process_check:
-        if not st.session_state.file_info:
+        if not st.session_state.process_check:
             if uploaded_file is not None:
 
                 # "파일 저장" 버튼을 화면에 표시
