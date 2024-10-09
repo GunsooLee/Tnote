@@ -336,7 +336,7 @@ def main_app():
         # 마스터 테이블에 저장할때 시퀀스 가져오는거 중복 내용 처리
         rec_seq=''
 
-        if uploaded_file is not None:
+        if uploaded_file:
 
             # "파일 저장" 버튼을 화면에 표시
             if st.button("파일 업로드"):
