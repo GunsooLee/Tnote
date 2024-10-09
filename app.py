@@ -261,7 +261,6 @@ def main_app():
     # 세션데이터
     st.session_state.info = {}
     st.session_state.file_info = {}
-    st.session_state.process_check = False
     st.session_state.df_origin = None
     st.session_state.df_origin_analyze = None
     st.session_state.plot_tfidf_matrix = None
@@ -279,6 +278,7 @@ def main_app():
         st.header("회의녹취록 업로드")
         uploaded_file = st.file_uploader("녹음된 회의파일을 올려주세요", type=["mp3", "wav", "ogg", "flac", "m4a"])
         st.session_state.file_generated = False
+        st.session_state.process_check = False
         # 2열 레이아웃 생성
         col1, col2 = st.columns(2)
 
