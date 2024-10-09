@@ -336,7 +336,7 @@ def main_app():
 
         # 마스터 테이블에 저장할때 시퀀스 가져오는거 중복 내용 처리
         rec_seq=''
-
+        st.write(f"{st.session_state.process_check}")
         # 한번이라도 프로세스가 실행되었는지 확인
         if not st.session_state.process_check:
             if uploaded_file is not None:
@@ -365,7 +365,7 @@ def main_app():
                         connection.commit()
                         connection.close()
 
-                        st.success("데이터베이스에 commit 완료") # 디버깅 로그                  
+                        st.success("데이터베이스에 commit 완료") # 디*-버깅 로그                  
 
 
                         st.success("데이터베이스에 데이터가 저장시도. :: tn_note_mst") # 디버깅 로그
