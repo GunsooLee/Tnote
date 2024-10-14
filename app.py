@@ -223,7 +223,7 @@ def main_app():
     # 회의록 정보 select
     def result_file_info_from_db(connection):
         cursor = connection.cursor()
-        cursor.execute("SELECT document_title, meeting_room, meeting_date, attendees, insert_date  FROM tn_result_file ORDER BY insert_date desc")
+        cursor.execute("SELECT document_title, meeting_room, meeting_date, attendees,file_path, insert_date  FROM tn_result_file ORDER BY insert_date desc")
         records = cursor.fetchall()
         return records
 
@@ -610,7 +610,7 @@ def main_app():
             connection.close()            
 
             # 조회된 데이터를 데이터프레임으로 변환하여 출력
-            df = pd.DataFrame(records, columns=["회의록 제목","회의실","회의날짜","참석자","업로드 일시"])
+            df = pd.DataFrame(records, columns=["회의록 제목","회의실","회의날짜","참석자","파일 경로","업로드 일시"])
             st.session_state.grid_data = df  # session_state에 저장
 
             #st.dataframe(df)
