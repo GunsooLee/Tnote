@@ -259,19 +259,30 @@ def main_app():
         return return_filepath
 
     # 세션데이터
-    st.session_state.info = {}
-    st.session_state.file_info = {}
+    if 'info' not in st.session_state:
+        st.session_state.info = {}
+    if 'file_info' not in st.session_state:
+        st.session_state.file_info = {}
     if 'process_check' not in st.session_state:
         st.session_state.process_check = None
-    st.session_state.df_origin = None
-    st.session_state.df_origin_analyze = None
-    st.session_state.plot_tfidf_matrix = None
-    st.session_state.plot_lda_topics = None
-    st.session_state.plot_kmeans_clusters = None
-    st.session_state.summarize_title = None
-    st.session_state.summarize_overall = None
-    st.session_state.summarize_by_speaker = None
-    st.session_state.analyze_emotion_by_speaker = None
+    if 'df_origin' not in st.session_state:
+        st.session_state.df_origin = None
+    if 'df_origin_analyze' not in st.session_state:
+        st.session_state.df_origin_analyze = None
+    if 'plot_tfidf_matrix' not in st.session_state:
+        st.session_state.plot_tfidf_matrix = None
+    if 'plot_lda_topics' not in st.session_state:
+        st.session_state.plot_lda_topics = None
+    if 'plot_kmeans_clusters' not in st.session_state:
+        st.session_state.plot_kmeans_clusters = None
+    if 'summarize_title' not in st.session_state:
+        st.session_state.summarize_title = None
+    if 'summarize_overall' not in st.session_state:
+        st.session_state.summarize_overall = None
+    if 'summarize_by_speaker' not in st.session_state:
+        st.session_state.summarize_by_speaker = None
+    if 'analyze_emotion_by_speaker' not in st.session_state:
+        st.session_state.analyze_emotion_by_speaker = None
 
     tabs = st.tabs(["📄 회의녹취록 업로드", "회의녹취록 조회", "회의록 다운로드"])
 
