@@ -313,6 +313,8 @@ def main_app():
                 st.session_state.info['meeting_room'] = meeting_room
                 st.session_state.info['mt_term'] = mt_term
                 st.session_state.info['speakers'] = speakers
+
+                st.write(f"{st.session_state.file_info}")
         else:
             with col1:            
                 name_topic = st.text_input("회의 제목을 입력하세요",value=st.session_state.info.get('name_topic'))
@@ -528,6 +530,7 @@ def main_app():
                                     except Exception as e:
                                         print(f"알 수 없는 오류 발생: {e}")    
         else:
+            st.write(f"{st.session_state.file_info}")
             # 세션 데이터 있는경우
             with st.expander("회의 녹취록 업로드 결과 보기▼"):
                 st.divider() 
