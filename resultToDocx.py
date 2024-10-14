@@ -25,6 +25,8 @@ def create_meeting_minutes(title, meeting_room, date, writer, attendees, subject
     document.add_heading('회의 제목', level=1)
     document.add_paragraph(title)
     
+    # 회의정보
+    document.add_heading('회의 정보', level=1)
     p = document.add_paragraph()
     p.add_run('일시 : ').bold=True
     p.add_run(date)
@@ -35,8 +37,8 @@ def create_meeting_minutes(title, meeting_room, date, writer, attendees, subject
     p.add_run('\n')
     # 회의 참석자
     p.add_run('참석자 : ').bold=True
-    for name in attendees:
-        p.add_run(name)
+    for i, name in enumerate(attendees):
+        p.add_run(", ".join(attendees))
     
     p.add_run('\n')
     # 회의 작성자
