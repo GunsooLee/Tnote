@@ -19,27 +19,35 @@ def create_meeting_minutes(title, meeting_room, date, writer, attendees, subject
     document = Document()
 
     # 문서 정보
-    document.add_heading(title, 0)
-    table = document.add_table(rows=1, cols=4)
-    table.style = 'Table Grid'
-    hdr_cells = table.rows[0].cells
-    hdr_cells[0].text = '일시'
-    hdr_cells[1].text = date
-    hdr_cells[2].text = '장소'
-    hdr_cells[3].text = meeting_room
+    document.add_heading('T-note 회의록', 0)
     
-    row_cells = table.add_row().cells
-    row_cells[0].text = '참석자'
+    # 회의 제목
+    document.add_heading('회의 제목', level=1)
+    document.add_paragraph(title)
+    
+    p = document.add_paragraph()
+    p.add_run('일시 : ').bold=True
+    p.add_run(date)
+    p.add_run('\n')
+    # 회의 장소
+    p.add_run('장소 : ').bold=True
+    p.add_run(meeting_room)
+    p.add_run('\n')
+    # 회의 참석자
+    p.add_run('참석자 : ').bold=True
     for name in attendees:
-        row_cells[1].add_paragraph(name)
-    row_cells[2].text = '작성자'
-    row_cells[3].text = writer
+        p.add_run(name)
+    
+    p.add_run('\n')
+    # 회의 작성자
+    p.add_run('작성자 : ').bold=True
+    p.add_run(writer)     
 
     # 회의 주제
     document.add_heading('회의 주제', level=1)
     document.add_paragraph(subject)
 
-    # 회의 주제
+    # 회의 내용
     document.add_heading('회의 내용', level=1)
     document.add_paragraph(contents)
 

@@ -68,14 +68,7 @@ def login():
             st.error("로그인 실패. 사용자 이름 또는 비밀번호가 잘못되었습니다.")
 
 def main_app():
-    #사이드바
-    st.set_page_config(
-        page_title="T-Note",    # 타이틀바 명
-        page_icon="📋",         # 타이틀바 아이콘
-        layout="wide",          # 화면 꽉차게 확장해주는...
-        initial_sidebar_state="auto"
-    )
-
+    
     # 세션 데이터
     if 'data' not in st.session_state:
         st.session_state.data = {
@@ -229,7 +222,7 @@ def main_app():
     # 회의록 정보 select
     def result_file_info_from_db(connection):
         cursor = connection.cursor()
-        cursor.execute("SELECT document_title, meeting_room, meeting_date, attendees, file_name, file_size, file_path,insert_date  FROM tn_result_file ORDER BY insert_date desc")
+        cursor.execute("SELECT document_title, meeting_room, meeting_date, attendees, insert_date  FROM tn_result_file ORDER BY insert_date desc")
         records = cursor.fetchall()
         return records
 
@@ -284,7 +277,7 @@ def main_app():
     if 'analyze_emotion_by_speaker' not in st.session_state:
         st.session_state.analyze_emotion_by_speaker = None
 
-    tabs = st.tabs(["📄 회의녹취록 업로드", "회의녹취록 조회", "회의록 다운로드"])
+    tabs = st.tabs(["📄 회의녹취록 업로드", "회의녹취록 조회"])
 
     # 첫번째 탭: 업로드
     with tabs[0]:
@@ -616,7 +609,7 @@ def main_app():
             connection.close()            
 
             # 조회된 데이터를 데이터프레임으로 변환하여 출력
-            df = pd.DataFrame(records, columns=["회의록 제목","회의실","회의날짜","참석자","파일명", "파일 크기(byte)", "파일 경로","업로드 일시"])
+            df = pd.DataFrame(records, columns=["회의록 제목","회의실","회의날짜","참석자","업로드 일시"])
             st.session_state.grid_data = df  # session_state에 저장
 
             #st.dataframe(df)
@@ -643,7 +636,7 @@ def main_app():
             selected_row = grid_response['selected_rows']
 
             # 선택된 행의 데이터 구조 확인
-            st.write("선택된 행의 데이터 구조: ", selected_row)
+            st.write("선택된 회의 녹취록 : ", selected_row)
 
             # 자료형 확인
             #st.write("선택된 데이터의 자료형: ", type(selected_row))
@@ -669,51 +662,6 @@ def main_app():
                     st.write("회의록 파일 경로가 존재하지 않습니다.")
             else:
                 st.write("선택된 회의록이이 없습니다.")
-    with tabs[2]:
-        st.header("회의록 다운로드")
-        # Session State에서 데이터 가져오기
-        data = st.session_state.data
-        return_filepath =''
-        if data:        
-            attendees = st.text_area("회의 참석자 (한 줄에 한 명씩 입력)", height=100)
-            attendees_list = attendees.splitlines()
-            if st.button("회의록 생성"):
-                if 'file_generated' not in st.session_state:  # 파일 생성 여부 확인
-                    # 회의록 생성 로직
-                    date = datetime.now().strftime('%Y%m%d_%H%M%S')
-                    file_name = f"회의록_{date}"
-                    return_filepath = create_meeting_minutes(
-                        data['name_topic'],
-                        "회의실 A",  # 임시로 고정, 필요에 따라 수정
-                        data['mt_date'],
-                        attendees_list,  # 임시로 고정, 필요에 따라 수정
-                        data['num_spk'],
-                        "회의 내용",  # 임시로 고정, 실제 내용으로 대체
-                        file_name
-                    )
-                    st.session_state.file_generated = True  # 파일 생성 완료 표시
-
-            # 파일 다운로드 버튼 생성
-            if 'file_generated' in st.session_state:
-                if os.path.exists(return_filepath):
-                    # 파일 다운로드 버튼 생성
-                    st.text(return_filepath)
-                    try:
-                        with open(return_filepath, 'rb') as file:
-                            st.download_button(
-                                label="회의록 파일 다운로드",
-                                data=file,
-                                file_name=return_filepath.split('\\')[-1],
-                                mime='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-                            )
-                    except FileNotFoundError as e:
-                        print(f"파일을 열 수 없습니다: {e}")
-                    except PermissionError as e:
-                        print(f"파일 접근 권한이 없습니다: {e}")
-                    except Exception as e:
-                        print(f"알 수 없는 오류 발생: {e}")    
-        else:
-            st.warning("아직 데이터가 없습니다.")
 
 if not st.session_state['logged_in']:
     login()
