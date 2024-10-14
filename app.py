@@ -259,8 +259,8 @@ def main_app():
         return return_filepath
 
     # 세션데이터
-    if 'info' not in st.session_state:
-        st.session_state.info = {}
+    
+    st.session_state.info = {}
     if 'file_info' not in st.session_state:
         st.session_state.file_info = {}
     if 'process_check' not in st.session_state:
@@ -313,8 +313,6 @@ def main_app():
                 st.session_state.info['meeting_room'] = meeting_room
                 st.session_state.info['mt_term'] = mt_term
                 st.session_state.info['speakers'] = speakers
-
-                st.write(f"{st.session_state.file_info}")
         else:
             with col1:            
                 name_topic = st.text_input("회의 제목을 입력하세요",value=st.session_state.info.get('name_topic'))
