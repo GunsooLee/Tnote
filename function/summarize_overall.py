@@ -11,7 +11,7 @@ def summarize_overall(text):
         inputs['input_ids'], 
         num_beams=8, 
         max_length=256, 
-        min_length=100, 
+        min_length=20, 
         temperature=0.7,  # 다양성 조절
         top_p=0.9,
         no_repeat_ngram_size=3, # 반복 방지
