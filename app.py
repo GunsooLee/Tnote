@@ -261,7 +261,8 @@ def main_app():
     # 세션데이터
     st.session_state.info = {}
     st.session_state.file_info = {}
-    st.session_state.process_check = None
+    if 'process_check' not in st.session_state:
+        st.session_state.process_check = None
     st.session_state.df_origin = None
     st.session_state.df_origin_analyze = None
     st.session_state.plot_tfidf_matrix = None
