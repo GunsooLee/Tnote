@@ -550,57 +550,57 @@ def main_app():
                     st.image("https://static.streamlit.io/examples/dice.jpg", caption="Dice Image")           
             
             # 전체 회의 제목과 요약을 회의록생성시 가져오기위한 변수
-                    to_title =''
-                    to_overall_summary=''    
+                to_title =''
+                to_overall_summary=''    
+                
+                # placeholder 생성
+                placeholder = st.empty()
+                
+                                                        
+                with st.expander("전체 STT 결과"):                        
+                    st.write(st.session_state.df_origin)
+                with st.expander("한국어 형태소 분석"):
+                    st.write(st.session_state.df_origin_analyze)
+                with st.expander("단어 벡터화"):
+                    st.pyplot(st.session_state.plot_tfidf_matrix)
+                with st.expander("토픽 모델링"):
+                    st.pyplot(st.session_state.plot_lda_topic)                            
+                with st.expander("군집화"):
+                    st.pyplot(st.session_state.plot_kmeans_clusters)
+                with st.expander("전체 회의 제목"):
+                    st.write(st.session_state.summarize_title)
+                with st.expander("전체 회의 요약"):
+                    st.write(st.session_state.summarize_overall)
+                with st.expander("화자별 요약"):
+                    for speaker, summary in st.session_state.summarize_by_speaker.items():
+                        st.write(f"{speaker}: {summary}")
+                with st.expander("화자별 감정 분석"):
+                    for speaker, emotions in st.session_state.analyze_emotion_by_speaker.items():
+                        st.write(f"{speaker}: {emotions}")
+                            
                     
-                    # placeholder 생성
-                    placeholder = st.empty()
-                    
-                                                            
-                    with st.expander("전체 STT 결과"):                        
-                        st.write(st.session_state.df_origin)
-                    with st.expander("한국어 형태소 분석"):
-                        st.write(st.session_state.df_origin_analyze)
-                    with st.expander("단어 벡터화"):
-                        st.pyplot(st.session_state.plot_tfidf_matrix)
-                    with st.expander("토픽 모델링"):
-                        st.pyplot(st.session_state.plot_lda_topic)                            
-                    with st.expander("군집화"):
-                        st.pyplot(st.session_state.plot_kmeans_clusters)
-                    with st.expander("전체 회의 제목"):
-                        st.write(st.session_state.summarize_title)
-                    with st.expander("전체 회의 요약"):
-                        st.write(st.session_state.summarize_overall)
-                    with st.expander("화자별 요약"):
-                        for speaker, summary in st.session_state.summarize_by_speaker.items():
-                            st.write(f"{speaker}: {summary}")
-                    with st.expander("화자별 감정 분석"):
-                        for speaker, emotions in st.session_state.analyze_emotion_by_speaker.items():
-                            st.write(f"{speaker}: {emotions}")
-                                
-                        
-                    # 회의록 다운로드 추가
-                    with placeholder.expander("회의록 다운로드 보기▼"):
-                        # 파일 다운로드 버튼 생성
-                        if st.session_state.file_generated:
-                            if os.path.exists(down_file_path):
-                                # 파일 다운로드 버튼 생성
-                                st.text(down_file_path)
-                                try:
-                                    with open(down_file_path, 'rb') as file:
-                                        st.download_button(
-                                            label="회의록 파일 다운로드",
-                                            data=file,
-                                            file_name=down_file_path.split('\\')[-1],
-                                            mime='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-                                        )
-                                except FileNotFoundError as e:
-                                    print(f"파일을 열 수 없습니다: {e}")
-                                except PermissionError as e:
-                                    print(f"파일 접근 권한이 없습니다: {e}")
-                                except Exception as e:
-                                    print(f"알 수 없는 오류 발생: {e}") 
-    
+                # 회의록 다운로드 추가
+                with placeholder.expander("회의록 다운로드 보기▼"):
+                    # 파일 다운로드 버튼 생성
+                    if st.session_state.file_generated:
+                        if os.path.exists(down_file_path):
+                            # 파일 다운로드 버튼 생성
+                            st.text(down_file_path)
+                            try:
+                                with open(down_file_path, 'rb') as file:
+                                    st.download_button(
+                                        label="회의록 파일 다운로드",
+                                        data=file,
+                                        file_name=down_file_path.split('\\')[-1],
+                                        mime='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                                    )
+                            except FileNotFoundError as e:
+                                print(f"파일을 열 수 없습니다: {e}")
+                            except PermissionError as e:
+                                print(f"파일 접근 권한이 없습니다: {e}")
+                            except Exception as e:
+                                print(f"알 수 없는 오류 발생: {e}") 
+
     st.write(f"{st.session_state.process_check}")
     # 두번째 탭: 조회
     with tabs[1]:
