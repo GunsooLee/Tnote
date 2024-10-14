@@ -68,7 +68,8 @@ def login():
             st.error("로그인 실패. 사용자 이름 또는 비밀번호가 잘못되었습니다.")
 
 def main_app():
-    
+    # 페이지 레이아웃 변경
+    st.set_page_config(layout="wide")
     # 세션 데이터
     if 'data' not in st.session_state:
         st.session_state.data = {
