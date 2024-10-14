@@ -11,7 +11,7 @@ def summarize_overall(text):
         inputs['input_ids'], 
         num_beams=4, 
         max_length=256, 
-        min_length=20, 
+        min_length=100, 
         early_stopping=True)
     summary = tokenizer.decode(summary_ids[0], skip_special_tokens=True)
     return summary
