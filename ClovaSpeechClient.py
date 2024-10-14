@@ -140,9 +140,9 @@ class ClovaSpeechClient:
     
     def getSttAllResultDf(self,save_path):
         
-        # res = ClovaSpeechClient().req_upload(file=save_path, completion='sync') #파일 업로드
-        # json_obj = json.loads(res.text)
-        json_obj = json.loads(self.res)
+        res = ClovaSpeechClient().req_upload(file=save_path, completion='sync') #파일 업로드
+        json_obj = json.loads(res.text)
+        # json_obj = json.loads(self.res)
         
         #회의록 녹취록 전문 위한 result
         result = []
