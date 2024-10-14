@@ -12,7 +12,6 @@ def summarize_overall(text):
         num_beams=4, 
         max_length=256, 
         min_length=20, 
-        no_repeat_ngram_size=3, # 반복 방지
         early_stopping=True)
     summary = tokenizer.decode(summary_ids[0], skip_special_tokens=True)
     return summary
