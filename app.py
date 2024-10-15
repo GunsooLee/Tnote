@@ -403,7 +403,7 @@ def main_app():
                         client = ClovaSpeechClient()
                         try:    
                             df_origin = pd.DataFrame(np.array(client.getSttAllResultDf(save_path)))
-                            df_origin.columns =  ["화자", "원문"]                            
+                            df_origin.columns =  ["화자", "내용"]                            
                         except ValueError as e:
                             print(f"ClovaSpeechClient 오류 발생: {e}")
 
@@ -422,11 +422,11 @@ def main_app():
                                 return text                        
                         
                         # 맞춤법 교정 적용
-                        try:
-                            df_origin['내용'] = df_origin['원문'].apply(correct_spelling)
-                            st.session_state.df_origin = df_origin
-                        except KeyError as e:
-                            print(f"ClovaSpeechClient 데이터 없음: {e}")
+                        # try:
+                        #     df_origin['내용'] = df_origin['원문'].apply(correct_spelling)
+                        #     st.session_state.df_origin = df_origin
+                        # except KeyError as e:
+                        #     print(f"ClovaSpeechClient 데이터 없음: {e}")
                             
                         
                         
@@ -440,7 +440,7 @@ def main_app():
                                                                 
                         with st.expander("전체 STT 결과"):
                             show_progress(1)
-                            st.write(df_origin)
+                            st.dataframe(data=df_origin,width=None)
                         with st.expander("한국어 형태소 분석"):                    
                             show_progress(2)
                             df_origin['분석된 내용'] = df_origin['내용'].apply(okt_clean)
