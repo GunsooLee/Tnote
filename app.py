@@ -373,7 +373,16 @@ def main_app():
                         connection.commit()
                         connection.close()
 
-                        #st.success("데이터베이스에 commit 완료") # 디*-버깅 로그                  
+                        #st.success("데이터베이스에 commit 완료") # 디*-버깅 로그
+
+                        st.header("회의록 분석결과")
+
+                        total_steps = 8
+                        progress_bar = st.progress(0)
+
+                        # 텍스트와 이미지를 업데이트할 공간 확보
+                        text_placeholder = st.empty()
+                        image_placeholder = st.empty()
 
 
                         #st.success("데이터베이스에 데이터가 저장시도. :: tn_note_mst") # 디버깅 로그
@@ -607,7 +616,7 @@ def main_app():
         if 'grid_data' not in st.session_state:
             st.session_state.grid_data = None
 
-        if st.button("조회"):
+        if st.button("회의록 조회"):
             connection = connect_to_db()
             records = result_file_info_from_db(connection)
             connection.close()            
