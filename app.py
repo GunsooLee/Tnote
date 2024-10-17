@@ -53,9 +53,9 @@ if 'logged_in' not in st.session_state:
 
 def login():
     """로그인 함수"""
-    st.title("T-Note : tsis AI (login ver.)")
-    username = st.text_input("Login ID : tsis")
-    password = st.text_input("Password : 1 ", type="password")
+    st.title("T-Note : tsis AI 회의록작성")
+    username = st.text_input("Login ID")
+    password = st.text_input("Password", type="password")
 
     if st.button("로그인"):
         # 예시로 간단한 인증 로직 (실제 환경에서는 안전한 인증 방법 사용)
@@ -82,10 +82,10 @@ def main_app():
     font_path = r'/usr/share/fonts/truetype/nanum/NanumBarunGothic.ttf'
 
     # Streamlit 앱 제목
-    st.title("T-Note : tsis AI 회의록작성(로그인버전)")
+    st.title("T-Note : tsis AI 회의록작성")
 
-    with st.sidebar:
-        st.write("안녕하세요 tsis 님.")
+    #with st.sidebar:
+    #    st.write("안녕하세요 tsis 님.")
 
     # Pandas display 옵션 설정
     pd.set_option('display.max_columns', None)  # 모든 열 표시
