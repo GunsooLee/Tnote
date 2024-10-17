@@ -123,6 +123,8 @@ def main_app():
         text_placeholder.write(f"### {step_text}")  # 텍스트를 업데이트
 
         progress_bar.progress(step / total_steps)
+
+        time.sleep(1)
     # 단계별 프로그레스바와 텍스트, 이미지를 표시하는 함수
     def show_progress_with_image(total_steps):
 
@@ -400,6 +402,7 @@ def main_app():
                         st.session_state.file_info['save_path']=save_path
 
                         # 데이터프레임 입력 예시
+                        show_progress(1)
                         client = ClovaSpeechClient()
                         try:    
                             df_origin = pd.DataFrame(np.array(client.getSttAllResultDf(save_path)))
@@ -439,7 +442,7 @@ def main_app():
                         
                                                                 
                         with st.expander("전체 STT 결과"):
-                            show_progress(1)
+                            #show_progress(1)
                             st.dataframe(data=df_origin,width=None)
                         with st.expander("한국어 형태소 분석"):                    
                             show_progress(2)
