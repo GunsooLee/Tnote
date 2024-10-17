@@ -165,7 +165,7 @@ def main_app():
         # UUID 생성
         unique_id = uuid.uuid4()
 
-        st.success("uuid 호출 시도") # 디버깅 로그
+        #st.success("uuid 호출 시도") # 디버깅 로그
 
         # 새로운 파일명 생성
         new_filename = f"{unique_id}-{uploaded_file.name}"
@@ -360,14 +360,14 @@ def main_app():
                         st.session_state.process_check = True
                         # 파일 저장 및 정보 출력
                         file_name, file_size, save_path = save_file(uploaded_file, save_directory)
-                        st.write(f"업로드 파일명: {file_name}")
-                        st.write(f"파일 크기: {file_size / (1024 * 1024):.2f} MB")
-                        st.success(f"파일 {file_name}이 '{save_path}'에 저장되었습니다. [{file_size / (1024 * 1024):.2f} MB]")
+                        #st.write(f"업로드 파일명: {file_name}")
+                        #st.write(f"파일 크기: {file_size / (1024 * 1024):.2f} MB")
+                        #st.success(f"파일 {file_name}이 '{save_path}'에 저장되었습니다. [{file_size / (1024 * 1024):.2f} MB]")
 
                         # 데이터베이스에 정보 삽입
                         connection = connect_to_db()
                         rec_seq = insert_file_info_to_db(connection, file_name, file_size, save_path)
-                        st.success("데이터베이스에 데이터가 저장시도. :: tn_rec_file") # 디버깅 로그
+                        #st.success("데이터베이스에 데이터가 저장시도. :: tn_rec_file") # 디버깅 로그
 
 
                         connection.commit()
