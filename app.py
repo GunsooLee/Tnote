@@ -373,10 +373,10 @@ def main_app():
                         connection.commit()
                         connection.close()
 
-                        st.success("데이터베이스에 commit 완료") # 디*-버깅 로그                  
+                        #st.success("데이터베이스에 commit 완료") # 디*-버깅 로그                  
 
 
-                        st.success("데이터베이스에 데이터가 저장시도. :: tn_note_mst") # 디버깅 로그
+                        #st.success("데이터베이스에 데이터가 저장시도. :: tn_note_mst") # 디버깅 로그
                         # 확장 가능한 컨테이너에 결과 표시
                         with st.expander("회의 녹취록 업로드 결과 보기▼"):
                             st.divider() 
