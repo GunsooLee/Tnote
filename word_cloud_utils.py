@@ -5,7 +5,7 @@ from pecab import PeCab
 
 font_path = r'/usr/share/fonts/truetype/nanum/NanumBarunGothic.ttf'
 
-test_stopwords = ['하지만', '그리고', '그런데', '저는','제가',
+stopwords = ['하지만', '그리고', '그런데', '저는','제가',
              '그럼', '이런', '저런', '합니다',
              '많은', '많이', '정말', '너무', '수', '등', '것',
              '같습니다' , '좀' , '같아요' , '가' , '거']
@@ -18,7 +18,7 @@ def display_word_cloud(data, width=1200, height=500):
     word_cloud = WordCloud(font_path=font_path,
                           width=width,
                           height=height,
-                          stopwords=test_stopwords,
+                          stopwords=stopwords,
                           background_color="white",
                           random_state=42
                          ).generate(nouns)
@@ -26,4 +26,5 @@ def display_word_cloud(data, width=1200, height=500):
     plt.imshow(word_cloud, interpolation="bilinear")
     plt.axis("off")
 
-    st.pyplot(plt)
+    # st.pyplot(plt)
+    return plt

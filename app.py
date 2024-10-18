@@ -341,6 +341,9 @@ def main_app():
         # 저장할 경로 설정
         save_directory = "/home/tnote/backup_file/rec/"
         os.makedirs(save_directory, exist_ok=True)
+        
+        # STT 선언
+        client = ClovaSpeechClient()
 
         # 마스터 테이블에 저장할때 시퀀스 가져오는거 중복 내용 처리
         rec_seq=''
@@ -384,7 +387,6 @@ def main_app():
                         text_placeholder = st.empty()
                         image_placeholder = st.empty()
 
-
                         #st.success("데이터베이스에 데이터가 저장시도. :: tn_note_mst") # 디버깅 로그
                         # 확장 가능한 컨테이너에 결과 표시
                         with st.expander("회의 녹취록 업로드 결과 보기▼"):
@@ -402,9 +404,8 @@ def main_app():
                                 st.write(f"◆ 회의주제: T-LAB 주제정하기")
                                 st.write(f"◆ 회의요약: T-LAB 주제를 정해야해서 회의를 함.")
                             with col2:
-                                client = ClovaSpeechClient()
                                 # 이미지
-                                display_word_cloud(client.getSttOrigin(save_path))
+                                # st.pyplot(display_word_cloud(client.getSttOrigin(save_path)))
                                 st.image("https://static.streamlit.io/examples/dice.jpg", caption="Dice Image")
 
                         st.session_state.file_info['file_name']=file_name
@@ -413,7 +414,6 @@ def main_app():
 
                         # 데이터프레임 입력 예시
                         show_progress(1)
-                        client = ClovaSpeechClient()
                         try:    
                             df_origin = pd.DataFrame(np.array(client.getSttAllResultDf(save_path)))
                             df_origin.columns =  ["화자", "내용"]                            
