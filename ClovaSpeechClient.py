@@ -138,6 +138,16 @@ class ClovaSpeechClient:
         
         return stt_result
     
+    def getSttOrigin(self,sava_path):
+        
+        # res = ClovaSpeechClient().req_upload(file=save_path, completion='sync') #파일 업로드
+        # json_obj = json.loads(res.text)
+        json_obj = json.loads(self.res)
+        
+        result = json_obj.get("text")
+        
+        return result
+    
     def getSttAllResultDf(self,save_path):
         
         res = ClovaSpeechClient().req_upload(file=save_path, completion='sync') #파일 업로드

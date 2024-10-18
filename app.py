@@ -402,8 +402,9 @@ def main_app():
                                 st.write(f"◆ 회의주제: T-LAB 주제정하기")
                                 st.write(f"◆ 회의요약: T-LAB 주제를 정해야해서 회의를 함.")
                             with col2:
+                                client = ClovaSpeechClient()
                                 # 이미지
-                                #display_word_cloud(result)
+                                display_word_cloud(client.getSttOrigin(save_path))
                                 st.image("https://static.streamlit.io/examples/dice.jpg", caption="Dice Image")
 
                         st.session_state.file_info['file_name']=file_name
@@ -452,7 +453,7 @@ def main_app():
                                                                 
                         with st.expander("전체 STT 결과"):
                             #show_progress(1)
-                            st.dataframe(data=df_origin,width=None)
+                            st.dataframe(data=df_origin,use_container_width=True)
                         with st.expander("한국어 형태소 분석"):                    
                             show_progress(2)
                             df_origin['분석된 내용'] = df_origin['내용'].apply(okt_clean)
