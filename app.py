@@ -347,7 +347,6 @@ def main_app():
 
         # 마스터 테이블에 저장할때 시퀀스 가져오는거 중복 내용 처리
         rec_seq=''
-        st.write(f"{st.session_state.process_check}")
         # 한번이라도 프로세스가 실행되었는지 확인
         if not st.session_state.process_check:
             if uploaded_file is not None:
@@ -405,8 +404,8 @@ def main_app():
                                 st.write(f"◆ 회의요약: T-LAB 주제를 정해야해서 회의를 함.")
                             with col2:
                                 # 이미지
-                                # st.pyplot(display_word_cloud(client.getSttOrigin(save_path)))
-                                st.image("https://static.streamlit.io/examples/dice.jpg", caption="Dice Image")
+                                st.pyplot(display_word_cloud(client.getSttOrigin(save_path)))
+                                # st.image("https://static.streamlit.io/examples/dice.jpg", caption="Dice Image")
 
                         st.session_state.file_info['file_name']=file_name
                         st.session_state.file_info['file_size']=file_size
@@ -454,6 +453,7 @@ def main_app():
                         with st.expander("전체 STT 결과"):
                             #show_progress(1)
                             st.dataframe(data=df_origin,use_container_width=True)
+                            st.session_state.df_origin = df_origin
                         with st.expander("한국어 형태소 분석"):                    
                             show_progress(2)
                             df_origin['분석된 내용'] = df_origin['내용'].apply(okt_clean)
@@ -535,7 +535,6 @@ def main_app():
                                     except Exception as e:
                                         print(f"알 수 없는 오류 발생: {e}")    
         else:
-            st.write(f"{st.session_state.file_info}")
             # 세션 데이터 있는경우
             with st.expander("회의 녹취록 업로드 결과 보기▼"):
                 st.divider() 
@@ -553,9 +552,10 @@ def main_app():
                     st.write(f"◆ 회의요약: T-LAB 주제를 정해야해서 회의를 함.")
                 with col2:
                     # 이미지
-                    #display_word_cloud(result)
-                    st.image("https://static.streamlit.io/examples/dice.jpg", caption="Dice Image")           
-            
+                    st.pyplot(display_word_cloud(client.getSttOrigin(save_path)))
+                    # st.image("https://static.streamlit.io/examples/dice.jpg", caption="Dice Image")           
+            # placeholder 생성
+                placeholder_1 = st.empty()
             # 전체 회의 제목과 요약을 회의록생성시 가져오기위한 변수
                 to_title =''
                 to_overall_summary=''    
@@ -564,8 +564,8 @@ def main_app():
                 placeholder = st.empty()
                 
                                                         
-                with st.expander("전체 STT 결과"):                        
-                    st.write(st.session_state.df_origin)
+                with st.expander("전체 STT 결과"):    
+                    st.dataframe(data=st.session_state.df_origin,use_container_width=True)        
                 with st.expander("한국어 형태소 분석"):
                     st.write(st.session_state.df_origin_analyze)
                 with st.expander("단어 벡터화"):
@@ -587,7 +587,7 @@ def main_app():
                             
                     
                 # 회의록 다운로드 추가
-                with placeholder.expander("회의록 다운로드 보기▼"):
+                with placeholder_1.expander("회의록 다운로드 보기▼"):
                     # 파일 다운로드 버튼 생성
                     if st.session_state.file_generated:
                         if os.path.exists(down_file_path):
@@ -608,7 +608,6 @@ def main_app():
                             except Exception as e:
                                 print(f"알 수 없는 오류 발생: {e}") 
 
-    st.write(f"{st.session_state.process_check}")
     # 두번째 탭: 조회
     with tabs[1]:
         st.header("회의녹취록 조회")
