@@ -362,6 +362,9 @@ def main_app():
                         st.session_state.process_check = True
                         # 파일 저장 및 정보 출력
                         file_name, file_size, save_path = save_file(uploaded_file, save_directory)
+                        st.session_state.file_info['file_name']=file_name
+                        st.session_state.file_info['file_size']=file_size
+                        st.session_state.file_info['save_path']=save_path
                         #st.write(f"업로드 파일명: {file_name}")
                         #st.write(f"파일 크기: {file_size / (1024 * 1024):.2f} MB")
                         #st.success(f"파일 {file_name}이 '{save_path}'에 저장되었습니다. [{file_size / (1024 * 1024):.2f} MB]")
@@ -387,29 +390,8 @@ def main_app():
                         image_placeholder = st.empty()
 
                         #st.success("데이터베이스에 데이터가 저장시도. :: tn_note_mst") # 디버깅 로그
-                        # 확장 가능한 컨테이너에 결과 표시
-                        with st.expander("회의 녹취록 업로드 결과 보기▼"):
-                            st.divider() 
-                            st.write(f"◆ 파일명: {file_name}")
-                            st.write(f"◆ 파일 크기: {file_size / (1024 * 1024):.2f} MB")
-                            st.write(f"◆ 저장 경로: {save_path}")
-                            st.divider() 
-                            col1, col2 = st.columns(2)
-                            with col1:
-                                st.write(f"◆ 회의제목: {name_topic}")
-                                st.write(f"◆ 회의참여인원: {num_spk}")
-                                st.write(f"◆ 회의날짜: {mt_date}")
-                                st.write(f"◆ 회의진행시간: {mt_term}")
-                                st.write(f"◆ 회의주제: T-LAB 주제정하기")
-                                st.write(f"◆ 회의요약: T-LAB 주제를 정해야해서 회의를 함.")
-                            with col2:
-                                # 이미지
-                                st.pyplot(display_word_cloud(client.getSttOrigin(save_path)))
-                                # st.image("https://static.streamlit.io/examples/dice.jpg", caption="Dice Image")
+                        
 
-                        st.session_state.file_info['file_name']=file_name
-                        st.session_state.file_info['file_size']=file_size
-                        st.session_state.file_info['save_path']=save_path
 
                         # 데이터프레임 입력 예시
                         show_progress(1)
