@@ -582,10 +582,6 @@ def main_app():
             to_title =''
             to_overall_summary=''    
             
-            # placeholder 생성
-            placeholder = st.empty()
-                
-                                                        
             with st.expander("전체 STT 결과"):    
                 st.dataframe(data=st.session_state.df_origin,use_container_width=True)        
             with st.expander("한국어 형태소 분석"):
