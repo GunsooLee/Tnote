@@ -486,10 +486,16 @@ def main_app():
                         with st.expander("화자별 감정 분석"):
                             if st.session_state.analyze_emotion_by_speaker is None:
                                 show_progress(8)
-                                speaker_emotions = analyze_emotion_by_speaker(df_origin)
-                                for speaker, emotions in speaker_emotions.items():
-                                    st.write(f"{speaker}: {emotions}")
-                                st.session_state.analyze_emotion_by_speaker = speaker_emotions
+                                labels, scores = analyze_emotion_by_speaker(df_origin)
+                                spdf_viz = pd.DataFrame({'화자': labels, '감정 신뢰도': scores})
+                                # 감정 예측 결과를 시각화 (Matplotlib 사용)
+                                fig, ax = plt.subplots()
+                                ax.bar(df_viz['화자'], df_viz['감정 신뢰도'], color='skyblue')
+                                ax.set_xlabel('화자')
+                                ax.set_ylabel('감정 신뢰도')
+                                ax.set_title('화자별 감정 신뢰도')
+                                st.pyplot(fig)
+                                st.session_state.analyze_emotion_by_speaker = fig
                                 # 프로세스 종료시 파일다운로드 추가
                                 down_file_path = make_docx(name_topic,meeting_room,mt_date.strftime("%Y-%m-%d"),st.session_state['username'],speakers, to_title, to_overall_summary)
 
@@ -582,8 +588,7 @@ def main_app():
                 for speaker, summary in st.session_state.summarize_by_speaker.items():
                     st.write(f"{speaker}: {summary}")
             with st.expander("화자별 감정 분석"):
-                for speaker, emotions in st.session_state.analyze_emotion_by_speaker.items():
-                    st.write(f"{speaker}: {emotions}")
+                st.pyplot(st.session_state.analyze_emotion_by_speaker)
                         
                 
             # 회의록 다운로드 추가
