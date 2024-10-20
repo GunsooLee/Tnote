@@ -512,7 +512,28 @@ def main_app():
                                 st.session_state.analyze_emotion_by_speaker = speaker_emotions
                                 # 프로세스 종료시 파일다운로드 추가
                                 down_file_path = make_docx(name_topic,meeting_room,mt_date.strftime("%Y-%m-%d"),st.session_state['username'],speakers, to_title, to_overall_summary)
-                            
+
+                        #st.success("데이터베이스에 데이터가 저장시도. :: tn_note_mst") # 디버깅 로그
+                        # 확장 가능한 컨테이너에 결과 표시
+                        with result_placeholder.expander("회의 녹취록 업로드 결과 보기▼"):
+                            st.divider() 
+                            st.write(f"◆ 파일명: {file_name}")
+                            st.write(f"◆ 파일 크기: {file_size / (1024 * 1024):.2f} MB")
+                            st.write(f"◆ 저장 경로: {save_path}")
+                            st.divider() 
+                            col1, col2 = st.columns(2)
+                            with col1:
+                                st.write(f"◆ 회의제목: {name_topic}")
+                                st.write(f"◆ 회의참여인원: {num_spk}")
+                                st.write(f"◆ 회의날짜: {mt_date}")
+                                st.write(f"◆ 회의진행시간: {mt_term}")
+                                st.write(f"◆ 회의주제: {to_title}")
+                                st.write(f"◆ 회의요약: {to_overall_summary}")
+                            with col2:
+                                # 이미지
+                                # st.pyplot(display_word_cloud(client.getSttOrigin(save_path)))
+                                st.image("https://static.streamlit.io/examples/dice.jpg", caption="Dice Image")
+                                
                         # 회의록 다운로드 추가
                         with placeholder.expander("회의록 다운로드 보기▼"):
                             # 파일 다운로드 버튼 생성
@@ -548,8 +569,8 @@ def main_app():
                     st.write(f"◆ 회의참여인원: {st.session_state.info.get('num_spk')}")
                     st.write(f"◆ 회의날짜: {st.session_state.info.get('mt_date')}")
                     st.write(f"◆ 회의진행시간: {st.session_state.info.get('mt_term')}")
-                    st.write(f"◆ 회의주제: T-LAB 주제정하기")
-                    st.write(f"◆ 회의요약: T-LAB 주제를 정해야해서 회의를 함.")
+                    st.write(f"◆ 회의주제: {st.session_state.summarize_title}")
+                    st.write(f"◆ 회의요약: {st.session_state.summarize_overall}")
                 with col2:
                     # 이미지
                     st.pyplot(display_word_cloud(client.getSttOrigin(save_path)))
@@ -557,11 +578,11 @@ def main_app():
             # placeholder 생성
                 placeholder_1 = st.empty()
             # 전체 회의 제목과 요약을 회의록생성시 가져오기위한 변수
-                to_title =''
-                to_overall_summary=''    
-                
-                # placeholder 생성
-                placeholder = st.empty()
+            to_title =''
+            to_overall_summary=''    
+            
+            # placeholder 생성
+            placeholder = st.empty()
                 
                                                         
                 with st.expander("전체 STT 결과"):    
