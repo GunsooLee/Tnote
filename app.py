@@ -362,9 +362,6 @@ def main_app():
                         st.session_state.process_check = True
                         # 파일 저장 및 정보 출력
                         file_name, file_size, save_path = save_file(uploaded_file, save_directory)
-                        st.session_state.file_info['file_name']=file_name
-                        st.session_state.file_info['file_size']=file_size
-                        st.session_state.file_info['save_path']=save_path
                         #st.write(f"업로드 파일명: {file_name}")
                         #st.write(f"파일 크기: {file_size / (1024 * 1024):.2f} MB")
                         #st.success(f"파일 {file_name}이 '{save_path}'에 저장되었습니다. [{file_size / (1024 * 1024):.2f} MB]")
@@ -503,7 +500,10 @@ def main_app():
                             st.write(f"◆ 파일명: {file_name}")
                             st.write(f"◆ 파일 크기: {file_size / (1024 * 1024):.2f} MB")
                             st.write(f"◆ 저장 경로: {save_path}")
-                            st.divider() 
+                            st.session_state.file_info['file_name']=file_name
+                            st.session_state.file_info['file_size']=file_size
+                            st.session_state.file_info['save_path']=save_path   
+                            st.divider()                             
                             col1, col2 = st.columns(2)
                             with col1:
                                 st.write(f"◆ 회의제목: {name_topic}")
@@ -516,7 +516,7 @@ def main_app():
                                 # 이미지
                                 # st.pyplot(display_word_cloud(client.getSttOrigin(save_path)))
                                 st.image("https://static.streamlit.io/examples/dice.jpg", caption="Dice Image")
-                                
+
                         # 회의록 다운로드 추가
                         with placeholder.expander("회의록 다운로드 보기▼"):
                             # 파일 다운로드 버튼 생성
@@ -556,7 +556,7 @@ def main_app():
                     st.write(f"◆ 회의요약: {st.session_state.summarize_overall}")
                 with col2:
                     # 이미지
-                    st.pyplot(display_word_cloud(client.getSttOrigin(save_path)))
+                    st.pyplot(display_word_cloud(client.getSttOrigin(st.session_state.file_info.get('save_path'))))
                     # st.image("https://static.streamlit.io/examples/dice.jpg", caption="Dice Image")           
             # placeholder 생성
                 placeholder_1 = st.empty()
