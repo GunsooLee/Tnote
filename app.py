@@ -387,26 +387,7 @@ def main_app():
                         text_placeholder = st.empty()
                         image_placeholder = st.empty()
 
-                        #st.success("데이터베이스에 데이터가 저장시도. :: tn_note_mst") # 디버깅 로그
-                        # 확장 가능한 컨테이너에 결과 표시
-                        with st.expander("회의 녹취록 업로드 결과 보기▼"):
-                            st.divider() 
-                            st.write(f"◆ 파일명: {file_name}")
-                            st.write(f"◆ 파일 크기: {file_size / (1024 * 1024):.2f} MB")
-                            st.write(f"◆ 저장 경로: {save_path}")
-                            st.divider() 
-                            col1, col2 = st.columns(2)
-                            with col1:
-                                st.write(f"◆ 회의제목: {name_topic}")
-                                st.write(f"◆ 회의참여인원: {num_spk}")
-                                st.write(f"◆ 회의날짜: {mt_date}")
-                                st.write(f"◆ 회의진행시간: {mt_term}")
-                                st.write(f"◆ 회의주제: T-LAB 주제정하기")
-                                st.write(f"◆ 회의요약: T-LAB 주제를 정해야해서 회의를 함.")
-                            with col2:
-                                # 이미지
-                                # st.pyplot(display_word_cloud(client.getSttOrigin(save_path)))
-                                st.image("https://static.streamlit.io/examples/dice.jpg", caption="Dice Image")
+                        result_placeholder = st.empty()
 
                         st.session_state.file_info['file_name']=file_name
                         st.session_state.file_info['file_size']=file_size
@@ -454,6 +435,7 @@ def main_app():
                         with st.expander("전체 STT 결과"):
                             #show_progress(1)
                             st.dataframe(data=df_origin,use_container_width=True)
+                            st.session_state.df_origin = df_origin
                         with st.expander("한국어 형태소 분석"):                    
                             show_progress(2)
                             df_origin['분석된 내용'] = df_origin['내용'].apply(okt_clean)
@@ -512,7 +494,28 @@ def main_app():
                                 st.session_state.analyze_emotion_by_speaker = speaker_emotions
                                 # 프로세스 종료시 파일다운로드 추가
                                 down_file_path = make_docx(name_topic,meeting_room,mt_date.strftime("%Y-%m-%d"),st.session_state['username'],speakers, to_title, to_overall_summary)
-                            
+
+                        #st.success("데이터베이스에 데이터가 저장시도. :: tn_note_mst") # 디버깅 로그
+                        # 확장 가능한 컨테이너에 결과 표시
+                        with result_placeholder.expander("회의 녹취록 업로드 결과 보기▼"):
+                            st.divider() 
+                            st.write(f"◆ 파일명: {file_name}")
+                            st.write(f"◆ 파일 크기: {file_size / (1024 * 1024):.2f} MB")
+                            st.write(f"◆ 저장 경로: {save_path}")
+                            st.divider() 
+                            col1, col2 = st.columns(2)
+                            with col1:
+                                st.write(f"◆ 회의제목: {name_topic}")
+                                st.write(f"◆ 회의참여인원: {num_spk}")
+                                st.write(f"◆ 회의날짜: {mt_date}")
+                                st.write(f"◆ 회의진행시간: {mt_term}")
+                                st.write(f"◆ 회의주제: {to_title}")
+                                st.write(f"◆ 회의요약: {to_overall_summary}")
+                            with col2:
+                                # 이미지
+                                # st.pyplot(display_word_cloud(client.getSttOrigin(save_path)))
+                                st.image("https://static.streamlit.io/examples/dice.jpg", caption="Dice Image")
+                                
                         # 회의록 다운로드 추가
                         with placeholder.expander("회의록 다운로드 보기▼"):
                             # 파일 다운로드 버튼 생성
@@ -549,64 +552,42 @@ def main_app():
                     st.write(f"◆ 회의참여인원: {st.session_state.info.get('num_spk')}")
                     st.write(f"◆ 회의날짜: {st.session_state.info.get('mt_date')}")
                     st.write(f"◆ 회의진행시간: {st.session_state.info.get('mt_term')}")
-                    st.write(f"◆ 회의주제: T-LAB 주제정하기")
-                    st.write(f"◆ 회의요약: T-LAB 주제를 정해야해서 회의를 함.")
+                    st.write(f"◆ 회의주제: {st.session_state.summarize_title}")
+                    st.write(f"◆ 회의요약: {st.session_state.summarize_overall}")
                 with col2:
                     # 이미지
                     #display_word_cloud(result)
                     st.image("https://static.streamlit.io/examples/dice.jpg", caption="Dice Image")           
             
             # 전체 회의 제목과 요약을 회의록생성시 가져오기위한 변수
-                to_title =''
-                to_overall_summary=''    
-                
-                # placeholder 생성
-                placeholder = st.empty()
+            to_title =''
+            to_overall_summary=''    
+            
+            # placeholder 생성
+            placeholder = st.empty()
                 
                                                         
-                with st.expander("전체 STT 결과"):                        
-                    st.write(st.session_state.df_origin)
-                with st.expander("한국어 형태소 분석"):
-                    st.write(st.session_state.df_origin_analyze)
-                with st.expander("단어 벡터화"):
-                    st.pyplot(st.session_state.plot_tfidf_matrix)
-                with st.expander("토픽 모델링"):
-                    st.pyplot(st.session_state.plot_lda_topic)                            
-                with st.expander("군집화"):
-                    st.pyplot(st.session_state.plot_kmeans_clusters)
-                with st.expander("전체 회의 제목"):
-                    st.write(st.session_state.summarize_title)
-                with st.expander("전체 회의 요약"):
-                    st.write(st.session_state.summarize_overall)
-                with st.expander("화자별 요약"):
-                    for speaker, summary in st.session_state.summarize_by_speaker.items():
-                        st.write(f"{speaker}: {summary}")
-                with st.expander("화자별 감정 분석"):
-                    for speaker, emotions in st.session_state.analyze_emotion_by_speaker.items():
-                        st.write(f"{speaker}: {emotions}")
-                            
-                    
-                # 회의록 다운로드 추가
-                with placeholder.expander("회의록 다운로드 보기▼"):
-                    # 파일 다운로드 버튼 생성
-                    if st.session_state.file_generated:
-                        if os.path.exists(down_file_path):
-                            # 파일 다운로드 버튼 생성
-                            st.text(down_file_path)
-                            try:
-                                with open(down_file_path, 'rb') as file:
-                                    st.download_button(
-                                        label="회의록 파일 다운로드",
-                                        data=file,
-                                        file_name=down_file_path.split('\\')[-1],
-                                        mime='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-                                    )
-                            except FileNotFoundError as e:
-                                print(f"파일을 열 수 없습니다: {e}")
-                            except PermissionError as e:
-                                print(f"파일 접근 권한이 없습니다: {e}")
-                            except Exception as e:
-                                print(f"알 수 없는 오류 발생: {e}") 
+            with st.expander("전체 STT 결과"):                        
+                st.write(st.session_state.df_origin)
+            with st.expander("한국어 형태소 분석"):
+                st.write(st.session_state.df_origin_analyze)
+            with st.expander("단어 벡터화"):
+                st.pyplot(st.session_state.plot_tfidf_matrix)
+            with st.expander("토픽 모델링"):
+                st.pyplot(st.session_state.plot_lda_topics)                            
+            with st.expander("군집화"):
+                st.pyplot(st.session_state.plot_kmeans_clusters)
+            with st.expander("전체 회의 제목"):
+                st.write(st.session_state.summarize_title)
+            with st.expander("전체 회의 요약"):
+                st.write(st.session_state.summarize_overall)
+            with st.expander("화자별 요약"):
+                for speaker, summary in st.session_state.summarize_by_speaker.items():
+                    st.write(f"{speaker}: {summary}")
+            with st.expander("화자별 감정 분석"):
+                for speaker, emotions in st.session_state.analyze_emotion_by_speaker.items():
+                    st.write(f"{speaker}: {emotions}")
+
 
     st.write(f"{st.session_state.process_check}")
     # 두번째 탭: 조회
