@@ -497,7 +497,7 @@ def main_app():
                                 st.pyplot(fig)
                                 st.session_state.analyze_emotion_by_speaker = fig
                                 # 프로세스 종료시 파일다운로드 추가
-                                down_file_path = make_docx(name_topic,meeting_room,mt_date.strftime("%Y-%m-%d"),st.session_state['username'],speakers, to_title, to_overall_summary)
+                                down_file_path = make_docx(name_topic,meeting_room,mt_date.strftime("%Y-%m-%d"),st.session_state['username'],speakers, to_title, to_overall_summary, st.session_state.info['mt_term'])
 
                         #st.success("데이터베이스에 데이터가 저장시도. :: tn_note_mst") # 디버깅 로그
                         # 확장 가능한 컨테이너에 결과 표시
