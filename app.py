@@ -279,7 +279,7 @@ def main_app():
     if 'summarize_by_speaker' not in st.session_state:
         st.session_state.summarize_by_speaker = None
     if 'analyze_emotion_by_speaker' not in st.session_state:
-        st.session_state.analyze_emotion_by_speaker = 
+        st.session_state.analyze_emotion_by_speaker = None
     if 'stt_text' not in st.session_state:
         st.session_state.stt_text = None
 
