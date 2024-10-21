@@ -37,8 +37,7 @@ def create_meeting_minutes(title, meeting_room, date, writer, attendees, subject
     p.add_run('\n')
     # 회의 참석자
     p.add_run('참석자 : ').bold=True
-    for i, name in enumerate(attendees):
-        p.add_run(", ".join(attendees))
+    p.add_run(", ".join(attendees))
     
     p.add_run('\n')
     # 회의 작성자
