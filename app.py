@@ -282,7 +282,9 @@ def main_app():
         st.session_state.analyze_emotion_by_speaker = None
     if 'stt_text' not in st.session_state:
         st.session_state.stt_text = None
-
+    if 'file_down_path' not in st.session_state:
+        st.session_state.file_down_path = None
+        
     tabs = st.tabs(["📄 회의녹취록 업로드", "회의녹취록 조회"])
 
     # 첫번째 탭: 업로드
@@ -464,7 +466,7 @@ def main_app():
                                 print_date = plot_kmeans_clusters(kmeans_model, tfidf_matrix)
                                 st.pyplot(print_date)
                                 st.session_state.plot_kmeans_clusters = print_date
-                        with st.expander("전체 회의 제목"):
+                        with st.expander("전체 회의 주제"):
                             if st.session_state.summarize_title is None:
                                 show_progress(5)
                                 combined_text = df_origin.apply(lambda row: f"{row['화자']}] {row['내용']}", axis=1).str.cat(sep='\n')
@@ -501,11 +503,12 @@ def main_app():
                                 st.session_state.analyze_emotion_by_speaker = fig
                                 # 프로세스 종료시 파일다운로드 추가
                                 down_file_path = make_docx(name_topic,meeting_room,mt_date.strftime("%Y-%m-%d"),st.session_state['username'],speakers, to_title, to_overall_summary, st.session_state.info['mt_term'])
-
+                                st.session_state.file_down_path = down_file_path
+                                
                         show_progress(9)
                         #st.success("데이터베이스에 데이터가 저장시도. :: tn_note_mst") # 디버깅 로그
                         # 확장 가능한 컨테이너에 결과 표시
-                        with st.expander("회의 녹취록 업로드 결과 보기▼"):
+                        with result_placeholder.expander("회의 녹취록 업로드 결과 보기▼"):
                             st.divider() 
                             st.write(f"◆ 파일명: {file_name}")
                             st.write(f"◆ 파일 크기: {file_size / (1024 * 1024):.2f} MB")
@@ -570,8 +573,28 @@ def main_app():
                     # 이미지
                     st.pyplot(st.session_state.stt_text)
                     # st.image("https://static.streamlit.io/examples/dice.jpg", caption="Dice Image")           
-            # placeholder 생성
-            placeholder_1 = st.empty()
+            # 회의록 다운로드 추가
+            with st.expander("회의록 다운로드 보기▼"):
+                # 파일 다운로드 버튼 생성
+                if st.session_state.file_generated:
+                    if os.path.exists(st.session_state.file_down_path):
+                        # 파일 다운로드 버튼 생성
+                        st.text(st.session_state.file_down_path)
+                        try:
+                            with open(st.session_state.file_down_path, 'rb') as file:
+                                st.download_button(
+                                    label="회의록 파일 다운로드",
+                                    data=file,
+                                    file_name=st.session_state.file_down_path.split('\\')[-1],
+                                    mime='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                                )
+                        except FileNotFoundError as e:
+                            print(f"파일을 열 수 없습니다: {e}")
+                        except PermissionError as e:
+                            print(f"파일 접근 권한이 없습니다: {e}")
+                        except Exception as e:
+                            print(f"알 수 없는 오류 발생: {e}") 
+                            
             # 전체 회의 제목과 요약을 회의록생성시 가져오기위한 변수
             to_title =''
             to_overall_summary=''    
@@ -586,7 +609,7 @@ def main_app():
                 st.pyplot(st.session_state.plot_lda_topics)                            
             with st.expander("군집화"):
                 st.pyplot(st.session_state.plot_kmeans_clusters)
-            with st.expander("전체 회의 제목"):
+            with st.expander("전체 회의 주제"):
                 st.write(st.session_state.summarize_title)
             with st.expander("전체 회의 요약"):
                 st.write(st.session_state.summarize_overall)
@@ -597,27 +620,7 @@ def main_app():
                 st.pyplot(st.session_state.analyze_emotion_by_speaker)
                         
                 
-            # 회의록 다운로드 추가
-            with placeholder_1.expander("회의록 다운로드 보기▼"):
-                # 파일 다운로드 버튼 생성
-                if st.session_state.file_generated:
-                    if os.path.exists(down_file_path):
-                        # 파일 다운로드 버튼 생성
-                        st.text(down_file_path)
-                        try:
-                            with open(down_file_path, 'rb') as file:
-                                st.download_button(
-                                    label="회의록 파일 다운로드",
-                                    data=file,
-                                    file_name=down_file_path.split('\\')[-1],
-                                    mime='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-                                )
-                        except FileNotFoundError as e:
-                            print(f"파일을 열 수 없습니다: {e}")
-                        except PermissionError as e:
-                            print(f"파일 접근 권한이 없습니다: {e}")
-                        except Exception as e:
-                            print(f"알 수 없는 오류 발생: {e}") 
+            
 
     # 두번째 탭: 조회
     with tabs[1]:
