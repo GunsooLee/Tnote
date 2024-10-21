@@ -1,7 +1,7 @@
 from transformers import pipeline
 
 # 감정 분석 모델 로드
-sentiment_pipeline = pipeline("sentiment-analysis", model="nlptown/bert-base-multilingual-uncased-sentiment")
+sentiment_pipeline = pipeline("sentiment-analysis", model="nlptown/bert-base-multilingual-uncased-sentiment", max_length=512, truncation=True))
 
 # 화자별 감정 분석 함수
 def analyze_emotion_by_speaker(df):

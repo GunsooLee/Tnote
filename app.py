@@ -487,7 +487,7 @@ def main_app():
                             if st.session_state.analyze_emotion_by_speaker is None:
                                 show_progress(8)
                                 labels, scores = analyze_emotion_by_speaker(df_origin)
-                                spdf_viz = pd.DataFrame({'화자': labels, '감정 신뢰도': scores})
+                                df_viz = pd.DataFrame({'화자': labels, '감정 신뢰도': scores})
                                 # 감정 예측 결과를 시각화 (Matplotlib 사용)
                                 fig, ax = plt.subplots()
                                 ax.bar(df_viz['화자'], df_viz['감정 신뢰도'], color='skyblue')
