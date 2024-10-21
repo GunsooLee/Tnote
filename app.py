@@ -501,7 +501,7 @@ def main_app():
 
                         #st.success("데이터베이스에 데이터가 저장시도. :: tn_note_mst") # 디버깅 로그
                         # 확장 가능한 컨테이너에 결과 표시
-                        with result_placeholder.expander("회의 녹취록 업로드 결과 보기▼"):
+                        with st.expander("회의 녹취록 업로드 결과 보기▼"):
                             st.divider() 
                             st.write(f"◆ 파일명: {file_name}")
                             st.write(f"◆ 파일 크기: {file_size / (1024 * 1024):.2f} MB")
