@@ -237,7 +237,6 @@ def main_app():
             topic,
             room,  
             mt_date.strftime("%Y-%m-%d"),
-            st.session_state['username'], # 임시로 고정, 실제 내용으로 대체
             username, # 임시로 고정, 실제 내용으로 대체
             speakers.splitlines(),
             title,   # 임시로 고정, 실제 내용으로 대체
