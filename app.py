@@ -234,13 +234,13 @@ def main_app():
         date = datetime.now().strftime('%Y%m%d_%H%M%S')
         file_name = f"회의록_{date}"
         retrun_filesize, return_filepath = create_meeting_minutes(
-            name_topic,
-            meeting_room,  
+            topic,
+            room,  
             mt_date.strftime("%Y-%m-%d"),
-            st.session_state['username'], # 임시로 고정, 실제 내용으로 대체
+            username, # 임시로 고정, 실제 내용으로 대체
             speakers.splitlines(),
-            to_title,   # 임시로 고정, 실제 내용으로 대체
-            to_overall_summary,  # 임시로 고정, 실제 내용으로 대체
+            title,   # 임시로 고정, 실제 내용으로 대체
+            summary,  # 임시로 고정, 실제 내용으로 대체
             meet_time,
             file_name
         )
