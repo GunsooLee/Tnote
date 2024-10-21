@@ -472,7 +472,7 @@ def main_app():
                         with st.expander("전체 회의 요약"):
                             if st.session_state.summarize_overall is None:
                                 show_progress(6)
-                                overall_summary = summarize_overall(combined_text)
+                                overall_summary = summarize_overall(df_origin.apply(lambda row: f"{row['화자']}] {row['분석된 내용']}", axis=1).str.cat(sep='\n'))
                                 to_overall_summary = overall_summary
                                 st.write(overall_summary)
                                 st.session_state.summarize_overall = overall_summary
