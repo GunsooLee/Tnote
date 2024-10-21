@@ -4,7 +4,7 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from datetime import datetime
 import os
 
-def create_meeting_minutes(title, meeting_room, date, writer, attendees, subject, contents, file_name='Tnote_'+datetime.now().strftime('%Y%m%d_%H%M%S')):
+def create_meeting_minutes(title, meeting_room, date, writer, attendees, subject, contents, meeting_time, file_name='Tnote_'+datetime.now().strftime('%Y%m%d_%H%M%S')):
     """_summary_
     Args:
         title (string): 회의록 문서 제목
@@ -31,6 +31,10 @@ def create_meeting_minutes(title, meeting_room, date, writer, attendees, subject
     p.add_run('일시 : ').bold=True
     p.add_run(date)
     p.add_run('\n')
+    p.add_run('회의 시간 : ').bold=True
+    p.add_run(meeting_time)
+    p.add_run('\n')
+    
     # 회의 장소
     p.add_run('장소 : ').bold=True
     p.add_run(meeting_room)

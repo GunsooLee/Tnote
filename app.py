@@ -97,21 +97,21 @@ def main_app():
     # 로딩바 : 단계별 정보를 반환하는 함수
     def progress_steps(step):
         if step == 1:
-            return "        1/8 단계: STT 적용 중......."
+            return "        1/9 단계: STT 적용 중......."
         elif step == 2:
-            return "        2/8 단계: 형태소 분석 중......."
+            return "        2/9 단계: 형태소 분석 중......."
         elif step == 3:
-            return "        3/8 단계: 단어 벡터화......."
+            return "        3/9 단계: 단어 벡터화......."
         elif step == 4:
-            return "        4/8 단계: 토픽 모델링/군집화......."
+            return "        4/9 단계: 토픽 모델링/군집화......."
         elif step == 5:
-            return "        5/8 단계: 주제 선정 중......."
+            return "        5/9 단계: 주제 선정 중......."
         elif step == 6:
-            return "        6/8 단계: 전체 회의 요약......."
+            return "        6/9 단계: 전체 회의 요약......."
         elif step == 7:
-            return "        7/8 단계: 화자별 요약......."
+            return "        7/9 단계: 화자별 요약......."
         elif step == 8:
-            return "        8/8 단계: 화자별 감정분석......."
+            return "        8/9 단계: 화자별 감정분석......."
         elif step == 9:
             return "        회의록 작성 완료"
 
@@ -229,7 +229,7 @@ def main_app():
         records = cursor.fetchall()
         return records
 
-    def make_docx(topic, room, date_ymd, username, speakers, title, summary):
+    def make_docx(topic, room, date_ymd, username, speakers, title, summary, meet_time):
         #회의록 생성 로직 
         date = datetime.now().strftime('%Y%m%d_%H%M%S')
         file_name = f"회의록_{date}"
@@ -241,6 +241,7 @@ def main_app():
             speakers.splitlines(),
             to_title,   # 임시로 고정, 실제 내용으로 대체
             to_overall_summary,  # 임시로 고정, 실제 내용으로 대체
+            meet_time,
             file_name
         )
         st.session_state.file_generated = True  # 파일 생성 완료 표시
@@ -326,7 +327,7 @@ def main_app():
                 speakers = st.text_area("참석자 이름을 엔터로 구분하여 입력하세요",value=st.session_state.info.get('speakers'))
                 
             
-        total_steps = 8
+        total_steps = 9
         
         progress_bar = st.progress(0)
 
@@ -474,7 +475,7 @@ def main_app():
                         with st.expander("전체 회의 요약"):
                             if st.session_state.summarize_overall is None:
                                 show_progress(6)
-                                overall_summary = summarize_overall(combined_text)
+                                overall_summary = summarize_overall(df_origin.apply(lambda row: f"{row['화자']}] {row['분석된 내용']}", axis=1).str.cat(sep='\n'))
                                 to_overall_summary = overall_summary
                                 st.write(overall_summary)
                                 st.session_state.summarize_overall = overall_summary
@@ -499,8 +500,9 @@ def main_app():
                                 st.pyplot(fig)
                                 st.session_state.analyze_emotion_by_speaker = fig
                                 # 프로세스 종료시 파일다운로드 추가
-                                down_file_path = make_docx(name_topic,meeting_room,mt_date.strftime("%Y-%m-%d"),st.session_state['username'],speakers, to_title, to_overall_summary)
+                                down_file_path = make_docx(name_topic,meeting_room,mt_date.strftime("%Y-%m-%d"),st.session_state['username'],speakers, to_title, to_overall_summary, st.session_state.info['mt_term'])
 
+                        show_progress(9)
                         #st.success("데이터베이스에 데이터가 저장시도. :: tn_note_mst") # 디버깅 로그
                         # 확장 가능한 컨테이너에 결과 표시
                         with st.expander("회의 녹취록 업로드 결과 보기▼"):
