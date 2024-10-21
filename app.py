@@ -562,8 +562,8 @@ def main_app():
                     st.write(f"◆ 회의요약: {st.session_state.summarize_overall}")
                 with col2:
                     # 이미지
-                    st.pyplot(display_word_cloud(client.getSttOrigin(st.session_state.file_info.get('save_path'))))
-                    # st.image("https://static.streamlit.io/examples/dice.jpg", caption="Dice Image")           
+                    # st.pyplot(display_word_cloud(client.getSttOrigin(st.session_state.file_info.get('save_path'))))
+                    st.image("https://static.streamlit.io/examples/dice.jpg", caption="Dice Image")           
             # placeholder 생성
                 placeholder_1 = st.empty()
             # 전체 회의 제목과 요약을 회의록생성시 가져오기위한 변수
