@@ -32,7 +32,7 @@ def create_meeting_minutes(title, meeting_room, date, writer, attendees, subject
     p.add_run(date)
     p.add_run('\n')
     p.add_run('회의 시간 : ').bold=True
-    p.add_run(meeting_time
+    p.add_run(meeting_time)
     p.add_run('\n')
     
     # 회의 장소
