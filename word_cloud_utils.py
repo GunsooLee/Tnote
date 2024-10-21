@@ -25,6 +25,7 @@ def display_word_cloud(data, width=1200, height=500):
     plt.figure()
     plt.imshow(word_cloud, interpolation="bilinear")
     plt.axis("off")
+    plt.show()
 
     # st.pyplot(plt)
     return plt
