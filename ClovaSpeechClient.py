@@ -144,7 +144,7 @@ class ClovaSpeechClient:
         json_obj = json.loads(res.text)
         # json_obj = json.loads(self.res)
         
-        result = json_obj.get("text")
+        result = json_obj['text']
         
         return result
     
