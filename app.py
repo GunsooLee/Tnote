@@ -327,9 +327,9 @@ def main_app():
                 speakers = st.text_area("참석자 이름을 엔터로 구분하여 입력하세요",value=st.session_state.info.get('speakers'))
                 
             
-        total_steps = 9
+        # total_steps = 9
         
-        progress_bar = st.progress(0)
+        # progress_bar = st.progress(0)
 
         # 텍스트와 이미지를 업데이트할 공간 확보
         text_placeholder = st.empty()
@@ -382,7 +382,7 @@ def main_app():
 
                         st.header("회의록 분석결과")
 
-                        total_steps = 8
+                        total_steps = 9
                         progress_bar = st.progress(0)
 
                         # 텍스트와 이미지를 업데이트할 공간 확보
