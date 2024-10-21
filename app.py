@@ -520,8 +520,8 @@ def main_app():
                                 st.write(f"◆ 회의요약: {to_overall_summary}")
                             with col2:
                                 # 이미지
-                                # st.pyplot(display_word_cloud(client.getSttOrigin(save_path)))
-                                st.image("https://static.streamlit.io/examples/dice.jpg", caption="Dice Image")
+                                st.pyplot(display_word_cloud(client.getSttOrigin(save_path)))
+                                # st.image("https://static.streamlit.io/examples/dice.jpg", caption="Dice Image")
 
                         # 회의록 다운로드 추가
                         with placeholder.expander("회의록 다운로드 보기▼"):
