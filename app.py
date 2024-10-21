@@ -229,7 +229,7 @@ def main_app():
         records = cursor.fetchall()
         return records
 
-    def make_docx(topic, room, date_ymd, username, speakers, title, summary):
+    def make_docx(topic, room, date_ymd, username, speakers, title, summary, meet_time):
         #회의록 생성 로직 
         date = datetime.now().strftime('%Y%m%d_%H%M%S')
         file_name = f"회의록_{date}"
@@ -241,6 +241,7 @@ def main_app():
             speakers.splitlines(),
             to_title,   # 임시로 고정, 실제 내용으로 대체
             to_overall_summary,  # 임시로 고정, 실제 내용으로 대체
+            meet_time,
             file_name
         )
         st.session_state.file_generated = True  # 파일 생성 완료 표시
