@@ -278,7 +278,9 @@ def main_app():
     if 'summarize_by_speaker' not in st.session_state:
         st.session_state.summarize_by_speaker = None
     if 'analyze_emotion_by_speaker' not in st.session_state:
-        st.session_state.analyze_emotion_by_speaker = None
+        st.session_state.analyze_emotion_by_speaker = 
+    if 'stt_text' not in st.session_state:
+        st.session_state.stt_text = None
 
     tabs = st.tabs(["📄 회의녹취록 업로드", "회의녹취록 조회"])
 
@@ -520,8 +522,10 @@ def main_app():
                                 st.write(f"◆ 회의요약: {to_overall_summary}")
                             with col2:
                                 # 이미지
-                                # st.pyplot(display_word_cloud(client.getSttOrigin(save_path)))
-                                st.image("https://static.streamlit.io/examples/dice.jpg", caption="Dice Image")
+                                stt_text = " ".join(df_origin['내용'])
+                                st.session_state.stt_text = stt_text
+                                st.pyplot(display_word_cloud(stt_text))
+                                # st.image("https://static.streamlit.io/examples/dice.jpg", caption="Dice Image")
 
                         # 회의록 다운로드 추가
                         with placeholder.expander("회의록 다운로드 보기▼"):
@@ -562,8 +566,8 @@ def main_app():
                     st.write(f"◆ 회의요약: {st.session_state.summarize_overall}")
                 with col2:
                     # 이미지
-                    # st.pyplot(display_word_cloud(client.getSttOrigin(st.session_state.file_info.get('save_path'))))
-                    st.image("https://static.streamlit.io/examples/dice.jpg", caption="Dice Image")           
+                    st.pyplot(display_word_cloud(stt_text))
+                    # st.image("https://static.streamlit.io/examples/dice.jpg", caption="Dice Image")           
             # placeholder 생성
                 placeholder_1 = st.empty()
             # 전체 회의 제목과 요약을 회의록생성시 가져오기위한 변수
