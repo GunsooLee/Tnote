@@ -520,8 +520,8 @@ def main_app():
                                 st.write(f"◆ 회의요약: {to_overall_summary}")
                             with col2:
                                 # 이미지
-                                st.pyplot(display_word_cloud(client.getSttOrigin(save_path)))
-                                # st.image("https://static.streamlit.io/examples/dice.jpg", caption="Dice Image")
+                                # st.pyplot(display_word_cloud(client.getSttOrigin(save_path)))
+                                st.image("https://static.streamlit.io/examples/dice.jpg", caption="Dice Image")
 
                         # 회의록 다운로드 추가
                         with placeholder.expander("회의록 다운로드 보기▼"):
@@ -577,7 +577,7 @@ def main_app():
             with st.expander("단어 벡터화"):
                 st.pyplot(st.session_state.plot_tfidf_matrix)
             with st.expander("토픽 모델링"):
-                st.pyplot(st.session_state.plot_lda_topic)                            
+                st.pyplot(st.session_state.plot_lda_topics)                            
             with st.expander("군집화"):
                 st.pyplot(st.session_state.plot_kmeans_clusters)
             with st.expander("전체 회의 제목"):
