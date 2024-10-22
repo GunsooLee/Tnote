@@ -4,7 +4,7 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from datetime import datetime
 import os
 
-def create_meeting_minutes(title, meeting_room, date, writer, attendees, subject, contents, meeting_time, file_name='Tnote_'+datetime.now().strftime('%Y%m%d_%H%M%S')):
+def create_meeting_minutes(title, meeting_room, date, writer, attendees, subject, contents, meeting_time, stt, att_suj, file_name='Tnote_'+datetime.now().strftime('%Y%m%d_%H%M%S')):
     """_summary_
     Args:
         title (string): 회의록 문서 제목
@@ -13,6 +13,8 @@ def create_meeting_minutes(title, meeting_room, date, writer, attendees, subject
         writer (string): 작성자
         attendees (string): 참석 인원
         contents (string): 회의 내용
+        stt (string): stt 결과
+        att_suj (strinf): 화자별
         file_name (string): 다운로드 파일 이름
     """
 
@@ -56,6 +58,16 @@ def create_meeting_minutes(title, meeting_room, date, writer, attendees, subject
     document.add_heading('회의 내용', level=1)
     document.add_paragraph(contents)
 
+    paragraph = document.add_paragraph()
+    paragraph.keep_with_next = True
+    paragraph.add_heading('화자별 요약', level=1)
+    paragraph.add_paragraph(att_suj)
+    
+    paragraph2 = document.add_paragraph()
+    paragraph2.keep_with_next = True
+    paragraph2.add_heading('STT 결과', level=1)
+    paragraph2.add_paragraph(stt)
+    
     # 파일 저장 
     file_path = 'result_file/' + file_name + '.docx'
     document.save(file_path)

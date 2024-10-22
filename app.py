@@ -229,7 +229,7 @@ def main_app():
         records = cursor.fetchall()
         return records
 
-    def make_docx(topic, room, date_ymd, username, speakers, title, summary, meet_time):
+    def make_docx(topic, room, date_ymd, username, speakers, title, summary, meet_time,stt,att_suj):
         #회의록 생성 로직 
         date = datetime.now().strftime('%Y%m%d_%H%M%S')
         file_name = f"회의록_{date}"
@@ -242,6 +242,8 @@ def main_app():
             title,   # 임시로 고정, 실제 내용으로 대체
             summary,  # 임시로 고정, 실제 내용으로 대체
             meet_time,
+            stt,
+            att_suj,
             file_name
         )
         st.session_state.file_generated = True  # 파일 생성 완료 표시
@@ -429,7 +431,7 @@ def main_app():
                         # 전체 회의 제목과 요약을 회의록생성시 가져오기위한 변수
                         to_title =''
                         to_overall_summary=''    
-                        
+                        att_subject=''
                         result_placeholder = st.empty()
                         # placeholder 생성
                         placeholder = st.empty()
@@ -437,7 +439,7 @@ def main_app():
                                                                 
                         with st.expander("전체 STT 결과"):
                             #show_progress(1)
-                            st.dataframe(data=df_origin,use_container_width=True)
+                            st.dataframe(data=df_origin)
                             st.session_state.df_origin = df_origin
                         with st.expander("한국어 형태소 분석"):                    
                             show_progress(2)
@@ -487,6 +489,7 @@ def main_app():
                                 speaker_summaries = summarize_by_speaker(df_origin)
                                 for speaker, summary in speaker_summaries.items():
                                     st.write(f"{speaker}: {summary}")
+                                    att_subject += f"{speaker}: {summary}\n"
                                 st.session_state.summarize_by_speaker=speaker_summaries
                         with st.expander("화자별 감정 분석"):
                             if st.session_state.analyze_emotion_by_speaker is None:
@@ -502,13 +505,14 @@ def main_app():
                                 st.pyplot(fig)
                                 st.session_state.analyze_emotion_by_speaker = fig
                                 # 프로세스 종료시 파일다운로드 추가
-                                down_file_path = make_docx(name_topic,meeting_room,mt_date.strftime("%Y-%m-%d"),st.session_state['username'],speakers, to_title, to_overall_summary, st.session_state.info['mt_term'])
+                                combined_string = " ".join(df_origin['내용'])
+                                down_file_path = make_docx(name_topic,meeting_room,mt_date.strftime("%Y-%m-%d"),st.session_state['username'],speakers, to_title, to_overall_summary, st.session_state.info['mt_term'],combined_string,att_subject)
                                 st.session_state.file_down_path = down_file_path
                                 
                         show_progress(9)
                         #st.success("데이터베이스에 데이터가 저장시도. :: tn_note_mst") # 디버깅 로그
                         # 확장 가능한 컨테이너에 결과 표시
-                        with result_placeholder.expander("회의 녹취록 업로드 결과 보기▼"):
+                        with result_placeholder.expander("회의 녹취록 업로드 결과 보기"):
                             st.divider() 
                             st.write(f"◆ 파일명: {file_name}")
                             st.write(f"◆ 파일 크기: {file_size / (1024 * 1024):.2f} MB")
@@ -528,12 +532,14 @@ def main_app():
                             with col2:
                                 # 이미지
                                 stt_text = " ".join(df_origin['내용'])
-                                st.session_state.stt_text = display_word_cloud(stt_text)
-                                st.pyplot(st.session_state.stt_text)
+                                # st.session_state.stt_text = display_word_cloud(stt_text)
+                                # st.pyplot(st.session_state.stt_text)
+                                st.session_state.stt_text = st.pyplot(display_word_cloud(stt_text))
+                                st.session_state.stt_text
                                 # st.image("https://static.streamlit.io/examples/dice.jpg", caption="Dice Image")
 
                         # 회의록 다운로드 추가
-                        with placeholder.expander("회의록 다운로드 보기▼"):
+                        with placeholder.expander("회의록 다운로드 보기"):
                             # 파일 다운로드 버튼 생성
                             if st.session_state.file_generated:
                                 if os.path.exists(down_file_path):
@@ -555,7 +561,7 @@ def main_app():
                                         print(f"알 수 없는 오류 발생: {e}")    
         else:
             # 세션 데이터 있는경우
-            with st.expander("회의 녹취록 업로드 결과 보기▼"):
+            with st.expander("회의 녹취록 업로드 결과 보기"):
                 st.divider() 
                 st.write(f"◆ 파일명: {st.session_state.file_info.get('file_name')}")
                 st.write(f"◆ 파일 크기: {st.session_state.file_info.get('file_size') / (1024 * 1024):.2f} MB")
@@ -571,36 +577,34 @@ def main_app():
                     st.write(f"◆ 회의요약: {st.session_state.summarize_overall}")
                 with col2:
                     # 이미지
-                    st.pyplot(st.session_state.stt_text)
+                    st.session_state.stt_text
                     # st.image("https://static.streamlit.io/examples/dice.jpg", caption="Dice Image")           
             # 회의록 다운로드 추가
-            with st.expander("회의록 다운로드 보기▼"):
-                # 파일 다운로드 버튼 생성
-                if st.session_state.file_generated:
-                    if os.path.exists(st.session_state.file_down_path):
-                        # 파일 다운로드 버튼 생성
-                        st.text(st.session_state.file_down_path)
-                        try:
-                            with open(st.session_state.file_down_path, 'rb') as file:
-                                st.download_button(
-                                    label="회의록 파일 다운로드",
-                                    data=file,
-                                    file_name=st.session_state.file_down_path.split('\\')[-1],
-                                    mime='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-                                )
-                        except FileNotFoundError as e:
-                            print(f"파일을 열 수 없습니다: {e}")
-                        except PermissionError as e:
-                            print(f"파일 접근 권한이 없습니다: {e}")
-                        except Exception as e:
-                            print(f"알 수 없는 오류 발생: {e}") 
+            with st.expander("회의록 다운로드 보기"):
+                if os.path.exists(st.session_state.file_down_path):
+                    # 파일 다운로드 버튼 생성
+                    st.text(st.session_state.file_down_path)
+                    try:
+                        with open(st.session_state.file_down_path, 'rb') as file:
+                            st.download_button(
+                                label="회의록 파일 다운로드",
+                                data=file,
+                                file_name=st.session_state.file_down_path.split('\\')[-1],
+                                mime='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                            )
+                    except FileNotFoundError as e:
+                        print(f"파일을 열 수 없습니다: {e}")
+                    except PermissionError as e:
+                        print(f"파일 접근 권한이 없습니다: {e}")
+                    except Exception as e:
+                        print(f"알 수 없는 오류 발생: {e}") 
                             
             # 전체 회의 제목과 요약을 회의록생성시 가져오기위한 변수
             to_title =''
             to_overall_summary=''    
             
             with st.expander("전체 STT 결과"):    
-                st.dataframe(data=st.session_state.df_origin,use_container_width=True)        
+                st.dataframe(data=st.session_state.df_origin)        
             with st.expander("한국어 형태소 분석"):
                 st.write(st.session_state.df_origin_analyze)
             with st.expander("단어 벡터화"):
@@ -688,7 +692,7 @@ def main_app():
                 else:
                     st.write("회의록 파일 경로가 존재하지 않습니다.")
             else:
-                st.write("선택된 회의록이이 없습니다.")
+                st.write("선택된 회의록이 없습니다.")
 
 if not st.session_state['logged_in']:
     login()
