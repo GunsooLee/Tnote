@@ -58,15 +58,15 @@ def create_meeting_minutes(title, meeting_room, date, writer, attendees, subject
     document.add_heading('회의 내용', level=1)
     document.add_paragraph(contents)
 
-    paragraph = document.add_paragraph()
-    paragraph.keep_with_next = True
+    document.add_page_break()    
     document.add_heading('화자별 요약', level=1)
-    paragraph.add_run(att_suj)
+    document.add_paragraph(att_suj)
     
-    paragraph2 = document.add_paragraph()
-    paragraph2.keep_with_next = True
+    
+    document.add_page_break()
     document.add_heading('STT 결과', level=1)
-    paragraph2.add_run(stt)
+    document.add_paragraph(stt)
+    
     
     # 파일 저장 
     file_path = 'result_file/' + file_name + '.docx'
