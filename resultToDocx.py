@@ -58,11 +58,12 @@ def create_meeting_minutes(title, meeting_room, date, writer, attendees, subject
     document.add_heading('회의 내용', level=1)
     document.add_paragraph(contents)
 
+    # 화자별 요약 페이지
     document.add_page_break()    
     document.add_heading('화자별 요약', level=1)
     document.add_paragraph(att_suj)
     
-    
+    # STT 결과 페이지
     document.add_page_break()
     document.add_heading('STT 결과', level=1)
     document.add_paragraph(stt)
