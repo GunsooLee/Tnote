@@ -534,8 +534,8 @@ def main_app():
                                 stt_text = " ".join(df_origin['내용'])
                                 # st.session_state.stt_text = display_word_cloud(stt_text)
                                 # st.pyplot(st.session_state.stt_text)
-                                st.session_state.stt_text = st.pyplot(display_word_cloud(stt_text))
-                                st.session_state.stt_text
+                                st.session_state.stt_text = display_word_cloud(stt_text)
+                                st.pyplot(st.session_state.stt_text)
                                 # st.image("https://static.streamlit.io/examples/dice.jpg", caption="Dice Image")
 
                         # 회의록 다운로드 추가
@@ -577,7 +577,7 @@ def main_app():
                     st.write(f"◆ 회의요약: {st.session_state.summarize_overall}")
                 with col2:
                     # 이미지
-                    st.session_state.stt_text
+                    st.pyplot(st.session_state.stt_text)
                     # st.image("https://static.streamlit.io/examples/dice.jpg", caption="Dice Image")           
             # 회의록 다운로드 추가
             with st.expander("회의록 다운로드 보기"):
