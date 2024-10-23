@@ -97,22 +97,24 @@ def main_app():
     # 로딩바 : 단계별 정보를 반환하는 함수
     def progress_steps(step):
         if step == 1:
-            return "        1/9 단계: STT 적용 중......."
+            return "        1/10 단계: 🔊 STT 적용 중......."
         elif step == 2:
-            return "        2/9 단계: 형태소 분석 중......."
+            return "        2/10 단계: ⛏️ 형태소 분석 중......."
         elif step == 3:
-            return "        3/9 단계: 단어 벡터화......."
+            return "        3/10 단계: 📈 단어 벡터화......."
         elif step == 4:
-            return "        4/9 단계: 토픽 모델링/군집화......."
+            return "        4/10 단계: 📊 토픽 모델링/군집화......."
         elif step == 5:
-            return "        5/9 단계: 주제 선정 중......."
+            return "        5/10 단계: 📍 주제 선정중......."
         elif step == 6:
-            return "        6/9 단계: 전체 회의 요약......."
+            return "        6/10 단계: 📝 전체 회의 요약중......."
         elif step == 7:
-            return "        7/9 단계: 화자별 요약......."
+            return "        7/10 단계: 💬 화자별 요약중......."
         elif step == 8:
-            return "        8/9 단계: 화자별 감정분석......."
+            return "        8/10 단계: 🙋 화자별 감정분석중......."
         elif step == 9:
+            return "        9/10 단계: 🔰 워드클라우드 생성중......."
+        elif step == 10:
             return "        회의록 작성 완료"
 
     # 단계별 프로그레스바와 텍스트, 이미지를 표시하는 함수
@@ -287,48 +289,48 @@ def main_app():
     if 'file_down_path' not in st.session_state:
         st.session_state.file_down_path = None
         
-    tabs = st.tabs(["📄 회의녹취록 업로드", "회의녹취록 조회"])
+    tabs = st.tabs(["📂 회의녹취록 업로드   ", "🔍 회의녹취록 조회   "])
 
     # 첫번째 탭: 업로드
     with tabs[0]:
         st.header("회의녹취록 업로드")
-        uploaded_file = st.file_uploader("녹음된 회의파일을 올려주세요", type=["mp3", "wav", "ogg", "flac", "m4a"])
+        uploaded_file = st.file_uploader("🎤 녹음된 회의파일을 올려주세요", type=["mp3", "wav", "ogg", "flac", "m4a"])
         st.session_state.file_generated = False
         # 2열 레이아웃 생성
         col1, col2 = st.columns(2)
 
         if not st.session_state.info:            
             with col1:            
-                name_topic = st.text_input("회의 제목을 입력하세요")
-                mt_date = st.date_input("회의날짜를 선택하세요.")
+                name_topic = st.text_input("📌 회의 제목을 입력하세요")
+                mt_date = st.date_input("📆 회의날짜를 선택하세요.")
                 num_spk_opt = ["2","3","4","5","6","7","8","9","10"]
-                num_spk = st.selectbox("회의 참여인원을 선택하세요.", options=num_spk_opt)
+                num_spk = st.selectbox("👩‍👧‍👦 회의 참여인원을 선택하세요.", options=num_spk_opt)
                 st.session_state.info['name_topic'] = name_topic
                 st.session_state.info['mt_date'] = mt_date
                 st.session_state.info['num_spk'] = num_spk
             with col2:            
-                meeting_room = st.text_input("회의실을 입력하세요")
+                meeting_room = st.text_input("🪑 회의실을 입력하세요")
                 # 회의 종료 시간을 30분 단위로 선택할 수 있도록 설정
                 mt_term_opt = ["30분", "1시간", "1시간30분", "2시간","2시간30분","3시간","3시간30분","4시간","4시간30분","5시간","5시간30분","6시간"]
-                mt_term = st.selectbox("회의 진행시간을 선택하세요", options=mt_term_opt)
-                speakers_text = st.text_area("참석자 이름을 엔터로 구분하여 입력하세요")
+                mt_term = st.selectbox("⏱️ 회의 진행시간을 선택하세요", options=mt_term_opt)
+                speakers_text = st.text_area("✍️ 참석자 이름을 엔터로 구분하여 입력하세요")
                 speakers = speakers_text
                 st.session_state.info['meeting_room'] = meeting_room
                 st.session_state.info['mt_term'] = mt_term
                 st.session_state.info['speakers'] = speakers
         else:
             with col1:            
-                name_topic = st.text_input("회의 제목을 입력하세요",value=st.session_state.info.get('name_topic'))
-                mt_date = st.date_input("회의날짜를 선택하세요.",value=st.session_state.info.get('mt_date'))
+                name_topic = st.text_input("📌 회의 제목을 입력하세요",value=st.session_state.info.get('name_topic'))
+                mt_date = st.date_input("📆 회의날짜를 선택하세요.",value=st.session_state.info.get('mt_date'))
                 num_spk_opt = ["2","3","4","5","6","7","8","9","10"]
-                num_spk = st.selectbox("회의 참여인원을 선택하세요.", options=num_spk_opt,index=st.session_state.info.get('num_spk'))
+                num_spk = st.selectbox("👩‍👧‍👦 회의 참여인원을 선택하세요.", options=num_spk_opt,index=st.session_state.info.get('num_spk'))
 
             with col2:
-                meeting_room = st.text_input("회의실을 입력하세요",value=st.session_state.info.get('meeting_room'))
+                meeting_room = st.text_input("🪑 회의실을 입력하세요",value=st.session_state.info.get('meeting_room'))
                 # 회의 종료 시간을 30분 단위로 선택할 수 있도록 설정
                 mt_term_opt = ["30분", "1시간", "1시간30분", "2시간","2시간30분","3시간","3시간30분","4시간","4시간30분","5시간","5시간30분","6시간"]
-                mt_term = st.selectbox("회의 진행시간을 선택하세요", options=mt_term_opt,index=st.session_state.info.get('mt_term'))
-                speakers = st.text_area("참석자 이름을 엔터로 구분하여 입력하세요",value=st.session_state.info.get('speakers'))
+                mt_term = st.selectbox("⏱️ 회의 진행시간을 선택하세요", options=mt_term_opt,index=st.session_state.info.get('mt_term'))
+                speakers = st.text_area("✍️ 참석자 이름을 엔터로 구분하여 입력하세요",value=st.session_state.info.get('speakers'))
                 
             
         # total_steps = 9
@@ -359,7 +361,7 @@ def main_app():
             if uploaded_file is not None:
 
                 # "파일 저장" 버튼을 화면에 표시
-                if st.button("파일 업로드"):
+                if st.button("회의녹취 업로드"):
 
                     if not name_topic :
                     # 회의제목이 입력되지 않았을 경우 경고 메시지 표시
@@ -437,23 +439,23 @@ def main_app():
                         placeholder = st.empty()
                         
                                                                 
-                        with st.expander("전체 STT 결과"):
+                        with st.expander("📋 전체 STT 결과"):
                             #show_progress(1)
                             st.dataframe(data=df_origin)
                             st.session_state.df_origin = df_origin
-                        with st.expander("한국어 형태소 분석"):                    
+                        with st.expander("⛏️ 한국어 형태소 분석"):                    
                             show_progress(2)
                             df_origin['분석된 내용'] = df_origin['내용'].apply(okt_clean)
                             st.write(df_origin)
                             st.session_state.df_origin_analyze = df_origin
-                        with st.expander("단어 벡터화"):
+                        with st.expander("📈 단어 벡터화"):
                             if st.session_state.plot_tfidf_matrix is None:
                                 show_progress(3)
                                 tfidf_matrix, vectorizer = tfidf_vectorize(df_origin[['화자', '분석된 내용']])
                                 print_date = plot_tfidf_matrix(tfidf_matrix, vectorizer)
                                 st.pyplot(print_date)
                                 st.session_state.plot_tfidf_matrix = print_date
-                        with st.expander("토픽 모델링"):
+                        with st.expander("📊 토픽 모델링"):
                             if st.session_state.plot_lda_topics is None:
                                 show_progress(4)
                                 lda_model = lda_topic_modeling(tfidf_matrix, num_topics=3)
@@ -461,14 +463,14 @@ def main_app():
                                 st.pyplot(print_date)
                                 st.session_state.plot_lda_topics = print_date
                                 
-                        with st.expander("군집화"):
+                        with st.expander("💠 군집화"):
                             if st.session_state.plot_kmeans_clusters is None:
                                 show_progress(4)
                                 kmeans_model = kmeans_clustering(tfidf_matrix, num_clusters=3)
                                 print_date = plot_kmeans_clusters(kmeans_model, tfidf_matrix)
                                 st.pyplot(print_date)
                                 st.session_state.plot_kmeans_clusters = print_date
-                        with st.expander("전체 회의 주제"):
+                        with st.expander("📍 전체 회의 주제"):
                             if st.session_state.summarize_title is None:
                                 show_progress(5)
                                 combined_text = df_origin.apply(lambda row: f"{row['화자']}] {row['내용']}", axis=1).str.cat(sep='\n')
@@ -476,14 +478,14 @@ def main_app():
                                 to_title=title
                                 st.write(title)
                                 st.session_state.summarize_title = title
-                        with st.expander("전체 회의 요약"):
+                        with st.expander("📝 전체 회의 요약"):
                             if st.session_state.summarize_overall is None:
                                 show_progress(6)
                                 overall_summary = summarize_overall(df_origin.apply(lambda row: f"{row['화자']}] {row['분석된 내용']}", axis=1).str.cat(sep='\n'))
                                 to_overall_summary = overall_summary
                                 st.write(overall_summary)
                                 st.session_state.summarize_overall = overall_summary
-                        with st.expander("화자별 요약"):
+                        with st.expander("💬 화자별 요약"):
                             if st.session_state.summarize_by_speaker is None:
                                 show_progress(7)
                                 speaker_summaries = summarize_by_speaker(df_origin)
@@ -491,7 +493,7 @@ def main_app():
                                     st.write(f"{speaker}: {summary}")
                                     att_subject += f"{speaker}: {summary}\n"
                                 st.session_state.summarize_by_speaker=speaker_summaries
-                        with st.expander("화자별 감정 분석"):
+                        with st.expander("🙋 화자별 감정 분석"):
                             if st.session_state.analyze_emotion_by_speaker is None:
                                 show_progress(8)
                                 labels, scores = analyze_emotion_by_speaker(df_origin)
@@ -509,10 +511,10 @@ def main_app():
                                 down_file_path = make_docx(name_topic,meeting_room,mt_date.strftime("%Y-%m-%d"),st.session_state['username'],speakers, to_title, to_overall_summary, st.session_state.info['mt_term'],combined_string,att_subject)
                                 st.session_state.file_down_path = down_file_path
                                 
-                        show_progress(9)
+                        
                         #st.success("데이터베이스에 데이터가 저장시도. :: tn_note_mst") # 디버깅 로그
                         # 확장 가능한 컨테이너에 결과 표시
-                        with result_placeholder.expander("회의 녹취록 업로드 결과 보기"):
+                        with result_placeholder.expander("📋 회의 녹취록 업로드 결과 보기"):
                             st.divider() 
                             st.write(f"◆ 파일명: {file_name}")
                             st.write(f"◆ 파일 크기: {file_size / (1024 * 1024):.2f} MB")
@@ -534,12 +536,14 @@ def main_app():
                                 stt_text = " ".join(df_origin['내용'])
                                 # st.session_state.stt_text = display_word_cloud(stt_text)
                                 # st.pyplot(st.session_state.stt_text)
+                                show_progress(9)
                                 st.session_state.stt_text = display_word_cloud(stt_text)
                                 st.pyplot(st.session_state.stt_text)
                                 # st.image("https://static.streamlit.io/examples/dice.jpg", caption="Dice Image")
+                                show_progress(10)
 
                         # 회의록 다운로드 추가
-                        with placeholder.expander("회의록 다운로드 보기"):
+                        with placeholder.expander("🗂️ 회의록 다운로드 보기"):
                             # 파일 다운로드 버튼 생성
                             if st.session_state.file_generated:
                                 if os.path.exists(down_file_path):
@@ -561,7 +565,7 @@ def main_app():
                                         print(f"알 수 없는 오류 발생: {e}")    
         else:
             # 세션 데이터 있는경우
-            with st.expander("회의 녹취록 업로드 결과 보기"):
+            with st.expander("📋 회의 녹취록 업로드 결과 보기"):
                 st.divider() 
                 st.write(f"◆ 파일명: {st.session_state.file_info.get('file_name')}")
                 st.write(f"◆ 파일 크기: {st.session_state.file_info.get('file_size') / (1024 * 1024):.2f} MB")
@@ -580,7 +584,7 @@ def main_app():
                     st.pyplot(st.session_state.stt_text)
                     # st.image("https://static.streamlit.io/examples/dice.jpg", caption="Dice Image")           
             # 회의록 다운로드 추가
-            with st.expander("회의록 다운로드 보기"):
+            with st.expander("🗂️ 회의록 다운로드 보기"):
                 if os.path.exists(st.session_state.file_down_path):
                     # 파일 다운로드 버튼 생성
                     st.text(st.session_state.file_down_path)
@@ -603,24 +607,24 @@ def main_app():
             to_title =''
             to_overall_summary=''    
             
-            with st.expander("전체 STT 결과"):    
+            with st.expander("📜 전체 STT 결과"):    
                 st.dataframe(data=st.session_state.df_origin)        
-            with st.expander("한국어 형태소 분석"):
+            with st.expander("⛏️ 한국어 형태소 분석"):
                 st.write(st.session_state.df_origin_analyze)
-            with st.expander("단어 벡터화"):
+            with st.expander("📈 단어 벡터화"):
                 st.pyplot(st.session_state.plot_tfidf_matrix)
-            with st.expander("토픽 모델링"):
+            with st.expander("📊 토픽 모델링"):
                 st.pyplot(st.session_state.plot_lda_topics)                            
-            with st.expander("군집화"):
+            with st.expander("💠 군집화"):
                 st.pyplot(st.session_state.plot_kmeans_clusters)
-            with st.expander("전체 회의 주제"):
+            with st.expander("📍 전체 회의 주제"):
                 st.write(st.session_state.summarize_title)
-            with st.expander("전체 회의 요약"):
+            with st.expander("📝 전체 회의 요약"):
                 st.write(st.session_state.summarize_overall)
-            with st.expander("화자별 요약"):
+            with st.expander("💬 화자별 요약"):
                 for speaker, summary in st.session_state.summarize_by_speaker.items():
                     st.write(f"{speaker}: {summary}")
-            with st.expander("화자별 감정 분석"):
+            with st.expander("🙋 화자별 감정 분석"):
                 st.pyplot(st.session_state.analyze_emotion_by_speaker)
                         
                 
