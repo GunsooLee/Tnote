@@ -388,7 +388,7 @@ def main_app():
 
                         st.header("회의록 분석결과")
 
-                        total_steps = 9
+                        total_steps = 10
                         progress_bar = st.progress(0)
 
                         # 텍스트와 이미지를 업데이트할 공간 확보
@@ -439,7 +439,7 @@ def main_app():
                         placeholder = st.empty()
                         
                                                                 
-                        with st.expander("📋 전체 STT 결과"):
+                        with st.expander("📜 전체 STT 결과"):
                             #show_progress(1)
                             st.dataframe(data=df_origin)
                             st.session_state.df_origin = df_origin
