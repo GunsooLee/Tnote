@@ -519,7 +519,8 @@ def main_app():
                                 st.pyplot(fig)
                                 st.session_state.analyze_emotion_by_speaker = fig
                                 # 프로세스 종료시 파일다운로드 추가
-                                combined_string = " ".join(df_origin['내용'])
+                                result_string = df_origin.apply(lambda row: f"{row['화자']} : {row['내용']}", axis=1)
+                                combined_string = '\n'.join(result_string)
                                 down_file_path = make_docx(name_topic,meeting_room,mt_date.strftime("%Y-%m-%d"),st.session_state['username'],speakers, to_title, to_overall_summary, st.session_state.info['mt_term'],combined_string,att_subject)
                                 st.session_state.file_down_path = down_file_path
                                 
