@@ -651,7 +651,7 @@ def main_app():
 
         # session_state에 저장된 데이터가 있을 경우에만 그리드를 표시
         if st.session_state.grid_data is not None:
-            st.write("업로드된 회의 녹취록 리스트:")
+            st.write("📚 업로드된 회의 녹취록 리스트:")
             df = st.session_state.grid_data
 
             # AgGrid로 그리드 표시
@@ -671,7 +671,7 @@ def main_app():
             selected_row = grid_response['selected_rows']
 
             # 선택된 행의 데이터 구조 확인
-            st.write("선택된 회의 녹취록 : ", selected_row)
+            st.write("✔️ 선택된 회의 녹취록 : ", selected_row)
 
             # 자료형 확인
             #st.write("선택된 데이터의 자료형: ", type(selected_row))
