@@ -679,7 +679,7 @@ def main_app():
             # DataFrame으로 반환된 경우, 선택된 행을 DataFrame 형식으로 처리
             if isinstance(selected_row, pd.DataFrame) and not selected_row.empty:
 
-                # st.write("✔️ 선택된 회의 녹취록", selected_row)
+                st.write("✔️ 선택된 회의 녹취록", selected_row)
                 
                 # 선택된 첫 번째 행 데이터 추출
                 selected_row_data = selected_row.iloc[0]  # DataFrame에서 첫 번째 행 가져오기
