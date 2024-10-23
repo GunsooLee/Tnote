@@ -53,9 +53,17 @@ if 'logged_in' not in st.session_state:
 
 def login():
     """로그인 함수"""
-    st.title("T-Note : tsis AI 회의록작성")
-    username = st.text_input("Login ID")
-    password = st.text_input("Password", type="password")
+    st.markdown(
+        '<span style="font-size: 6em; font-weight: bold;">T-Note</span>',
+        unsafe_allow_html=True
+    )
+    st.markdown("### 📝  tsis AI 회의록 작성 ver 1.0")
+    st.markdown("###### 📌  2024 T-Lab tsis 신기술 연구회")
+    st.markdown("###### 📌  Team ""T-Note"" 최종발표시연")
+    st.divider()
+
+    username = st.text_input("🆔   Login ID", placeholder="Enter your login ID")
+    password = st.text_input("🔑   Password", placeholder="Enter your password", type="password")
 
     if st.button("로그인"):
         # 예시로 간단한 인증 로직 (실제 환경에서는 안전한 인증 방법 사용)
@@ -82,7 +90,11 @@ def main_app():
     font_path = r'/usr/share/fonts/truetype/nanum/NanumBarunGothic.ttf'
 
     # Streamlit 앱 제목
-    st.title("T-Note : tsis AI 회의록작성")
+    #st.title("T-Note : tsis AI 회의록작성")
+    st.markdown(
+        '<span style="font-size: 3em; font-weight: bold;">T-Note </span> <span style="font-size: 2em; font-weight: bold;">(ver 1.0)</span>',
+        unsafe_allow_html=True
+    )
 
     #with st.sidebar:
     #    st.write("안녕하세요 tsis 님.")
