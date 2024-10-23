@@ -61,7 +61,7 @@ def login():
         # 예시로 간단한 인증 로직 (실제 환경에서는 안전한 인증 방법 사용)
         if username == "tsis" and password == "1":
             st.session_state['logged_in'] = True
-            st.session_state['username'] = username
+            st.session_state['username'] = "이윤승 선임"
             st.success("로그인 성공!")
             st.rerun()  # 로그인 성공 시 페이지 새로고침
         else:
