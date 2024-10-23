@@ -567,7 +567,7 @@ def main_app():
                                             st.download_button(
                                                 label="회의록 파일 다운로드",
                                                 data=file,
-                                                file_name=down_file_path.split('\\')[-1],
+                                                file_name=down_file_path.split('/')[-1],
                                                 mime='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
                                             )
                                     except FileNotFoundError as e:
@@ -606,7 +606,7 @@ def main_app():
                             st.download_button(
                                 label="회의록 파일 다운로드",
                                 data=file,
-                                file_name=st.session_state.file_down_path.split('\\')[-1],
+                                file_name=st.session_state.file_down_path.split('/')[-1],
                                 mime='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
                             )
                     except FileNotFoundError as e:
