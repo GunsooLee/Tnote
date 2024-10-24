@@ -51,6 +51,26 @@ from function.okt_clean import okt_clean
 if 'logged_in' not in st.session_state:
     st.session_state['logged_in'] = False
 
+# 하단 고정 저작권 문구
+footer = """
+    <style>
+    .footer {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        background-color: white;
+        color: black;
+        text-align: center;
+        padding: 10px;
+        font-size: 15px;
+    }
+    </style>
+    <div class="footer">
+        Copyright © 2024 tsis Corp. All rights reserved.
+    </div>
+"""
+
 def login():
     """로그인 함수"""
     st.markdown(
@@ -74,7 +94,9 @@ def login():
             st.rerun()  # 로그인 성공 시 페이지 새로고침
         else:
             st.error("로그인 실패. 사용자 이름 또는 비밀번호가 잘못되었습니다.")
-
+    
+    #저작권 표시
+    st.markdown(footer, unsafe_allow_html=True)
 def main_app():
     # 페이지 레이아웃 변경
     # st.set_page_config(layout="wide")
