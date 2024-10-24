@@ -41,6 +41,7 @@ import time
 from function.summarize_overall import summarize_overall
 from function.summarize_by_speaker import summarize_by_speaker
 from function.summarize_title import summarize_title
+from function.sentiment_analysis_by_speaker import plot_emotion_distribution
 from function.sentiment_analysis_by_speaker import analyze_emotion_by_speaker
 from function.tfidf_vectorization import tfidf_vectorize, plot_tfidf_matrix
 from function.lda_topic_modeling import lda_topic_modeling, plot_lda_topics
