@@ -568,7 +568,7 @@ def main_app():
                                 st.write(f"◆ 회의요약: {to_overall_summary}")
                             with col2:
                                 # 이미지
-                                stt_text = " ".join(df_origin['내용'])
+                                stt_text = " ".join(st.session_state.df_origin_analyze['분석된 내용'])
                                 # st.session_state.stt_text = display_word_cloud(stt_text)
                                 # st.pyplot(st.session_state.stt_text)
                                 show_progress(9)
