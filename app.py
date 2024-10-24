@@ -77,7 +77,7 @@ def login():
 
 def main_app():
     # 페이지 레이아웃 변경
-    st.set_page_config(layout="wide")
+    # st.set_page_config(layout="wide")
     # 세션 데이터
     if 'data' not in st.session_state:
         st.session_state.data = {
@@ -301,7 +301,7 @@ def main_app():
     if 'file_down_path' not in st.session_state:
         st.session_state.file_down_path = None
         
-    tabs = st.tabs(["📂 회의녹취록 업로드   ", "🔍 회의녹취록 조회   "])
+    tabs = st.tabs(["📂 회의록 만들기", "🔍 회의기록 조회하기"])
 
     # 첫번째 탭: 업로드
     with tabs[0]:
