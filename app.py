@@ -569,7 +569,7 @@ def main_app():
                                 st.write(f"📆  회의날짜: {mt_date}")
                                 st.write(f"👩 <200d>👧 <200d>👦  회의참여인원 : {num_spk}")
                             with col2:
-                                st.write(f"🪑 회의실:  {meeting_room}"))
+                                st.write(f"🪑 회의실:  {meeting_room}")
                                 st.write(f"⏱️ 회의진행시간 : {mt_term}")
                                 st.write(f"✍️ 참석인원 : {speakers}")
 
