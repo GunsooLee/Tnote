@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud
 import streamlit as st
-from pecab import PeCab
+#from pecab import PeCab
 
 font_path = r'/usr/share/fonts/truetype/nanum/NanumBarunGothic.ttf'
 
@@ -12,8 +12,8 @@ stopwords = ['하지만', '그리고', '그런데', '저는','제가',
 
 
 def display_word_cloud(data, width=1200, height=500):
-    pecab = PeCab()
-    nouns = " ".join(pecab.nouns(data)) #명사만 가져오기
+    # pecab = PeCab()
+    # nouns = " ".join(pecab.nouns(data)) #명사만 가져오기
     
     word_cloud = WordCloud(font_path=font_path,
                           width=width,
@@ -21,7 +21,7 @@ def display_word_cloud(data, width=1200, height=500):
                           stopwords=stopwords,
                           background_color="white",
                           random_state=42
-                         ).generate(nouns)
+                         ).generate(data)
     plt.figure()
     plt.imshow(word_cloud, interpolation="bilinear")
     plt.axis("off")
