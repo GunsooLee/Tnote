@@ -551,31 +551,43 @@ def main_app():
                         # 확장 가능한 컨테이너에 결과 표시
                         with result_placeholder.expander("📋 회의 녹취록 업로드 결과 보기"):
                             st.divider() 
-                            st.write(f"◆ 파일명: {file_name}")
-                            st.write(f"◆ 파일 크기: {file_size / (1024 * 1024):.2f} MB")
-                            st.write(f"◆ 저장 경로: {save_path}")
-                            st.session_state.file_info['file_name']=file_name
-                            st.session_state.file_info['file_size']=file_size
-                            st.session_state.file_info['save_path']=save_path   
-                            st.divider()                             
+                            show_progress(9)
+
+                            stt_text = " ".join(st.session_state.df_origin_analyze['분석된 내용'])
+                            #st.session_state.stt_text = display_word_cloud(stt_text)
+                            #st.pyplot(st.session_state.stt_text)
+
+                            st.session_state.stt_text = stt_text
+                            st.pyplot(display_word_cloud(stt_text))
+
+                            st.markdown('######')
+
                             col1, col2 = st.columns(2)
+
                             with col1:
-                                st.write(f"◆ 회의제목: {name_topic}")
-                                st.write(f"◆ 회의참여인원: {num_spk}")
-                                st.write(f"◆ 회의날짜: {mt_date}")
-                                st.write(f"◆ 회의진행시간: {mt_term}")
-                                st.write(f"◆ 회의주제: {to_title}")
-                                st.write(f"◆ 회의요약: {to_overall_summary}")
+                                st.write(f"📌  회의제목 : {name_topic}")
+                                st.write(f"📆  회의날짜: {mt_date}")
+                                st.write(f"👩 <200d>👧 <200d>👦  회의참여인원 : {num_spk}")
                             with col2:
-                                # 이미지
-                                stt_text = " ".join(st.session_state.df_origin_analyze['분석된 내용'])
-                                # st.session_state.stt_text = display_word_cloud(stt_text)
-                                # st.pyplot(st.session_state.stt_text)
-                                show_progress(9)
-                                st.session_state.stt_text = display_word_cloud(stt_text)
-                                st.pyplot(st.session_state.stt_text)
-                                # st.image("https://static.streamlit.io/examples/dice.jpg", caption="Dice Image")
-                                show_progress(10)
+                                st.write(f"🪑 회의실:  {meeting_room}"))
+                                st.write(f"⏱️ 회의진행시간 : {mt_term}")
+                                st.write(f"✍️ 참석인원 : {speakers}")
+
+                            st.markdown('######')
+
+                            st.write("📍  회의주제")
+                            st.write(f"{to_title}")
+                            st.markdown('######')
+                            st.write("📝  회의요약")
+                            st.write(f"{to_overall_summary}")
+                            st.markdown('######')
+                            st.write("💬  화자별요약")
+
+                            for speaker, summary in speaker_summaries.items():
+                                    st.write(f"{speaker}: {summary}")
+                                    att_subject += f"{speaker}: {summary}\n"
+                                
+                            show_progress(10)
 
                         # 회의록 다운로드 추가
                         with placeholder.expander("🗂️ 회의록 다운로드 보기"):
@@ -601,23 +613,35 @@ def main_app():
         else:
             # 세션 데이터 있는경우
             with st.expander("📋 회의 녹취록 업로드 결과 보기"):
-                st.divider() 
-                st.write(f"◆ 파일명: {st.session_state.file_info.get('file_name')}")
-                st.write(f"◆ 파일 크기: {st.session_state.file_info.get('file_size') / (1024 * 1024):.2f} MB")
-                st.write(f"◆ 저장 경로: {st.session_state.file_info.get('save_path')}")
-                st.divider() 
+                
+                st.pyplot(display_word_cloud(st.session_state.stt_text))
+
+                st.markdown('######')
+
                 col1, col2 = st.columns(2)
+
                 with col1:
-                    st.write(f"◆ 회의제목: {st.session_state.info.get('name_topic')}")
-                    st.write(f"◆ 회의참여인원: {st.session_state.info.get('num_spk')}")
-                    st.write(f"◆ 회의날짜: {st.session_state.info.get('mt_date')}")
-                    st.write(f"◆ 회의진행시간: {st.session_state.info.get('mt_term')}")
-                    st.write(f"◆ 회의주제: {st.session_state.summarize_title}")
-                    st.write(f"◆ 회의요약: {st.session_state.summarize_overall}")
+                    st.write(f"📌   회의제목 : {st.session_state.info.get(name_topic)}")
+                    st.write(f"📆   회의날짜: {st.session_state.info.get(mt_date)}")
+                    st.write(f"👩 <200d>👧 <200d>👦  회의참여인원 : {st.session_state.info.get(num_spk)}")
                 with col2:
-                    # 이미지
-                    st.pyplot(st.session_state.stt_text)
-                    # st.image("https://static.streamlit.io/examples/dice.jpg", caption="Dice Image")           
+                    st.write(f"🪑회의실 : {st.session_state.info.get(meeting_room)}")
+                    st.write(f"⏱️ 회의진행시간 : {st.session_state.info.get(mt_term)}")
+                    st.write(f"✍️ 참석인원 : {st.session_state.info.get(speakers)}")
+
+                st.markdown('######')
+
+                st.write("📍   회의주제")
+                st.write(st.session_state.summarize_title)
+                st.markdown('######')
+                st.write("📝   회의요약")
+                st.write(st.session_state.summarize_overall)
+                st.markdown('######')
+                st.write("💬   화자별요약")
+
+                for speaker, summary in st.session_state.summarize_by_speaker.items():
+                        st.write(f"{speaker}: {summary}")
+           
             # 회의록 다운로드 추가
             with st.expander("🗂️ 회의록 다운로드 보기"):
                 if os.path.exists(st.session_state.file_down_path):
