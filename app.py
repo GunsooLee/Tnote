@@ -530,15 +530,15 @@ def main_app():
                         with st.expander("🙋 화자별 감정 분석"):
                             if st.session_state.analyze_emotion_by_speaker is None:
                                 show_progress(8)
-                                labels, scores = analyze_emotion_by_speaker(df_origin)
-                                df_viz = pd.DataFrame({'화자': labels, '감정 신뢰도': scores})
-                                # 감정 예측 결과를 시각화 (Matplotlib 사용)
-                                fig, ax = plt.subplots()
-                                ax.bar(df_viz['화자'], df_viz['감정 신뢰도'], color='skyblue')
-                                ax.set_xlabel('화자')
-                                ax.set_ylabel('감정 신뢰도')
-                                ax.set_title('화자별 감정 신뢰도')
+                                speaker_emotions, emotion_distributions = analyze_emotion_by_speaker(df_origin)
+                                fig = plot_emotion_distribution(emotion_distributions)
                                 st.pyplot(fig)
+                                for speaker, result in speaker_emotions.items():
+                                    st.write(f"{speaker}의 분석 결과:")
+                                    st.write(f"총 텍스트 수: {result['총 텍스트 수']}")
+                                    st.write(f"상세 분석: {result['상세 분석']}")
+                                    st.write()
+                                
                                 st.session_state.analyze_emotion_by_speaker = fig
                                 # 프로세스 종료시 파일다운로드 추가
                                 result_string = df_origin.apply(lambda row: f"{row['화자']} : {row['내용']}", axis=1)
