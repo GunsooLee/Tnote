@@ -625,11 +625,11 @@ def main_app():
                 col1, col2 = st.columns(2)
 
                 with col1:
-                    st.write(f"📌   회의제목 : {st.session_state.info.get(name_topic)}")
-                    st.write(f"📆   회의날짜: {st.session_state.info.get(mt_date)}")
-                    st.write(f"👩‍👧‍👦  회의참여인원 : {st.session_state.info.get(num_spk)}")
+                    st.write(f"📌 회의제목 : {st.session_state.info.get(name_topic)}")
+                    st.write(f"📆 회의날짜: {st.session_state.info.get(mt_date)}")
+                    st.write(f"👩‍👧‍👦 회의참여인원 : {st.session_state.info.get(num_spk)}")
                 with col2:
-                    st.write(f"🪑회의실 : {st.session_state.info.get(meeting_room)}")
+                    st.write(f"🪑 회의실 : {st.session_state.info.get(meeting_room)}")
                     st.write(f"⏱️ 회의진행시간 : {st.session_state.info.get(mt_term)}")
                     st.write(f"✍️ 참석인원 : {st.session_state.info.get(speakers)}")
 
