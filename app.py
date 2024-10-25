@@ -535,10 +535,9 @@ def main_app():
                                 fig = plot_emotion_distribution(emotion_distributions)
                                 st.pyplot(fig)
                                 for speaker, result in speaker_emotions.items():
-                                    st.write(f"{speaker}의 분석 결과:")
-                                    st.write(f"총 텍스트 수: {result['총 텍스트 수']}")
-                                    st.write(f"상세 분석: {result['상세 분석']}")
-                                    st.write()
+                                    emotion_category = result['감정 결과']
+                                    st.write(f"{speaker} 감정결과 : {result['감정 결과']} ({result['감정 분포']['긍정 비율']:.2f}%)")
+                                    st.markdown('######')
                                 
                                 st.session_state.analyze_emotion_by_speaker = fig
                                 # 프로세스 종료시 파일다운로드 추가
