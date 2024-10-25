@@ -56,8 +56,13 @@ def plot_emotion_distribution( emotion_distribution):
     values = list(emotion_distribution.values())
     
     plt.figure(figsize=(8, 3))
-    plt.barh(speakers, values, color='#FFD700', height=0.3)
+    bars = plt.barh(speakers, values, color='#FFD700', height=0.3)
     plt.xlim(0, 100)  # 비율이므로 100%까지 설정
     plt.xlabel('긍정 단어 비율 (%)')
     plt.title('화자별 긍정 단어 비율')
+
+    # 막대 끝에 긍정 비율 값 표시
+    for bar, value in zip(bars, values):
+        plt.text(value + 1, bar.get_y() + bar.get_height()/2, f'{value:.2f}%', va='center')
+        
     return plt
