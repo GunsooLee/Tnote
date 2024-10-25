@@ -5,11 +5,11 @@ from transformers import BartForConditionalGeneration, PreTrainedTokenizerFast, 
 from datasets import Dataset
 
 # KoBART 모델과 토크나이저 불러오기
-model = BartForConditionalGeneration.from_pretrained('gogamza/kobart-summarization')
-tokenizer = PreTrainedTokenizerFast.from_pretrained('gogamza/kobart-summarization')
+model = BartForConditionalGeneration.from_pretrained('./kobart-finetuned')
+tokenizer = PreTrainedTokenizerFast.from_pretrained('./kobart-finetuned')
 
 # JSON 데이터가 들어 있는 폴더 경로
-data_dir = './training_data/data'
+data_dir = './training_data/data_tsis'
 
 # JSON 파일에서 텍스트와 요약문 추출 함수
 def load_json_data(file_path):
