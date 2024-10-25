@@ -319,6 +319,8 @@ def main_app():
         st.session_state.summarize_by_speaker = None
     if 'analyze_emotion_by_speaker' not in st.session_state:
         st.session_state.analyze_emotion_by_speaker = None
+    if 'speaker_emotions' not in st.session_state:
+        st.session_state.speaker_emotions = None
     if 'stt_text' not in st.session_state:
         st.session_state.stt_text = None
     if 'file_down_path' not in st.session_state:
@@ -532,6 +534,7 @@ def main_app():
                             if st.session_state.analyze_emotion_by_speaker is None:
                                 show_progress(8)
                                 speaker_emotions, emotion_distributions = analyze_emotion_by_speaker(df_origin)
+                                st.session_state.speaker_emotions = speaker_emotions
                                 fig = plot_emotion_distribution(emotion_distributions)
                                 st.pyplot(fig)
                                 for speaker, result in speaker_emotions.items():
@@ -688,7 +691,20 @@ def main_app():
                 for speaker, summary in st.session_state.summarize_by_speaker.items():
                     st.write(f"{speaker}: {summary}")
             with st.expander("🙋 화자별 감정 분석"):
+                # st.pyplot 초기화 해줘야 안겹침
+                plt.close()
+
                 st.pyplot(st.session_state.analyze_emotion_by_speaker)
+                speaker_emotions = st.session_state.speaker_emotions
+
+                for speaker, result in speaker_emotions.items():
+                    emotion_category = result['감정 결과']
+                    st.markdown(f"**{speaker}** 감정결과 : {result['감정 결과']} ({result['감정 분포']['긍정 비율']:.2f}%)")
+
+                st.markdown('######')
+                st.markdown('💯  **[감정점수 산정방식]**')
+                st.markdown('(감정별 단어점수 x 사용갯수)의 총합 x 100/ (전체단어갯수x5)')
+                st.markdown('😍  매우긍정 5점, 😀  긍정 4점, 😐  중립 3점, 😠  부정 2점, 😡  매우부정 1점')
                         
                 
             
