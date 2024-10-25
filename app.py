@@ -568,7 +568,7 @@ def main_app():
                             with col1:
                                 st.write(f"📌  회의제목 : {name_topic}")
                                 st.write(f"📆  회의날짜: {mt_date}")
-                                st.write(f"👩 <200d>👧 <200d>👦  회의참여인원 : {num_spk}")
+                                st.write(f"👩‍👧‍👦  회의참여인원 : {num_spk}")
                             with col2:
                                 st.write(f"🪑 회의실 : {meeting_room}")
                                 st.write(f"⏱️ 회의진행시간 : {mt_term}")
@@ -624,7 +624,7 @@ def main_app():
                 with col1:
                     st.write(f"📌   회의제목 : {st.session_state.info.get(name_topic)}")
                     st.write(f"📆   회의날짜: {st.session_state.info.get(mt_date)}")
-                    st.write(f"👩 <200d>👧 <200d>👦  회의참여인원 : {st.session_state.info.get(num_spk)}")
+                    st.write(f"👩‍👧‍👦  회의참여인원 : {st.session_state.info.get(num_spk)}")
                 with col2:
                     st.write(f"🪑회의실 : {st.session_state.info.get(meeting_room)}")
                     st.write(f"⏱️ 회의진행시간 : {st.session_state.info.get(mt_term)}")
