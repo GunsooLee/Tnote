@@ -5,6 +5,19 @@ import matplotlib.pyplot as plt
 # 감정 분석 모델 로드
 sentiment_pipeline = pipeline("sentiment-analysis", model="nlptown/bert-base-multilingual-uncased-sentiment", max_length=512, truncation=True)
 
+# 긍정 비율에 따른 감정 범주 분류 함수
+def get_emotion_category(positive_ratio):
+    if positive_ratio >= 80:
+        return "매우긍정"
+    elif positive_ratio >= 60:
+        return "긍정"
+    elif positive_ratio >= 40:
+        return "중립"
+    elif positive_ratio >= 20:
+        return "부정"
+    else:
+        return "매우부정"
+
 # 화자별 감정 분석 함수 (상세 정보 및 그래프 포함)
 def analyze_emotion_by_speaker(df):
     speaker_groups = df.groupby('화자')['분석된 내용'].apply(list)  # 화자별로 내용을 리스트로 결합
@@ -34,16 +47,22 @@ def analyze_emotion_by_speaker(df):
         # 총 분석된 텍스트 수 계산
         total_texts = len(texts)
         
+        positive_ratio = (((emotion_counts['매우 긍정'] * 5) + (emotion_counts['긍정'] * 4) + (emotion_counts['중립'] * 3) + (emotion_counts['부정'] * 2) + (emotion_counts['매우 부정'] * 1)) / (total_texts*5)) * 100
+
         # 비율 계산
         emotion_distribution = {
-            '긍정 비율': (((emotion_counts['매우 긍정'] * 5) + (emotion_counts['긍정'] * 4) + (emotion_counts['중립'] * 3) + (emotion_counts['부정'] * 2) + (emotion_counts['매우 부정'] * 1)) / (total_texts*5)) * 100
+            '긍정 비율': positive_ratio
         }
+
+        # 긍정 비율을 감정 범주로 변환
+        emotion_category = get_emotion_category(positive_ratio)
         
         # 화자별 감정 분석 결과 저장
         speaker_emotions[speaker] = {
             '총 텍스트 수': total_texts,
             '감정 분포': emotion_distribution,
-            '상세 분석': emotion_counts
+            '상세 분석': emotion_counts,
+            '감정 결과': emotion_category
         }
 
         emotion_distributions[speaker] = emotion_distribution['긍정 비율']
