@@ -9,7 +9,7 @@ model = BartForConditionalGeneration.from_pretrained('./kobart-finetuned')
 tokenizer = PreTrainedTokenizerFast.from_pretrained('./kobart-finetuned')
 
 # JSON 데이터가 들어 있는 폴더 경로
-data_dir = './training_data/data_tsis'
+data_dir = './training_data/tsis_data'
 
 # JSON 파일에서 텍스트와 요약문 추출 함수
 def load_json_data(file_path):
