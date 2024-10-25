@@ -8,15 +8,15 @@ sentiment_pipeline = pipeline("sentiment-analysis", model="nlptown/bert-base-mul
 # 긍정 비율에 따른 감정 범주 분류 함수
 def get_emotion_category(positive_ratio):
     if positive_ratio >= 80:
-        return "매우긍정"
+        return "😍 매우긍정"
     elif positive_ratio >= 60:
-        return "긍정"
+        return "😀 긍정"
     elif positive_ratio >= 40:
-        return "중립"
+        return "😐 중립"
     elif positive_ratio >= 20:
-        return "부정"
+        return "😠부정"
     else:
-        return "매우부정"
+        return "😡 매우부정"
 
 # 화자별 감정 분석 함수 (상세 정보 및 그래프 포함)
 def analyze_emotion_by_speaker(df):
