@@ -625,23 +625,23 @@ def main_app():
                 col1, col2 = st.columns(2)
 
                 with col1:
-                    st.write(f"📌 회의제목 : {st.session_state.info.get(name_topic)}")
-                    st.write(f"📆 회의날짜: {st.session_state.info.get(mt_date)}")
-                    st.write(f"👩‍👧‍👦 회의참여인원 : {st.session_state.info.get(num_spk)}")
+                    st.write(f"📌 회의제목 : {st.session_state.info.get('name_topic')}")
+                    st.write(f"📆 회의날짜: {st.session_state.info.get('mt_date')}")
+                    st.write(f"👩‍👧‍👦 회의참여인원 : {st.session_state.info.get('num_spk')}")
                 with col2:
-                    st.write(f"🪑 회의실 : {st.session_state.info.get(meeting_room)}")
-                    st.write(f"⏱️ 회의진행시간 : {st.session_state.info.get(mt_term)}")
-                    st.write(f"✍️ 참석인원 : {st.session_state.info.get(speakers)}")
+                    st.write(f"🪑 회의실 : {st.session_state.info.get('meeting_room')}")
+                    st.write(f"⏱️ 회의진행시간 : {st.session_state.info.get('mt_term')}")
+                    st.write(f"✍️ 참석인원 : {st.session_state.info.get('speakers')}")
 
                 st.markdown('######')
 
-                st.write("📍   회의주제")
+                st.write("📍 회의주제")
                 st.write(st.session_state.summarize_title)
                 st.markdown('######')
-                st.write("📝   회의요약")
+                st.write("📝 회의요약")
                 st.write(st.session_state.summarize_overall)
                 st.markdown('######')
-                st.write("💬   화자별요약")
+                st.write("💬 화자별요약")
 
                 for speaker, summary in st.session_state.summarize_by_speaker.items():
                         st.write(f"{speaker}: {summary}")
