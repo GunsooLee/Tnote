@@ -541,7 +541,7 @@ def main_app():
                                 st.markdown('######')
                                 st.markdown('######💯 [감정점수 산정방식]')
                                 st.markdown('######(감정별 단어점수 x 사용갯수)의 총합 x 100/ (전체단어갯수x5)')
-                                st.markdown('######매우긍정 5점, 긍정 4점, 중립 3점, 부정 2점, 매우부정 1점')
+                                st.markdown('######😍매우긍정 5점, 😀긍정 4점, 😐중립 3점, 😠부정 2점, 😡매우부정 1점')
                                 
                                 st.session_state.analyze_emotion_by_speaker = fig
                                 # 프로세스 종료시 파일다운로드 추가
