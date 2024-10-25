@@ -486,7 +486,7 @@ def main_app():
                         with st.expander("📈 단어 벡터화"):
                             if st.session_state.plot_tfidf_matrix is None:
                                 show_progress(3)
-                                tfidf_matrix, vectorizer = tfidf_vectorize(df_origin[['화자', '분석된 내용']])
+                                df_tfidf, tfidf_matrix, vectorizer = tfidf_vectorize(df_origin[['화자', '분석된 내용']])
                                 print_date = plot_tfidf_matrix(tfidf_matrix, vectorizer)
                                 st.pyplot(print_date)
                                 st.session_state.plot_tfidf_matrix = print_date
@@ -501,8 +501,8 @@ def main_app():
                         with st.expander("💠 군집화"):
                             if st.session_state.plot_kmeans_clusters is None:
                                 show_progress(4)
-                                kmeans_model = kmeans_clustering(tfidf_matrix, num_clusters=3)
-                                print_date = plot_kmeans_clusters(kmeans_model, tfidf_matrix)
+                                df_tfidf_trans, df_kmeans = kmeans_clustering(df_tfidf, 7)
+                                print_date = plot_kmeans_clusters(df_tfidf_trans, df_kmeans)
                                 st.pyplot(print_date)
                                 st.session_state.plot_kmeans_clusters = print_date
                         with st.expander("📍 전체 회의 주제"):
