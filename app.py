@@ -510,7 +510,7 @@ def main_app():
                         with st.expander("📍 전체 회의 주제"):
                             if st.session_state.summarize_title is None:
                                 show_progress(5)
-                                combined_text = df_origin.apply(lambda row: f"{row['화자']}] {row['내용']}", axis=1).str.cat(sep='\n')
+                                combined_text = df_origin.apply(lambda row: f"{row['화자']}] \"{row['내용']}.\"", axis=1).str.cat(sep='\n')
                                 title = summarize_title(combined_text)
                                 to_title=title
                                 st.write(title)
@@ -518,7 +518,7 @@ def main_app():
                         with st.expander("📝 전체 회의 요약"):
                             if st.session_state.summarize_overall is None:
                                 show_progress(6)
-                                overall_summary = summarize_overall(df_origin.apply(lambda row: f"{row['화자']}] {row['분석된 내용']}", axis=1).str.cat(sep='\n'))
+                                overall_summary = summarize_overall(df_origin)
                                 to_overall_summary = overall_summary
                                 st.write(overall_summary)
                                 st.session_state.summarize_overall = overall_summary
