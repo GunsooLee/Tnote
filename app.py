@@ -527,7 +527,8 @@ def main_app():
                                 show_progress(7)
                                 speaker_summaries = summarize_by_speaker(df_origin)
                                 for speaker, summary in speaker_summaries.items():
-                                    st.write(f"{speaker}: {summary}")
+                                    st.markdown(f"**{speaker}**")
+                                    st.write(f" {summary}")
                                     att_subject += f"{speaker}: {summary}\n"
                                 st.session_state.summarize_by_speaker=speaker_summaries
                         with st.expander("🙋 화자별 감정 분석"):
@@ -689,7 +690,8 @@ def main_app():
                 st.write(st.session_state.summarize_overall)
             with st.expander("💬 화자별 요약"):
                 for speaker, summary in st.session_state.summarize_by_speaker.items():
-                    st.write(f"{speaker}: {summary}")
+                    st.markdown(f"**{speaker}**")
+                    st.write(f" {summary}")
             with st.expander("🙋 화자별 감정 분석"):
                 # st.pyplot 초기화 해줘야 안겹침
                 plt.close()
