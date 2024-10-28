@@ -78,7 +78,7 @@ def login():
         '<span style="font-size: 6em; font-weight: bold;">T-Note</span>',
         unsafe_allow_html=True
     )
-    st.markdown("### 📝  tsis AI 회의록 작성 ver 1.0")
+    st.markdown("### 📝  tsis AI 회의록 작성 ver 1.0.0")
     st.markdown("###### 📌  2024 T-Lab tsis 신기술 연구회")
     st.markdown("###### 📌  Team ""T-Note"" 최종발표시연")
     st.divider()
@@ -115,7 +115,7 @@ def main_app():
     # Streamlit 앱 제목
     #st.title("T-Note : tsis AI 회의록작성")
     st.markdown(
-        '<span style="font-size: 3em; font-weight: bold;">T-Note </span> <span style="font-size: 2em; font-weight: bold;">(ver 1.0)</span>',
+        '<span style="font-size: 3em; font-weight: bold;">T-Note </span> <span style="font-size: 2em; font-weight: bold;">(ver 1.0.0)</span>',
         unsafe_allow_html=True
     )
 
