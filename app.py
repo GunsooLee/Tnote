@@ -540,7 +540,7 @@ def main_app():
                                 st.pyplot(fig)
                                 for speaker, result in speaker_emotions.items():
                                     emotion_category = result['감정 결과']
-                                    st.markdown(f"**{speaker} 감정결과 : ** {result['감정 결과']} ({result['감정 분포']['긍정 비율']:.2f}%)")
+                                    st.markdown(f"**{speaker} 감정결과 :** {result['감정 결과']} ({result['감정 분포']['긍정 비율']:.2f}%)")
                                 
                                 st.markdown('######')
                                 st.markdown('**💯 [감정점수 산정방식]**')
@@ -701,7 +701,7 @@ def main_app():
 
                 for speaker, result in speaker_emotions.items():
                     emotion_category = result['감정 결과']
-                    st.markdown(f"**{speaker}** 감정결과 : {result['감정 결과']} ({result['감정 분포']['긍정 비율']:.2f}%)")
+                    st.markdown(f"**{speaker} 감정결과 :** {result['감정 결과']} ({result['감정 분포']['긍정 비율']:.2f}%)")
 
                 st.markdown('######')
                 st.markdown('💯  **[감정점수 산정방식]**')
