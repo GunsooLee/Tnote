@@ -20,11 +20,17 @@ def load_json_data(file_path):
         text = data.get('Meta(Refine)', {}).get('passage')
         if not text:
             text = data.get('Meta', {}).get('passage')
-        summary = data['Annotation']['summary1']
+        summary = data.get('Annotation', {}).get('summary1')
         
         # summary1이 없으면 summary2 사용 (예시를 따라 추가 처리)
         if not summary:
-            summary = data['Annotation']['summary2']
+            summary = data.get('Annotation', {}).get('summary2')
+            
+        if not summary:
+            summary = data.get('Annotation', {}).get('Summary1')
+
+        if not summary:
+            summary = data.get('Annotation', {}).get('Summary2')
         
         return {'text': text, 'summary': summary}
 
