@@ -17,7 +17,9 @@ def load_json_data(file_path):
         data = json.load(f)
         
         # 'passage'와 'summary1' 필드 추출
-        text = data['Meta(Refine)']['passage']
+        text = data.get('Meta(Refine)', {}).get('passage')
+        if not text:
+            text = data.get('Meta', {}).get('passage')
         summary = data['Annotation']['summary1']
         
         # summary1이 없으면 summary2 사용 (예시를 따라 추가 처리)
