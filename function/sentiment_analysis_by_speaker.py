@@ -84,4 +84,4 @@ def plot_emotion_distribution( emotion_distribution):
     for bar, value in zip(bars, values):
         plt.text(value + 1, bar.get_y() + bar.get_height()/2, f'{value:.2f}%', va='center')
         
-    return plt
+    return plt.gcf()
