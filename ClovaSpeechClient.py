@@ -149,15 +149,27 @@ class ClovaSpeechClient:
         return result
     
     def getSttAllResultDf(self,save_path):
+
+        print("Uploading file:", save_path)
         
         res = ClovaSpeechClient().req_upload(file=save_path, completion='sync') #파일 업로드
-        json_obj = json.loads(res.text)
+
+        print("Upload response:", res.text)
+
+        try:
+            json_obj = json.loads(res.text)
+        except json.JSONDecodeError as e:
+            print("JSON decode error:", e)
+            return None
+        # json_obj = json.loads(res.text)
         # json_obj = json.loads(self.res)
         
         #회의록 녹취록 전문 위한 result
         result = []
 
         segments_arr = json_obj['segments']
+
+         print("Segments array:", segments_arr)
       
         for segment in segments_arr:
             stt_result = []
